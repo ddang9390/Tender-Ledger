@@ -3,7 +3,8 @@
 # Purpose - To setup the database for the Tender Ledger project
 
 import sqlite3
-import pandas as pd
+from .categories import add_category
+from .payment_methods import add_payment_method
 
 DB_DIR = "data"
 DB_NAME = "tender_ledger.db"
@@ -30,8 +31,8 @@ def set_up_database(testing=False):
 
         # Build the tables if they don't exist
         set_up_users_table(cur)
-        set_up_categories_table(cur)
-        set_up_payment_methods_table(cur)
+        set_up_categories_table(cur, testing)
+        set_up_payment_methods_table(cur, testing)
         set_up_expenses_table(cur)
 
         # Commit pending transactions to the database then close the connection
@@ -54,16 +55,19 @@ def set_up_users_table(cur):
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     username TEXT UNIQUE NOT NULL,
                     password TEXT,
-                    created_at DATETIME
+                    created_at DATETIME,
+                    updated_at DATETIME
                 )
                 """)
 
-def set_up_categories_table(cur):
+def set_up_categories_table(cur, testing):
     """
     Create the table for the categories
 
     Argument:
         cur (Cursor): Cursor instance that is used to execute SQL statements
+        testing (bool): If true, set up database for testing purposes
+                        Else, set up database for prod
     """
     cur.execute("""
                 CREATE TABLE IF NOT EXISTS categories(
@@ -71,17 +75,26 @@ def set_up_categories_table(cur):
                     user_id INTEGER,
                     name TEXT NOT NULL,
                     created_at DATETIME,
+                    updated_at DATETIME,
                 
                     FOREIGN KEY (user_id) REFERENCES users(id)
                 )
                 """)
+    
+    # Inserting default categories
+    default_categories = []
 
-def set_up_payment_methods_table(cur):
+    for category in default_categories:
+        add_category(None, category, testing)
+
+def set_up_payment_methods_table(cur, testing):
     """
     Create the table for the payment methods
 
     Argument:
         cur (Cursor): Cursor instance that is used to execute SQL statements
+        testing (bool): If true, set up database for testing purposes
+                        Else, set up database for prod
     """
     cur.execute("""
                 CREATE TABLE IF NOT EXISTS payment_methods(
@@ -89,11 +102,18 @@ def set_up_payment_methods_table(cur):
                     user_id INTEGER,
                     name TEXT NOT NULL,
                     created_at DATETIME,
+                    updated_at DATETIME,
                 
                     FOREIGN KEY (user_id) REFERENCES users(id)
                 )
                 """)
     
+    # Inserting default payment methods
+    default_payment_methods = ["Cash", "Credit"]
+    
+    for payment_method in default_payment_methods:
+        add_payment_method(None, payment_method, testing)
+
 def set_up_expenses_table(cur):
     """
     Create the table for the expenses
@@ -118,30 +138,3 @@ def set_up_expenses_table(cur):
                     FOREIGN KEY (category_id) REFERENCES categories(id)
                 )
                 """)
-
-
-
-def execute_query(query):
-    """
-    Connects to database and executes the query generated from
-    translating the user's sentence. Displays the results of the
-    query and the generated query
-
-    Argument:
-        query (string): The generated query
-    """
-    con = sqlite3.connect(DB_PATH)
-    print(DB_PATH)
-    results = pd.read_sql_query(query, con)
-    con.close()
-
-    print("\n----Query Results----")
-    if results.empty:
-        print("The query produced no results")
-    else:
-        print(results.to_string(index=False))
-
-    print("\nResulting Query: ", query, "\n")
-
-    return query, results.to_html()
-
