@@ -3,6 +3,7 @@
 # Purpose - Handles the appearance of the expenses page
 
 import customtkinter
+from ..Elements.add_expense_popup import AddExpensePopup
 
 class ExpensesPage(customtkinter.CTkFrame):
     def __init__(self, parent, controller):
@@ -14,16 +15,25 @@ class ExpensesPage(customtkinter.CTkFrame):
             controller (App): The main ui that acts as a controller for deciding what page is visible
         """
         super().__init__(parent)
+        self.parent = parent
         self.controller = controller
 
         label = customtkinter.CTkLabel(self, text="My Expenses")
         label.pack()
 
-        add_button = customtkinter.CTkButton(self, text="Add", command=self.add_expense)
+        add_button = customtkinter.CTkButton(self, text="Add", command=self.display_popup)
         add_button.pack()
 
-    def add_expense(self):
+    def display_popup(self):
         """
         Displays the popup for adding new expenses
         """
-        print("hello world")
+        popup = AddExpensePopup(parent=self.parent, controller=self.controller)
+
+        # Ensures that the popup is updated and visible before grabbing it
+        popup.update_idletasks()
+        popup.deiconify()
+
+        # Display the popup
+        popup.grab_set()
+        popup.wait_window(popup)
