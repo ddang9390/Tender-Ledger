@@ -17,6 +17,10 @@ def add_expense(user_id, amount, date_of_purchase, payment_method_id, category_i
         location (string): Other details about the expense
         cur (Cursor): Cursor instance that is used to execute SQL statements
         con (Connection): Connection to the database
+
+    Returns:
+        bool: True if able to add expense
+              False if not
     """
     created_at = datetime.now()
     sql = "INSERT INTO expenses (user_id, amount, date_of_purchase, payment_method_id, category_id, location, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)"
@@ -26,8 +30,12 @@ def add_expense(user_id, amount, date_of_purchase, payment_method_id, category_i
     try:
         cur.execute(sql, val)
         con.commit()
+
+        return True
+    
     except Exception as e:
         print(e)
+        return False
 
 def update_expense(user_id, amount, date_of_purchase, payment_method_id, category_id, location, testing=False):
     """
@@ -42,6 +50,10 @@ def update_expense(user_id, amount, date_of_purchase, payment_method_id, categor
         location (string): Other details about the expense
         testing (bool): If True, the testing DB will be used
                         Else, use the prod DB
+
+    Returns:
+        bool: True if able to update expense
+              False if not
     """
     updated_at = datetime.now()
 
@@ -53,5 +65,9 @@ def delete_expense(id, testing=False):
         id (int): ID of the expense
         testing (bool): If True, the testing DB will be used
                         Else, use the prod DB
+
+    Returns:
+        bool: True if able to delete expense
+              False if not
     """
     pass

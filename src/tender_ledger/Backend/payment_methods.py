@@ -13,6 +13,10 @@ def add_payment_method(user_id, name, cur, con):
         name (string): The custom payment method's name
         cur (Cursor): Cursor instance that is used to execute SQL statements
         con (Connection): Connection to the database
+
+    Returns:
+        bool: True if able to add payment method
+              False if not
     """
 
     created_at = datetime.now()
@@ -24,9 +28,12 @@ def add_payment_method(user_id, name, cur, con):
     try:
         cur.execute(sql, val)
         con.commit()
+
+        return True
+    
     except Exception as e:
         print(e)
-
+        return False
 
 def update_payment_method(user_id, name, testing=False):
     """
@@ -37,6 +44,10 @@ def update_payment_method(user_id, name, testing=False):
         name (string): The custom payment method's name
         testing (bool): If True, the testing DB will be used
                         Else, use the prod DB
+
+    Returns:
+        bool: True if able to update payment method
+              False if not
     """
     updated_at = datetime.now()
 
@@ -48,5 +59,9 @@ def delete_payment_method(id, testing=False):
         id (int): The custom payment method's id
         testing (bool): If True, the testing DB will be used
                         Else, use the prod DB
+
+    Returns:
+        bool: True if able to delete payment method
+              False if not
     """
     pass

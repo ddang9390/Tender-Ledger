@@ -146,3 +146,23 @@ def set_up_expenses_table(cur):
                     FOREIGN KEY (category_id) REFERENCES categories(id)
                 )
                 """)
+
+def clear_tables(cur, con):
+    """
+    Empty the tables in the database
+
+    Argument:
+        cur (Cursor): Cursor instance that is used to execute SQL statements
+        con (Connection): Connection to the database
+    """
+    cur.execute("DELETE FROM expenses")
+    cur.execute("DELETE FROM categories")
+    cur.execute("DELETE FROM payment_methods")
+    cur.execute("DELETE FROM users")
+
+    # Leave the defaults alone
+    for payment_method in DEFAULT_PAYMENT_METHODS:
+        add_payment_method(None, payment_method, cur, con)
+    for category in DEFAULT_CATEGOREIS:
+        add_category(None, category, cur, con)
+    

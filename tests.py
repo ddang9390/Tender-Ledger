@@ -9,7 +9,11 @@ from src.tender_ledger.Backend.expenses import *
 from src.tender_ledger.Backend.payment_methods import *
 from src.tender_ledger.Backend.users import *
 
+TEST_DB_NAME = "test_tender_ledger.db"
+TEST_DB_PATH = DB_DIR + "/" + TEST_DB_NAME
+
 #TODO - break apart into multiple test files
+#TODO - get the test_setup_database function to run before the other test cases
 class Tests(unittest.TestCase):
     def test_setup_database(self):
         """
@@ -26,13 +30,40 @@ class Tests(unittest.TestCase):
         """
         Tests if the user can be added properly
         """
-        pass
+        con = sqlite3.connect(TEST_DB_PATH)
+        cur = con.cursor()
+        clear_tables(cur, con)
+        username = "username"
+        password = "123456"
+        
+
+        try:
+            result = add_user(username, password, cur, con)
+            delete_user(username, cur, con)
+            con.close()
+
+            self.assertTrue(result)
+        except Exception as e:
+            self.fail("Unable to add user")
 
     def test_unable_to_add_duplicate_user(self):
         """
         Tests if unable to add users with duplicate usernames
         """
-        pass
+        con = sqlite3.connect(TEST_DB_PATH)
+        cur = con.cursor()
+        clear_tables(cur, con)
+        username = "duplicate"
+        password = "123456"
+
+        try:
+            result = add_user(username, password, cur, con)
+            result = add_user(username, password, cur, con)
+            con.close()
+
+            self.assertFalse(result)
+        except Exception as e:
+            self.fail("Unable to add user")
 
     def test_password_requirements(self):
         """
@@ -50,7 +81,22 @@ class Tests(unittest.TestCase):
         """
         Tests if able to delete users
         """
-        pass
+        con = sqlite3.connect(TEST_DB_PATH)
+        cur = con.cursor()
+        clear_tables(cur, con)
+        username = "delete_me"
+        password = "123456"
+
+        try:
+            result = add_user(username, password, cur, con)
+            result = delete_user(username, cur, con)
+            con.close()
+
+            self.assertTrue(result)
+        except Exception as e:
+            print(e)
+            self.fail("Unable to delete user")
+        
 
 
     # For testing category functionality
@@ -111,7 +157,26 @@ class Tests(unittest.TestCase):
         """
         Tests if the expense can be added properly
         """
-        pass
+        con = sqlite3.connect(TEST_DB_PATH)
+        cur = con.cursor()
+        clear_tables(cur, con)
+
+        # Parameters for test expense
+        user_id = None
+        amount = 123
+        date_of_purchase = datetime.now()
+        payment_method_id = 1
+        category_id = 1
+        location = "testing"
+
+        try:
+            result = add_expense(user_id,amount, date_of_purchase, payment_method_id, category_id, location, cur, con)
+            con.close()
+
+            self.assertTrue(result)
+        except Exception as e:
+            print(e)
+            self.fail("Unable to delete expense")
 
     def test_update_expense(self):
         """

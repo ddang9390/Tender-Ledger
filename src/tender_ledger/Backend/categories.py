@@ -13,6 +13,10 @@ def add_category(user_id, name, cur, con):
         name (string): The custom category's name
         cur (Cursor): Cursor instance that is used to execute SQL statements
         con (Connection): Connection to the database
+
+    Returns:
+        bool: True if able to add category
+              False if not
     """
 
     created_at = datetime.now()
@@ -24,8 +28,12 @@ def add_category(user_id, name, cur, con):
     try:
         cur.execute(sql, val)
         con.commit()
+
+        return True
+    
     except Exception as e:
         print(e)
+        return False
 
 
 def update_category(user_id, name, testing=False):
@@ -37,6 +45,10 @@ def update_category(user_id, name, testing=False):
         name (string): The custom category's name
         testing (bool): If True, the testing DB will be used
                         Else, use the prod DB
+
+    Returns:
+        bool: True if able to update category
+              False if not
     """
     updated_at = datetime.now()
 
@@ -48,5 +60,9 @@ def delete_category(id, testing=False):
         id (int): The custom category's id
         testing (bool): If True, the testing DB will be used
                         Else, use the prod DB
+
+    Returns:
+        bool: True if able to delete category
+              False if not
     """
     pass
