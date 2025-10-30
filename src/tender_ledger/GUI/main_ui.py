@@ -12,9 +12,15 @@ RESOLUTION_WIDTH = 1100
 RESOLUTION_HEIGHT = 580
 
 class App(customtkinter.CTk):
-    def __init__(self):
-        """Initializes the main UI for the project"""
+    def __init__(self, db):
+        """
+        Initializes the main UI for the project
+        
+        Argument:
+            db (DatabaseManager): Instance of database manager being used
+        """
         super().__init__()
+        self.db = db
 
         self.title("Tender Ledger")
         self.geometry(f"{RESOLUTION_WIDTH}x{RESOLUTION_HEIGHT}")
@@ -25,11 +31,11 @@ class App(customtkinter.CTk):
         container.grid_columnconfigure(0, weight=1)
 
         # Setup navbar TODO - only display when logged in
-        self.navbar = NavBar(container, self)
+        self.navbar = NavBar(container, self, db)
         self.navbar.grid(row=0, column=0, sticky="nsw")
 
         # Setup default page TODO - change to login
-        expenses_page = ExpensesPage(container, self)
+        expenses_page = ExpensesPage(container, self, db)
         self.show_page(expenses_page)
 
     def show_page(self, page):
@@ -42,3 +48,4 @@ class App(customtkinter.CTk):
         page.grid(row=0, column=1, sticky="nsew")
         page.tkraise()
 
+    

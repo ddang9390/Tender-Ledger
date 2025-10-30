@@ -4,7 +4,7 @@
 
 from datetime import datetime
 
-def add_expense(user_id, amount, date_of_purchase, payment_method_id, category_id, location, cur, con):
+def add_expense(user_id, amount, date_of_purchase, payment_method_id, category_id, location, db):
     """
     Add an expense for the user
 
@@ -15,8 +15,7 @@ def add_expense(user_id, amount, date_of_purchase, payment_method_id, category_i
         payment_method_id (int): Payment method used for expense
         category_id (int): Expense's category
         location (string): Other details about the expense
-        cur (Cursor): Cursor instance that is used to execute SQL statements
-        con (Connection): Connection to the database
+        db (DatabaseManager): Instance of database manager being used
 
     Returns:
         bool: True if able to add expense
@@ -26,16 +25,7 @@ def add_expense(user_id, amount, date_of_purchase, payment_method_id, category_i
     sql = "INSERT INTO expenses (user_id, amount, date_of_purchase, payment_method_id, category_id, location, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)"
     val = (user_id, amount, date_of_purchase, payment_method_id, category_id, location, created_at)
 
-    # Execute the query then commit the changes
-    try:
-        cur.execute(sql, val)
-        con.commit()
-
-        return True
-    
-    except Exception as e:
-        print(e)
-        return False
+    return db.execute_statement(sql, val)
 
 def update_expense(user_id, amount, date_of_purchase, payment_method_id, category_id, location, testing=False):
     """

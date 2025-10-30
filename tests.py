@@ -15,32 +15,23 @@ TEST_DB_PATH = DB_DIR + "/" + TEST_DB_NAME
 #TODO - break apart into multiple test files
 #TODO - get the test_setup_database function to run before the other test cases
 class Tests(unittest.TestCase):
-    def test_setup_database(self):
-        """
-        Tests if the database can be setup properly
-        """
-        try:
-            set_up_database(testing=True)
-        except Exception as e:
-            print(e)
-            self.fail("Unable to setup testing database")
+    def __init__(self, methodName = "runTest"):
+        super().__init__(methodName)
+        self.db = DatabaseManager(testing=True)
+
         
     # For testing user functionality
     def test_adding_users(self):
         """
         Tests if the user can be added properly
         """
-        con = sqlite3.connect(TEST_DB_PATH)
-        cur = con.cursor()
-        clear_tables(cur, con)
+        self.db.clear_tables()
         username = "username"
         password = "123456"
-        
 
         try:
-            result = add_user(username, password, cur, con)
-            delete_user(username, cur, con)
-            con.close()
+            result = add_user(username, password, self.db)
+            delete_user(username, self.db)
 
             self.assertTrue(result)
         except Exception as e:
@@ -50,16 +41,14 @@ class Tests(unittest.TestCase):
         """
         Tests if unable to add users with duplicate usernames
         """
-        con = sqlite3.connect(TEST_DB_PATH)
-        cur = con.cursor()
-        clear_tables(cur, con)
+        self.db.clear_tables()
         username = "duplicate"
         password = "123456"
 
         try:
-            result = add_user(username, password, cur, con)
-            result = add_user(username, password, cur, con)
-            con.close()
+            result = add_user(username, password, self.db)
+            result = add_user(username, password, self.db)
+
 
             self.assertFalse(result)
         except Exception as e:
@@ -81,16 +70,13 @@ class Tests(unittest.TestCase):
         """
         Tests if able to delete users
         """
-        con = sqlite3.connect(TEST_DB_PATH)
-        cur = con.cursor()
-        clear_tables(cur, con)
+        self.db.clear_tables()
         username = "delete_me"
         password = "123456"
 
         try:
-            result = add_user(username, password, cur, con)
-            result = delete_user(username, cur, con)
-            con.close()
+            result = add_user(username, password, self.db)
+            result = delete_user(username, self.db)
 
             self.assertTrue(result)
         except Exception as e:
@@ -159,7 +145,7 @@ class Tests(unittest.TestCase):
         """
         con = sqlite3.connect(TEST_DB_PATH)
         cur = con.cursor()
-        clear_tables(cur, con)
+        self.db.clear_tables()
 
         # Parameters for test expense
         user_id = None
@@ -170,7 +156,7 @@ class Tests(unittest.TestCase):
         location = "testing"
 
         try:
-            result = add_expense(user_id,amount, date_of_purchase, payment_method_id, category_id, location, cur, con)
+            result = add_expense(user_id,amount, date_of_purchase, payment_method_id, category_id, location, self.db)
             con.close()
 
             self.assertTrue(result)
