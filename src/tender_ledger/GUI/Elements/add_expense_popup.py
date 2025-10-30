@@ -51,7 +51,10 @@ class AddExpensePopup(customtkinter.CTkToplevel):
         self.date.grid(row=0, column=1)
 
         # Setting up amount field
-        # self.amount = 
+        amount_label = customtkinter.CTkLabel(input_frame, text="Amount:")
+        amount_label.grid(row=1, column=0)
+        self.amount = customtkinter.CTkEntry(input_frame)
+        self.amount.grid(row=1, column=1)
 
         # Setting up category field
         # self.category = 

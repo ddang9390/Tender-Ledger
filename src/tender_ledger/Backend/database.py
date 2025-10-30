@@ -13,6 +13,19 @@ DB_PATH = DB_DIR + "/" + DB_NAME
 TEST_DB_NAME = "test_tender_ledger.db"
 TEST_DB_PATH = DB_DIR + "/" + TEST_DB_NAME
 
+DEFAULT_CATEGOREIS = ["Food", 
+                      "Utilities", 
+                      "Housing", 
+                      "Healthcare",
+                      "Insurance",
+                      "Entertainment",
+                      "Travel",
+                      "Shopping",
+                      "Other"]
+
+DEFAULT_PAYMENT_METHODS = ["Cash",
+                           "Credit"]
+
 def set_up_database(testing=False):
     """
     Sets up the database for the Tender Ledger project
@@ -31,8 +44,8 @@ def set_up_database(testing=False):
 
         # Build the tables if they don't exist
         set_up_users_table(cur)
-        set_up_categories_table(cur, testing)
-        set_up_payment_methods_table(cur, testing)
+        set_up_categories_table(cur, con)
+        set_up_payment_methods_table(cur, con)
         set_up_expenses_table(cur)
 
         # Commit pending transactions to the database then close the connection
@@ -60,20 +73,19 @@ def set_up_users_table(cur):
                 )
                 """)
 
-def set_up_categories_table(cur, testing):
+def set_up_categories_table(cur, con):
     """
     Create the table for the categories
 
     Argument:
         cur (Cursor): Cursor instance that is used to execute SQL statements
-        testing (bool): If true, set up database for testing purposes
-                        Else, set up database for prod
+        con (Connection): Connection to the database
     """
     cur.execute("""
                 CREATE TABLE IF NOT EXISTS categories(
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     user_id INTEGER,
-                    name TEXT NOT NULL,
+                    name TEXT UNIQUE NOT NULL,
                     created_at DATETIME,
                     updated_at DATETIME,
                 
@@ -81,26 +93,24 @@ def set_up_categories_table(cur, testing):
                 )
                 """)
     
+    
     # Inserting default categories
-    default_categories = []
+    for category in DEFAULT_CATEGOREIS:
+        add_category(None, category, cur, con)
 
-    for category in default_categories:
-        add_category(None, category, testing)
-
-def set_up_payment_methods_table(cur, testing):
+def set_up_payment_methods_table(cur, con):
     """
     Create the table for the payment methods
 
     Argument:
         cur (Cursor): Cursor instance that is used to execute SQL statements
-        testing (bool): If true, set up database for testing purposes
-                        Else, set up database for prod
+        con (Connection): Connection to the database
     """
     cur.execute("""
                 CREATE TABLE IF NOT EXISTS payment_methods(
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     user_id INTEGER,
-                    name TEXT NOT NULL,
+                    name TEXT UNIQUE NOT NULL,
                     created_at DATETIME,
                     updated_at DATETIME,
                 
@@ -109,10 +119,8 @@ def set_up_payment_methods_table(cur, testing):
                 """)
     
     # Inserting default payment methods
-    default_payment_methods = ["Cash", "Credit"]
-    
-    for payment_method in default_payment_methods:
-        add_payment_method(None, payment_method, testing)
+    for payment_method in DEFAULT_PAYMENT_METHODS:
+        add_payment_method(None, payment_method, cur, con)
 
 def set_up_expenses_table(cur):
     """
