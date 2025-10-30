@@ -61,3 +61,39 @@ def delete_expense(id, testing=False):
               False if not
     """
     pass
+
+def get_expenses_for_user(user_id, db):
+    """
+    Gets all expenses for a user
+
+    Arguments:
+        user_id (int): Id of the user
+        db (DatabaseManager): Instance of database manager being used
+
+    Returns:
+        list: List of the user's expenses
+    """
+    sql = """
+            SELECT
+                e.amount,
+                e.date_of_purchase,
+                p.name AS payment_method_name,
+                c.name AS category_name,
+                e.location
+            FROM
+                expenses e
+            LEFT JOIN
+                categories c ON e.category_id = c.id
+            LEFT JOIN
+                payment_methods p ON e.payment_method_id = p.id
+            WHERE
+                e.user_id = ?
+          """
+    val = (user_id,)
+
+    try:
+        db.cur.execute(sql, val)
+        return db.cur.fetchall()
+    except Exception as e:
+        print(e)
+        return []

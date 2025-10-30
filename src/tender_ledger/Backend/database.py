@@ -175,6 +175,5 @@ class DatabaseManager:
             return True
         
         except Exception as e:
-            print("fsdfds")
             print(e)
             return False

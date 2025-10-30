@@ -25,17 +25,19 @@ class App(customtkinter.CTk):
         self.title("Tender Ledger")
         self.geometry(f"{RESOLUTION_WIDTH}x{RESOLUTION_HEIGHT}")
 
-        container = customtkinter.CTkFrame(self)
-        container.pack(side="top", fill="both", expand=True)
-        container.grid_rowconfigure(0, weight=1)
-        container.grid_columnconfigure(0, weight=1)
+        self.page_container = customtkinter.CTkFrame(self)
+        self.page_container.pack(side="top", fill="both", expand=True)
+        self.page_container.grid_rowconfigure(0, weight=1)
+        self.page_container.grid_columnconfigure(0, weight=1)
+        self.page_container.grid(row=0, column=1)
+        
 
         # Setup navbar TODO - only display when logged in
-        self.navbar = NavBar(container, self, db)
+        self.navbar = NavBar(self, self, db)
         self.navbar.grid(row=0, column=0, sticky="nsw")
 
         # Setup default page TODO - change to login
-        expenses_page = ExpensesPage(container, self, db)
+        expenses_page = ExpensesPage(self.page_container, self, db)
         self.show_page(expenses_page)
 
     def show_page(self, page):

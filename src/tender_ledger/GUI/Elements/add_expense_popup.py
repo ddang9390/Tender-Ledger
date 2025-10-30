@@ -117,7 +117,7 @@ class AddExpensePopup(customtkinter.CTkToplevel):
 
         amount = self.amount.get()
         date_of_purchase = self.date.get_date()
-        payment_method_id = self.method.get() 
+        payment_method_id = self.payment_methods[self.method.get()]
         category_id = self.categories[self.category.get()]
         location = self.location.get()
  
