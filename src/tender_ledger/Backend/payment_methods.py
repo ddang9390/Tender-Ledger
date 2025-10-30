@@ -55,3 +55,36 @@ def delete_payment_method(id, testing=False):
               False if not
     """
     pass
+
+def get_payment_methods_for_user(user_id, db):
+    """
+    Gets the custom payment methods made by the user along with
+    the default methods
+
+    Arguments:
+        user_id (int): The user's id
+        db (DatabaseManager): Instance of database manager being used
+
+    Returns:
+        dict: A dictionary containing the payment method's name as the key
+              and the payment method's id as the value
+    """
+    payment_methods = {}
+    try:
+        sql = """
+                SELECT id, name 
+                FROM payment_methods
+                WHERE user_id = ? OR user_id IS NULL
+              """
+        
+        db.cur.execute(sql, (user_id,))
+        rows = db.cur.fetchall()
+
+        for row in rows:
+            payment_methods[row[1]] = row[0]
+        
+        return payment_methods
+
+    except Exception as e:
+        print(e)
+        return payment_methods

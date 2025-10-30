@@ -16,7 +16,7 @@ DB_NAME = "tender_ledger.db"
 DB_PATH = DB_DIR + "/" + DB_NAME
 
 class AddExpensePopup(customtkinter.CTkToplevel):
-    def __init__(self, parent, controller, categories, db, editing=False):
+    def __init__(self, parent, controller, categories, payment_methods, db, editing=False):
         """
         Initializes a new instance of the ProfilePage
 
@@ -32,6 +32,7 @@ class AddExpensePopup(customtkinter.CTkToplevel):
         self.parent = parent
         self.controller = controller
         self.categories = categories
+        self.payment_methods = payment_methods
         self.db = db
 
         if editing:
@@ -75,7 +76,9 @@ class AddExpensePopup(customtkinter.CTkToplevel):
         self.category.grid(row=2, column= 1)
 
         # Setting up Method of Purchase field
-        method_of_purchase = ["hi", "ha"]
+        method_of_purchase = []
+        for method in self.payment_methods.keys():
+            method_of_purchase.append(method)
         method_label = customtkinter.CTkLabel(input_frame, text="Method of Purchase:")
         method_label.grid(row=3, column=0)
         self.method = customtkinter.CTkOptionMenu(input_frame, values=method_of_purchase)
