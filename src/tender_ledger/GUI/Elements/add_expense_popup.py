@@ -35,16 +35,34 @@ class AddExpensePopup(customtkinter.CTkToplevel):
         self.payment_methods = payment_methods
         self.db = db
 
+        self.center_window()
         if editing:
             self.title(UPDATE_TITLE)
         else:
             self.title(ADD_TITLE)
             
+        # Register validation commands for user input
+        self.validate_input_cmd = self.register(self.validate_amount_input)
 
+        # Setting up inputs and buttons
         self.setup_inputs()
         self.setup_buttons(editing)
 
-        
+    def center_window(self):
+        """
+        Ensures that the popup shows over the window rather than some random location
+        """
+        # Get dimensions of main window
+        width = self.controller.winfo_width()
+        height = self.controller.winfo_height()
+        main_x = self.controller.winfo_x()
+        main_y = self.controller.winfo_y()
+
+        # Set coordinates of where popup should show
+        x = main_x + (width // 2)
+        y = main_y + (height // 2)
+
+        self.geometry(f"+{x}+{y}")
 
     def setup_inputs(self):
         """
@@ -63,7 +81,11 @@ class AddExpensePopup(customtkinter.CTkToplevel):
         # Setting up amount field
         amount_label = customtkinter.CTkLabel(input_frame, text="Amount:")
         amount_label.grid(row=1, column=0)
-        self.amount = customtkinter.CTkEntry(input_frame)
+        self.amount = customtkinter.CTkEntry(
+            input_frame,
+            validate="key",
+            validatecommand=(self.validate_input_cmd, '%P')
+        )
         self.amount.grid(row=1, column=1)
 
         # Setting up category field
@@ -89,6 +111,31 @@ class AddExpensePopup(customtkinter.CTkToplevel):
         location_label.grid(row=4, column=0)
         self.location = customtkinter.CTkEntry(input_frame)
         self.location.grid(row=4, column=1)
+
+    def validate_amount_input(self, val):
+        """
+        Ensures that the Amount field only accepts numbers with up to 2 decimal places
+
+        Returns:
+            bool: True if the input is a valid number
+                  False if not
+        """
+        # Allow the field to be empty
+        if val == "":
+            return True
+
+        try:
+            # Check if the value is a valid float
+            new_val = float(val)
+
+            # Check if the value has more than 2 decimal places
+            if "." in val and len(val.split('.')[1]) > 2:
+                return False
+            
+            return True
+        
+        except ValueError:
+            return False
 
     def setup_buttons(self, editing):
         """
