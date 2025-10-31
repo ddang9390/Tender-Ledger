@@ -77,8 +77,12 @@ class AddExpensePopup(customtkinter.CTkToplevel):
         # Setting up date field
         date_label = customtkinter.CTkLabel(input_frame, text="Date:")
         date_label.grid(row=0, column=0, pady=10, padx=10)
-        self.date = DateEntry(input_frame, selectmode='day')
+        self.date = DateEntry(input_frame, selectmode='day', state='normal', showweeknumbers=False)
         self.date.grid(row=0, column=1, pady=10, padx=10)
+        
+        # Ensures that the DateEntry is at the top level to prevent clicking the fields behind it
+        self.date._top_cal.transient(self)
+        self.date._top_cal.lift()
 
         # Setting up amount field
         amount_label = customtkinter.CTkLabel(input_frame, text="Amount:")
