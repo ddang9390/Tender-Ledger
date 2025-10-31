@@ -5,11 +5,15 @@
 import tkinter
 import customtkinter
 from .Pages.expenses_page import ExpensesPage
+from .Pages.dashboard_page import DashboardPage
+from .Pages.profile_page import ProfilePage  
 from .Elements.navbar import NavBar
 
 # Constants (might allow for custom resolutions later)
 RESOLUTION_WIDTH = 1100
 RESOLUTION_HEIGHT = 580
+
+
 
 class App(customtkinter.CTk):
     def __init__(self, db):
@@ -36,18 +40,26 @@ class App(customtkinter.CTk):
         self.navbar = NavBar(self, self, db)
         self.navbar.grid(row=0, column=0, sticky="nsw")
 
+        # Setup pages
+        self.pages = {
+            "ExpensesPage": ExpensesPage(self.page_container, self, db),
+            "DashboardPage": DashboardPage(self.page_container, self, db),
+            "ProfilePage": ProfilePage(self.page_container, self, db)
+        }
+
         # Setup default page TODO - change to login
-        expenses_page = ExpensesPage(self.page_container, self, db)
-        self.show_page(expenses_page)
+        self.show_page("ExpensesPage")
 
     def show_page(self, page):
         """
         Replace the current page with the new one
 
         Argument:
-            page: The new page to be displayed
+            page (String): The new page to be displayed
         """
-        page.grid(row=0, column=1, sticky="nsew")
-        page.tkraise()
+        p = self.pages[page]
+
+        p.grid(row=0, column=1, sticky="nsew")
+        p.tkraise()
 
     

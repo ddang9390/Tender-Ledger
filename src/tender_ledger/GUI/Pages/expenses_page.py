@@ -25,11 +25,10 @@ class ExpensesPage(customtkinter.CTkFrame):
         self.db = db
 
         #TODO - change user id once login functionality is implemented
-        user_id = -1
-        self.categories = get_categories_for_user(user_id, self.db)
-        self.payment_methods = get_payment_methods_for_user(user_id, self.db)
-        self.expenses = get_expenses_for_user(user_id, self.db)
-        
+        self.user_id = -1
+        self.categories = get_categories_for_user(self.user_id, self.db)
+        self.payment_methods = get_payment_methods_for_user(self.user_id, self.db)
+        self.expenses = get_expenses_for_user(self.user_id, self.db)
         
 
         label = customtkinter.CTkLabel(self, text="My Expenses")
@@ -47,7 +46,7 @@ class ExpensesPage(customtkinter.CTkFrame):
         """
         Displays the popup for adding new expenses
         """
-        popup = AddExpensePopup(parent=self.parent, controller=self.controller, categories=self.categories, payment_methods=self.payment_methods, db=self.db)
+        popup = AddExpensePopup(parent=self.parent, controller=self.controller, categories=self.categories, payment_methods=self.payment_methods, expense_page=self, db=self.db)
 
         # Ensures that the popup is updated and visible before grabbing it
         popup.update_idletasks()
@@ -88,6 +87,7 @@ class ExpensesPage(customtkinter.CTkFrame):
         """
         Refreshes the table by clearing it and then repopulating it
         """
+        self.expenses = get_expenses_for_user(self.user_id, self.db)
         # Clear the table
         for row in self.expense_table.get_children():
             self.expense_table.delete(row)
