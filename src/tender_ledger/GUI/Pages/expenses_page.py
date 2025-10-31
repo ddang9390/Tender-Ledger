@@ -30,16 +30,22 @@ class ExpensesPage(customtkinter.CTkFrame):
         self.payment_methods = get_payment_methods_for_user(self.user_id, self.db)
         self.expenses = get_expenses_for_user(self.user_id, self.db)
         
-
+        # Creating header section
         label = customtkinter.CTkLabel(self, text="My Expenses")
         label.grid(row=0, column=0, sticky="w")
 
         add_button = customtkinter.CTkButton(self, text="Add", command=self.display_popup)
         add_button.grid(row=0, column=1, sticky="e")
 
+        # Creating filter section
+        self.filter_frame = customtkinter.CTkFrame(self)
+        self.filter_frame.grid(row=1, column=0, columnspan=2, pady=20, sticky="nsew")
+        self.create_filter_section()
+
+        # Creating table section
         self.create_table()
         self.refresh_table()
-        self.expense_table_frame.grid(row=1, column=0, columnspan=2, sticky="nsew")
+        self.expense_table_frame.grid(row=2, column=0, columnspan=2, sticky="nsew")
         
 
     def display_popup(self):
@@ -56,6 +62,28 @@ class ExpensesPage(customtkinter.CTkFrame):
         popup.grab_set()
         popup.wait_window(popup)
 
+    def create_filter_section(self):
+        """
+        Displays the filter section for filtering the expenses table
+        """
+        # Category Filter
+        categories = ["--Category--"]
+        for category in self.categories.keys():
+            categories.append(category)
+        self.category_filter = customtkinter.CTkOptionMenu(self.filter_frame, values=categories)
+        self.category_filter.pack(side="left")
+
+        # Payment Method Filter
+        method_of_purchase = ["--Payment Method--"]
+        for method in self.payment_methods.keys():
+            method_of_purchase.append(method)
+        self.method_filter = customtkinter.CTkOptionMenu(self.filter_frame, values=method_of_purchase)
+        self.method_filter.pack(side="left", padx=10)
+
+        # Search button
+        search_button = customtkinter.CTkButton(self.filter_frame, text="Search", command=self.refresh_table)
+        search_button.pack(side="right")
+        
     def create_table(self):
         """
         Displays the table for the user's expenses
@@ -87,7 +115,11 @@ class ExpensesPage(customtkinter.CTkFrame):
         """
         Refreshes the table by clearing it and then repopulating it
         """
-        self.expenses = get_expenses_for_user(self.user_id, self.db)
+        # Get values from filter section
+        category = self.categories[self.category_filter.get()] if self.category_filter.get() != "--Category--" else None
+        payment_method = self.payment_methods[self.method_filter.get()] if self.method_filter.get() != "--Payment Method--" else None
+
+        self.expenses = get_expenses_for_user(self.user_id, self.db, category=category, payment_method=payment_method)
         # Clear the table
         for row in self.expense_table.get_children():
             self.expense_table.delete(row)

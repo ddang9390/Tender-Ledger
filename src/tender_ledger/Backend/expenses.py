@@ -62,34 +62,74 @@ def delete_expense(id, testing=False):
     """
     pass
 
-def get_expenses_for_user(user_id, db):
+def get_expenses_for_user(user_id, db, start_date=None, end_date=None, category=None, payment_method=None, search=None, order=None):
     """
     Gets all expenses for a user
 
     Arguments:
         user_id (int): Id of the user
         db (DatabaseManager): Instance of database manager being used
+        start_date (string): Start date for searching
+        end_date (string): End date for searching
+        category (int): Category being searched for
+        payment_method (int): Payment method being searched for
+        search (string): Term being searched for from search bar
+        order: Column being sorted
 
     Returns:
         list: List of the user's expenses
     """
-    sql = """
-            SELECT
-                e.amount,
-                e.date_of_purchase,
-                p.name AS payment_method_name,
-                c.name AS category_name,
-                e.location
-            FROM
-                expenses e
-            LEFT JOIN
-                categories c ON e.category_id = c.id
-            LEFT JOIN
-                payment_methods p ON e.payment_method_id = p.id
-            WHERE
-                e.user_id = ?
-          """
-    val = (user_id,)
+    select_clause = """
+                    SELECT
+                        e.amount,
+                        e.date_of_purchase,
+                        p.name AS payment_method_name,
+                        c.name AS category_name,
+                        e.location
+                    FROM
+                        expenses e
+                    LEFT JOIN
+                        categories c ON e.category_id = c.id
+                    LEFT JOIN
+                        payment_methods p ON e.payment_method_id = p.id
+                    """
+    where_clause = """
+                    WHERE
+                        e.user_id = ?
+                   """
+    order_by_clause = """
+                      ORDER BY
+                        e.date_of_purchase DESC
+                      """
+    val = [user_id,]
+
+    # Handling filtering
+    if start_date:
+        where_clause += ("AND e.date_of_purchase >= ?")
+        val.append(start_date)
+    
+    if end_date:
+        where_clause += (" AND e.date_of_purchase <= ?")
+        val.append(end_date)
+
+    if category:
+        where_clause += (" AND e.category_id = ?")
+        val.append(category)
+
+    if payment_method:
+        where_clause += (" AND e.payment_method_id = ?")
+        val.append(payment_method)
+
+    if search:
+        where_clause += (" AND (e.amount LIKE ? OR e.location LIKE ?)")
+        val.extend([f"%{search}%", f"%{search}%"])
+
+    # Handling sorting by columns
+    if order:
+        pass
+
+    sql = select_clause + where_clause + order_by_clause
+
 
     try:
         db.cur.execute(sql, val)
