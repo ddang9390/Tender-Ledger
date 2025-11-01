@@ -42,11 +42,22 @@ class ExpensesPage(customtkinter.CTkFrame):
         self.filter_frame.grid(row=1, column=0, columnspan=2, pady=20, sticky="nsew")
         self.create_filter_section()
 
+        #--------Table Stuff--------#
+        # TODO - move table related stuff into new file, this is getting too much
+        # Pagination controls
+        self.current_page = 1
+        self.options_per_page = 5
+        self.total_pages = len(self.expenses) // self.options_per_page
+        if len(self.expenses) % self.options_per_page != 0:
+            self.total_pages += 1
+
         # Creating table section
         self.create_table()
         self.refresh_table()
         self.expense_table_frame.grid(row=2, column=0, columnspan=2, sticky="nsew")
-        
+
+        self.create_pagination_options()
+        # ---------------------------#
 
     def display_popup(self):
         """
@@ -84,6 +95,61 @@ class ExpensesPage(customtkinter.CTkFrame):
         search_button = customtkinter.CTkButton(self.filter_frame, text="Search", command=self.refresh_table)
         search_button.pack(side="right")
         
+
+    #--------Table Stuff--------#
+    def create_pagination_options(self):
+        """
+        Displays pagination options for the expenses table
+        """
+        self.pagination_frame = customtkinter.CTkFrame(self)
+        self.pagination_frame.grid(row=3, column=0, columnspan=2, sticky="nsew")
+
+        # Previous button
+        self.prev_button = customtkinter.CTkButton(self.pagination_frame, text="Prev", command=self.go_to_prev_page)
+        self.prev_button.grid(row=0, column=0)
+
+        # Page label
+        self.page_label = customtkinter.CTkLabel(self.pagination_frame, text=f"{self.current_page}/{self.total_pages}")
+        self.page_label.grid(row=0, column=1, padx=10)
+
+        # Next button
+        self.next_button = customtkinter.CTkButton(self.pagination_frame, text="Next", command=self.go_to_next_page)
+        self.next_button.grid(row=0, column=2)
+
+        # Previous button is disabled by default
+        self.prev_button.configure(state="disabled")
+
+
+    def go_to_prev_page(self):
+        """
+        Go to the previous page in the table
+        """
+        self.current_page -= 1
+        self.page_label.configure(text=f"{self.current_page}/{self.total_pages}")
+
+        # Enable or disable buttons
+        if self.current_page == 1:
+            self.prev_button.configure(state="disabled")
+        if self.current_page != self.total_pages:
+            self.next_button.configure(state="normal")
+
+        self.refresh_table()
+
+    def go_to_next_page(self):
+        """
+        Go to the previous page in the table
+        """
+        self.current_page += 1
+        self.page_label.configure(text=f"{self.current_page}/{self.total_pages}")
+
+        # Enable or disable buttons
+        if self.current_page == self.total_pages:
+            self.next_button.configure(state="disabled")
+        if self.current_page != 1:
+            self.prev_button.configure(state="normal")
+
+        self.refresh_table()
+
     def create_table(self):
         """
         Displays the table for the user's expenses
@@ -120,14 +186,25 @@ class ExpensesPage(customtkinter.CTkFrame):
         payment_method = self.payment_methods[self.method_filter.get()] if self.method_filter.get() != "--Payment Method--" else None
 
         self.expenses = get_expenses_for_user(self.user_id, self.db, category=category, payment_method=payment_method)
+
         # Clear the table
         for row in self.expense_table.get_children():
             self.expense_table.delete(row)
 
+        # Calculate start and end indices for pagination
+        start = self.options_per_page * (self.current_page-1)
+        end = start + self.options_per_page
+        if end > len(self.expenses):
+            end = len(self.expenses)
+
         # Add expenses to the table
-        for expense in self.expenses:
+        for i in range(start, end):
+            expense = self.expenses[i]
             display_values = (expense[1], expense[0], expense[3], expense[2], expense[4])
             self.expense_table.insert('', 'end', values=display_values)
+
+
+    #---------------------------#
 
     def edit_expense(self):
         """

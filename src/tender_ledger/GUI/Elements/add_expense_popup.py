@@ -85,8 +85,8 @@ class AddExpensePopup(customtkinter.CTkToplevel):
         self.date._top_cal.lift()
 
         # Setting up amount field
-        amount_label = customtkinter.CTkLabel(input_frame, text="Amount:")
-        amount_label.grid(row=1, column=0, pady=10, padx=10)
+        self.amount_label = customtkinter.CTkLabel(input_frame, text="Amount (*):")
+        self.amount_label.grid(row=1, column=0, pady=10, padx=10)
         self.amount = customtkinter.CTkEntry(
             input_frame,
             validate="key",
@@ -174,8 +174,10 @@ class AddExpensePopup(customtkinter.CTkToplevel):
         category_id = self.categories[self.category.get()]
         location = self.location.get()
  
-
-        add_expense(user_id, amount, date_of_purchase, payment_method_id, category_id, location, self.db)
-        self.expense_page.refresh_table()
-        self.destroy()
+        if amount == "" or amount == None:
+            self.amount_label.configure(text_color = "red")
+        else:
+            add_expense(user_id, amount, date_of_purchase, payment_method_id, category_id, location, self.db)
+            self.expense_page.refresh_table()
+            self.destroy()
             
