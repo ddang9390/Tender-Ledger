@@ -49,9 +49,9 @@ class DashboardPage(customtkinter.CTkFrame):
         # TODO - integrate start and end dates when search section is complete
         total = get_total_spending(self.user_id, self.db)
         total_spending_label = customtkinter.CTkLabel(self.summary_frame, text=f"Total Spending: ${total:.2f}")
-        total_spending_label.grid(row=0, column=0)
+        total_spending_label.pack(side="left")
 
-        self.summary_frame.grid(row=1, column=0)
+        self.summary_frame.grid(row=1, column=0, sticky="nsew")
 
     def create_chart_section(self):
         """

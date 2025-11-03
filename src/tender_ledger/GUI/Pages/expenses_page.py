@@ -77,6 +77,10 @@ class ExpensesPage(customtkinter.CTkFrame):
         """
         Displays the filter section for filtering the expenses table
         """
+        # Generic search bar
+        self.search_bar = customtkinter.CTkEntry(self.filter_frame, placeholder_text = "Search")
+        self.search_bar.pack(side="left")
+
         # Category Filter
         categories = ["--Category--"]
         for category in self.categories.keys():
@@ -94,7 +98,20 @@ class ExpensesPage(customtkinter.CTkFrame):
         # Search button
         search_button = customtkinter.CTkButton(self.filter_frame, text="Search", command=self.refresh_table)
         search_button.pack(side="right")
+
+        # Reset button
+        reset_button = customtkinter.CTkButton(self.filter_frame, text="Reset", command=self.clear_filters)
+        reset_button.pack(side="right")
         
+    def clear_filters(self):
+        """
+        Clear the filters in the filter section
+        """
+        clear = customtkinter.StringVar(value="")
+        self.search_bar.configure(textvariable=clear)
+
+        self.category_filter.set("--Category--")
+        self.method_filter.set("--Payment Method--")
 
     #--------Table Stuff--------#
     def create_pagination_options(self):
@@ -182,10 +199,11 @@ class ExpensesPage(customtkinter.CTkFrame):
         Refreshes the table by clearing it and then repopulating it
         """
         # Get values from filter section
+        search = self.search_bar.get()
         category_search = self.categories[self.category_filter.get()] if self.category_filter.get() != "--Category--" else None
         payment_method_search = self.payment_methods[self.method_filter.get()] if self.method_filter.get() != "--Payment Method--" else None
 
-        self.expenses = get_expenses_for_user(self.user_id, self.db, category=category_search, payment_method=payment_method_search)
+        self.expenses = get_expenses_for_user(self.user_id, self.db, category=category_search, payment_method=payment_method_search, search=search)
 
         # Clear the table
         for row in self.expense_table.get_children():

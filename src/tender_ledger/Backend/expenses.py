@@ -121,8 +121,8 @@ def get_expenses_for_user(user_id, db, start_date=None, end_date=None, category=
         val.append(payment_method)
 
     if search:
-        where_clause += (" AND (e.amount LIKE ? OR e.location LIKE ?)")
-        val.extend([f"%{search}%", f"%{search}%"])
+        where_clause += (" AND (e.amount LIKE ? OR e.location LIKE ? OR e.date_of_purchase LIKE ?)")
+        val.extend([f"%{search}%", f"%{search}%", f"%{search}%"])
 
     # Handling sorting by columns
     if order:
