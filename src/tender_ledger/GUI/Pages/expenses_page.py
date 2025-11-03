@@ -182,10 +182,10 @@ class ExpensesPage(customtkinter.CTkFrame):
         Refreshes the table by clearing it and then repopulating it
         """
         # Get values from filter section
-        category = self.categories[self.category_filter.get()] if self.category_filter.get() != "--Category--" else None
-        payment_method = self.payment_methods[self.method_filter.get()] if self.method_filter.get() != "--Payment Method--" else None
+        category_search = self.categories[self.category_filter.get()] if self.category_filter.get() != "--Category--" else None
+        payment_method_search = self.payment_methods[self.method_filter.get()] if self.method_filter.get() != "--Payment Method--" else None
 
-        self.expenses = get_expenses_for_user(self.user_id, self.db, category=category, payment_method=payment_method)
+        self.expenses = get_expenses_for_user(self.user_id, self.db, category=category_search, payment_method=payment_method_search)
 
         # Clear the table
         for row in self.expense_table.get_children():
@@ -200,7 +200,13 @@ class ExpensesPage(customtkinter.CTkFrame):
         # Add expenses to the table
         for i in range(start, end):
             expense = self.expenses[i]
-            display_values = (expense[1], expense[0], expense[3], expense[2], expense[4])
+            date = expense[1]
+            amount = f"${expense[0]:.2f}"
+            category = expense[3]
+            payment_method = expense[2]
+            location = expense[4]
+
+            display_values = (date, amount, category, payment_method, location)
             self.expense_table.insert('', 'end', values=display_values)
 
 

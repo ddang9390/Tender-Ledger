@@ -129,11 +129,51 @@ def get_expenses_for_user(user_id, db, start_date=None, end_date=None, category=
         pass
 
     sql = select_clause + where_clause + order_by_clause
-
-
     try:
         db.cur.execute(sql, val)
         return db.cur.fetchall()
     except Exception as e:
         print(e)
         return []
+    
+def get_total_spending(user_id, db, start_date=None, end_date=None):
+    """
+    Gets the total spending for a user
+
+    Arguments:
+        user_id (int): Id of the user
+        db (DatabaseManager): Instance of database manager being used
+        start_date (string): Start date for searching
+        end_date (string): End date for searching
+
+    Returns:
+        float: Total spending for a user
+    """
+    select_clause = """
+          SELECT
+              SUM(amount)
+          FROM
+              expenses
+          """
+    where_clause = """
+                   WHERE user_id = ?
+                   """
+    start_clause = ""
+    end_clause = ";"
+
+    val = [user_id]
+    if start_date:
+        start_clause = " AND date_of_purchase >= ?"
+        val.append(start_date)
+
+    if end_date:
+        end_clause = " AND date_of_purchase <= ?;"
+        val.append(end_date)
+
+    sql = select_clause + where_clause + start_clause + end_clause
+    try:
+        db.cur.execute(sql, val)
+        return float(db.cur.fetchall()[0][0])
+    except Exception as e:
+        print(e)
+        return -1
