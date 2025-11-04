@@ -61,15 +61,19 @@ class ExpensesPage(customtkinter.CTkFrame):
         self.create_pagination_options()
         # ---------------------------#
 
-    def display_popup(self, deleting=None):
+    def display_popup(self, deleting=None, editing=None):
         """
         Displays the popup for adding or deleting expenses
 
         Argument:
             deleting (tuple): First element contains type being deleted, second contains ID
+            editing (int): Contains ID of expense to edit
         """
-        if not deleting:
+        if not deleting and not editing:
             popup = AddExpensePopup(parent=self.parent, controller=self.controller, categories=self.categories, payment_methods=self.payment_methods, expense_page=self, db=self.db)
+        
+        elif editing:
+            popup = AddExpensePopup(parent=self.parent, controller=self.controller, categories=self.categories, payment_methods=self.payment_methods, expense_page=self, db=self.db, editing=editing)
         else:
             popup = ConfirmationPopup(parent=self.parent, controller=self.controller,db=self.db, action=deleting)
 
@@ -234,7 +238,7 @@ class ExpensesPage(customtkinter.CTkFrame):
             expense_id = int(self.expense_table.identify_row(y))
 
             if col["id"] == "edit":
-                self.edit_expense()
+                self.display_popup(editing=expense_id)
             else:
                 # Display confirmation popup before deleting expense
                 deleting = ("Expense", expense_id, self)
@@ -276,12 +280,3 @@ class ExpensesPage(customtkinter.CTkFrame):
 
             display_values = (date, amount, category, payment_method, location, "Edit", "Delete")
             self.expense_table.insert('', 'end', values=display_values, iid=expense_id)
-
-
-    #---------------------------#
-
-    def edit_expense(self):
-        """
-        Opens the 'Add Expense' popup to edit the row's expense
-        """
-        print("Edit me")

@@ -27,12 +27,11 @@ def add_expense(user_id, amount, date_of_purchase, payment_method_id, category_i
 
     return db.execute_statement(sql, val)
 
-def update_expense(user_id, amount, date_of_purchase, payment_method_id, category_id, location, expense_id, db):
+def update_expense(amount, date_of_purchase, payment_method_id, category_id, location, expense_id, db):
     """
     Update an expense for the user
 
     Arguments:
-        user_id (int): The user's id
         amount (float): Amount of the purchase
         date_of_purchase (string): Date when purchase was made
         payment_method_id (int): Payment method used for expense
@@ -45,7 +44,21 @@ def update_expense(user_id, amount, date_of_purchase, payment_method_id, categor
         bool: True if able to update expense
               False if not
     """
+    sql = """
+          UPDATE expenses
+          SET 
+            amount = ?,
+            date_of_purchase = ?,
+            payment_method_id = ?,
+            category_id = ?,
+            location = ?,
+            updated_at = ?
+          WHERE id = ?
+          """
     updated_at = datetime.now()
+    val=(amount,date_of_purchase,payment_method_id,category_id,location,updated_at,expense_id)
+
+    return db.execute_statement(sql, val)
 
 def delete_expense(id, db):
     """
@@ -66,6 +79,46 @@ def delete_expense(id, db):
     val = (id,)
 
     return db.execute_statement(sql, val)
+
+def get_expense(id, db):
+    """
+    Get a single expense
+
+    Arguments:
+        id (int): ID of the expense
+        db (DatabaseManager): Instance of database manager being used
+
+    Returns:
+        list: Contains a tuple that contains info about the expense
+    """
+    select_clause = """
+                    SELECT
+                        e.amount,
+                        e.date_of_purchase,
+                        p.name AS payment_method_name,
+                        c.name AS category_name,
+                        e.location,
+                        e.id
+                    FROM
+                        expenses e
+                    LEFT JOIN
+                        categories c ON e.category_id = c.id
+                    LEFT JOIN
+                        payment_methods p ON e.payment_method_id = p.id
+                    """
+    where_clause = """
+                    WHERE
+                        e.id = ?
+                   """
+    val = [id,]
+
+    sql = select_clause + where_clause
+    try:
+        db.cur.execute(sql, val)
+        return db.cur.fetchall()
+    except Exception as e:
+        print(e)
+        return []
 
 def get_expenses_for_user(user_id, db, start_date=None, end_date=None, category=None, payment_method=None, search=None, order=None):
     """
