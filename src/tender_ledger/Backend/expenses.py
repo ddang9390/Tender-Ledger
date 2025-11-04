@@ -27,7 +27,7 @@ def add_expense(user_id, amount, date_of_purchase, payment_method_id, category_i
 
     return db.execute_statement(sql, val)
 
-def update_expense(user_id, amount, date_of_purchase, payment_method_id, category_id, location, testing=False):
+def update_expense(user_id, amount, date_of_purchase, payment_method_id, category_id, location, expense_id, db):
     """
     Update an expense for the user
 
@@ -38,8 +38,8 @@ def update_expense(user_id, amount, date_of_purchase, payment_method_id, categor
         payment_method_id (int): Payment method used for expense
         category_id (int): Expense's category
         location (string): Other details about the expense
-        testing (bool): If True, the testing DB will be used
-                        Else, use the prod DB
+        expense_id (int): ID of the expense to edit
+        db (DatabaseManager): Instance of database manager being used
 
     Returns:
         bool: True if able to update expense
@@ -47,14 +47,13 @@ def update_expense(user_id, amount, date_of_purchase, payment_method_id, categor
     """
     updated_at = datetime.now()
 
-def delete_expense(id, testing=False):
+def delete_expense(id, db):
     """
     Delete an expense for the 
 
     Arguments:
         id (int): ID of the expense
-        testing (bool): If True, the testing DB will be used
-                        Else, use the prod DB
+        db (DatabaseManager): Instance of database manager being used
 
     Returns:
         bool: True if able to delete expense
@@ -85,7 +84,8 @@ def get_expenses_for_user(user_id, db, start_date=None, end_date=None, category=
                         e.date_of_purchase,
                         p.name AS payment_method_name,
                         c.name AS category_name,
-                        e.location
+                        e.location,
+                        e.id
                     FROM
                         expenses e
                     LEFT JOIN

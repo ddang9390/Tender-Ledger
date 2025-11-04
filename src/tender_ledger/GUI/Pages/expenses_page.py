@@ -3,6 +3,7 @@
 # Purpose - Handles the appearance of the expenses page
 
 import customtkinter
+import re
 from ..Elements.add_expense_popup import AddExpensePopup
 from ...Backend.categories import get_categories_for_user
 from ...Backend.payment_methods import get_payment_methods_for_user
@@ -174,7 +175,7 @@ class ExpensesPage(customtkinter.CTkFrame):
         self.expense_table_frame = customtkinter.CTkFrame(self) 
 
         # Adding columns to table
-        columns = ('date', 'amount', 'category', 'payment method', 'location', 'action')
+        columns = ('date', 'amount', 'category', 'payment method', 'location', 'edit', 'delete')
         self.expense_table = ttk.Treeview(self.expense_table_frame, columns=columns, show='headings')
 
         # Add headers to columns
@@ -183,7 +184,8 @@ class ExpensesPage(customtkinter.CTkFrame):
         self.expense_table.heading('category', text='Category')
         self.expense_table.heading('payment method', text='Payment Method')
         self.expense_table.heading('location', text='Location')
-        self.expense_table.heading('action', text="Action")
+        self.expense_table.heading('edit', text="Edit")
+        self.expense_table.heading('delete', text="Delete")
 
         # Control column width
         self.expense_table.column('date', width=100)
@@ -191,8 +193,44 @@ class ExpensesPage(customtkinter.CTkFrame):
         self.expense_table.column('category', width=100)
         self.expense_table.column('payment method', width=150)
         self.expense_table.column('location', width=200)
-        self.expense_table.column('action', width=100)
+        self.expense_table.column('edit', width=75, anchor="center")
+        self.expense_table.column('delete', width=100, anchor="center")
         self.expense_table.grid(row=0, column=0, sticky="nsew")
+
+        # Bind left click event
+        self.expense_table.bind("<Button-1>", self.action_click)
+
+    def action_click(self, event):
+        """
+        Handles on click events for the table. User should be clicking on the values in the 
+        Action column for this to work. Edit and delete functionality will depend on which half
+        of the cell the user clicks on
+        """
+        # Get coordinates of event click
+        x = event.x
+        y = event.y
+
+        # Get region of event and return if not a cell
+        region = self.expense_table.identify_region(x, y)
+        if region != "cell": return
+
+        # Get column
+        col_index = self.expense_table.identify_column(x)
+        col = self.expense_table.column(col_index)
+
+        if col["id"] == "edit" or col["id"] == "delete":
+            # Get row
+            row_index = self.expense_table.identify_row(y)
+
+            # Get index for the expense
+            index = int("".join(re.findall(r'\d+', row_index))) - 1
+            expense = self.expenses[index]
+
+            if col["id"] == "edit":
+                self.edit_expense()
+            else:
+                self.delete_expense()
+
 
     def refresh_table(self):
         """
@@ -224,7 +262,7 @@ class ExpensesPage(customtkinter.CTkFrame):
             payment_method = expense[2]
             location = expense[4]
 
-            display_values = (date, amount, category, payment_method, location)
+            display_values = (date, amount, category, payment_method, location, "Edit", "Delete")
             self.expense_table.insert('', 'end', values=display_values)
 
 
