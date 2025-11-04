@@ -24,6 +24,7 @@ class AddExpensePopup(customtkinter.CTkToplevel):
             parent (CTkFrame): The container that will be containing this page
             controller (App): The main ui that acts as a controller for deciding what page is visible
             categories (dict): Contains names of categories as values and ids as keys
+            payment_methods (dict): Contains names of payment methods as values and ids as keys
             db (DatabaseManager): Instance of database manager being used
             expense_page (ExpensePage): Instance of expense page being used
             editing (bool): True if we are updating an expense

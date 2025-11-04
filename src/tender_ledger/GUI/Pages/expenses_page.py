@@ -5,6 +5,7 @@
 import customtkinter
 import re
 from ..Elements.add_expense_popup import AddExpensePopup
+from ..Elements.confirmation_popup import ConfirmationPopup
 from ...Backend.categories import get_categories_for_user
 from ...Backend.payment_methods import get_payment_methods_for_user
 from ...Backend.expenses import get_expenses_for_user
@@ -60,11 +61,17 @@ class ExpensesPage(customtkinter.CTkFrame):
         self.create_pagination_options()
         # ---------------------------#
 
-    def display_popup(self):
+    def display_popup(self, deleting=None):
         """
-        Displays the popup for adding new expenses
+        Displays the popup for adding or deleting expenses
+
+        Argument:
+            deleting (tuple): First element contains type being deleted, second contains ID
         """
-        popup = AddExpensePopup(parent=self.parent, controller=self.controller, categories=self.categories, payment_methods=self.payment_methods, expense_page=self, db=self.db)
+        if not deleting:
+            popup = AddExpensePopup(parent=self.parent, controller=self.controller, categories=self.categories, payment_methods=self.payment_methods, expense_page=self, db=self.db)
+        else:
+            popup = ConfirmationPopup(parent=self.parent, controller=self.controller,db=self.db, action=deleting)
 
         # Ensures that the popup is updated and visible before grabbing it
         popup.update_idletasks()
@@ -136,6 +143,10 @@ class ExpensesPage(customtkinter.CTkFrame):
 
         # Previous button is disabled by default
         self.prev_button.configure(state="disabled")
+
+        # Disable next button if only one page is available
+        if self.current_page == self.total_pages:
+            self.next_button.configure(state="disabled")
 
 
     def go_to_prev_page(self):
@@ -219,17 +230,15 @@ class ExpensesPage(customtkinter.CTkFrame):
         col = self.expense_table.column(col_index)
 
         if col["id"] == "edit" or col["id"] == "delete":
-            # Get row
-            row_index = self.expense_table.identify_row(y)
-
-            # Get index for the expense
-            index = int("".join(re.findall(r'\d+', row_index))) - 1
-            expense = self.expenses[index]
+            # Get expense id
+            expense_id = int(self.expense_table.identify_row(y))
 
             if col["id"] == "edit":
                 self.edit_expense()
             else:
-                self.delete_expense()
+                # Display confirmation popup before deleting expense
+                deleting = ("Expense", expense_id, self)
+                self.display_popup(deleting)
 
 
     def refresh_table(self):
@@ -262,8 +271,11 @@ class ExpensesPage(customtkinter.CTkFrame):
             payment_method = expense[2]
             location = expense[4]
 
+            # Use item identifier of Treeview, makes getting expense ID easier
+            expense_id = expense[-1]
+
             display_values = (date, amount, category, payment_method, location, "Edit", "Delete")
-            self.expense_table.insert('', 'end', values=display_values)
+            self.expense_table.insert('', 'end', values=display_values, iid=expense_id)
 
 
     #---------------------------#
@@ -273,9 +285,3 @@ class ExpensesPage(customtkinter.CTkFrame):
         Opens the 'Add Expense' popup to edit the row's expense
         """
         print("Edit me")
-
-    def delete_expense(self):
-        """
-        Shows a confirmation window for deleting the row's expense
-        """
-        print("delete me")

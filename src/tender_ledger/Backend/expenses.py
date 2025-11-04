@@ -59,7 +59,13 @@ def delete_expense(id, db):
         bool: True if able to delete expense
               False if not
     """
-    pass
+    sql = """
+            DELETE FROM expenses
+            WHERE id = ?
+          """
+    val = (id,)
+
+    return db.execute_statement(sql, val)
 
 def get_expenses_for_user(user_id, db, start_date=None, end_date=None, category=None, payment_method=None, search=None, order=None):
     """
