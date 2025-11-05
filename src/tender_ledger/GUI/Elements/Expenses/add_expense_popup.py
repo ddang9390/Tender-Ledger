@@ -5,7 +5,7 @@
 import datetime
 import customtkinter
 from tkcalendar import DateEntry
-from ...Backend.expenses import add_expense, update_expense, get_expense
+from ....Backend.expenses import add_expense, update_expense, get_expense
 
 # Defining constants
 ADD_TITLE = "Add Expense"
@@ -18,7 +18,7 @@ DB_PATH = DB_DIR + "/" + DB_NAME
 class AddExpensePopup(customtkinter.CTkToplevel):
     def __init__(self, parent, controller, categories, payment_methods, db, expense_page, editing=None):
         """
-        Initializes a new instance of the ProfilePage
+        Initializes a new instance of the Add Expense Popup
 
         Argumgents:
             parent (CTkFrame): The container that will be containing this page
