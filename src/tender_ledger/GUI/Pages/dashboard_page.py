@@ -22,6 +22,12 @@ class DashboardPage(customtkinter.CTkFrame):
         self.controller = controller
         self.db = db
 
+        self.refresh_page()
+        
+    def refresh_page(self):
+        """
+        Updates the page
+        """
         # TODO - change user id
         self.user_id = -1
         self.expenses = get_expenses_for_user(self.user_id, self.db)

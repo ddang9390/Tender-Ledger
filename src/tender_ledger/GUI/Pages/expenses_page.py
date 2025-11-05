@@ -28,6 +28,12 @@ class ExpensesPage(customtkinter.CTkFrame):
         self.controller = controller
         self.db = db
 
+        self.refresh_page()
+        
+    def refresh_page(self):
+        """
+        Updates the page
+        """
         #TODO - change user id once login functionality is implemented
         self.user_id = -1
         self.categories = get_categories_for_user(self.user_id, self.db)
@@ -51,7 +57,6 @@ class ExpensesPage(customtkinter.CTkFrame):
         self.expense_table_frame = customtkinter.CTkFrame(self) 
         self.expense_table_frame.grid(row=2, column=0, columnspan=2, sticky="nsew")
         self.expense_table = ExpenseTable(self.expense_table_frame, self, self.filter_section, self.db)
-        
 
     def display_popup(self, deleting=None, editing=None):
         """

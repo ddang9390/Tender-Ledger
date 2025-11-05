@@ -58,6 +58,7 @@ class App(customtkinter.CTk):
             page (String): The new page to be displayed
         """
         p = self.pages[page]
+        p.refresh_page()
 
         p.grid(row=0, column=1, sticky="nsew")
         p.tkraise()
