@@ -1,6 +1,6 @@
 # Author - Daniel Dang
 # Filename - expense_table.py
-# Purpose - Handles the appearance of the expenses table
+# Purpose - Handles the appearance and functionality of the expenses table
 
 import customtkinter
 from ....Backend.expenses import get_expenses_for_user
@@ -29,15 +29,11 @@ class ExpenseTable():
         # Setting page options
         self.current_page = 1
         self.options_per_page = 5
-        self.total_pages = len(self.expenses) // self.options_per_page
-        if len(self.expenses) % self.options_per_page != 0:
-            self.total_pages += 1
 
         # Creating table and pagination options
         self.create_table()
-        self.refresh_table()
         self.create_pagination_options()
-
+        self.refresh_table()
 
     def create_table(self):
         """
@@ -95,11 +91,11 @@ class ExpenseTable():
             expense_id = int(self.expense_table.identify_row(y))
 
             if col["id"] == "edit":
-                self.display_popup(editing=expense_id)
+                self.controller.display_popup(editing=expense_id)
             else:
                 # Display confirmation popup before deleting expense
                 deleting = ("Expense", expense_id, self)
-                self.display_popup(deleting)
+                self.controller.display_popup(deleting)
 
 
     def refresh_table(self):
@@ -138,12 +134,18 @@ class ExpenseTable():
             display_values = (date, amount, category, payment_method, location, "Edit", "Delete")
             self.expense_table.insert('', 'end', values=display_values, iid=expense_id)
 
+        # Refresh pagination options
+        self.create_pagination_options()
+        if self.current_page > self.total_pages:
+            self.go_to_prev_page()
+
     def create_pagination_options(self):
         """
         Displays pagination options for the expenses table
         """
         self.pagination_frame = customtkinter.CTkFrame(self.parent)
         self.pagination_frame.grid(row=1, column=0, columnspan=2, sticky="nsew")
+        self.calculate_total_pages()
 
         # Previous button
         self.prev_button = customtkinter.CTkButton(self.pagination_frame, text="Prev", command=self.go_to_prev_page)
@@ -157,12 +159,8 @@ class ExpenseTable():
         self.next_button = customtkinter.CTkButton(self.pagination_frame, text="Next", command=self.go_to_next_page)
         self.next_button.grid(row=0, column=2)
 
-        # Previous button is disabled by default
-        self.prev_button.configure(state="disabled")
-
-        # Disable next button if only one page is available
-        if self.current_page == self.total_pages:
-            self.next_button.configure(state="disabled")
+        # Update status of pagination buttons
+        self.update_pagination_buttons()
 
 
     def go_to_prev_page(self):
@@ -173,11 +171,7 @@ class ExpenseTable():
         self.page_label.configure(text=f"{self.current_page}/{self.total_pages}")
 
         # Enable or disable buttons
-        if self.current_page == 1:
-            self.prev_button.configure(state="disabled")
-        if self.current_page != self.total_pages:
-            self.next_button.configure(state="normal")
-
+        self.update_pagination_buttons()
         self.refresh_table()
 
     def go_to_next_page(self):
@@ -188,9 +182,31 @@ class ExpenseTable():
         self.page_label.configure(text=f"{self.current_page}/{self.total_pages}")
 
         # Enable or disable buttons
+        self.update_pagination_buttons()
+        self.refresh_table()
+
+    def update_pagination_buttons(self):
+        """
+        Disables or enables the pagination buttons depending on what page the user is on
+        """
+        self.calculate_total_pages()
+
+        # If at the beginning, disable prev button and ensure next button is enabled
+        if self.current_page == 1:
+            self.prev_button.configure(state="disabled")
+        else:
+            self.prev_button.configure(state="normal")  
+
+        # If at the end, disable next button and ensure prev button is enabled
         if self.current_page == self.total_pages:
             self.next_button.configure(state="disabled")
-        if self.current_page != 1:
-            self.prev_button.configure(state="normal")
+        else:
+            self.next_button.configure(state="normal")
 
-        self.refresh_table()
+    def calculate_total_pages(self):
+        """
+        Calculate the total number of pages in the table
+        """
+        self.total_pages = len(self.expenses) // self.options_per_page
+        if len(self.expenses) % self.options_per_page != 0:
+            self.total_pages += 1
