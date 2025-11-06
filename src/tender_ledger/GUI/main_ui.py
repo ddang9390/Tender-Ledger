@@ -2,7 +2,6 @@
 # Filename - main_ui.py
 # Purpose - Acts as the main window for the project
 
-import tkinter
 import customtkinter
 from .Pages.expenses_page import ExpensesPage
 from .Pages.dashboard_page import DashboardPage
@@ -12,7 +11,6 @@ from .Elements.navbar import NavBar
 # Constants (might allow for custom resolutions later)
 RESOLUTION_WIDTH = 1100
 RESOLUTION_HEIGHT = 580
-
 
 
 class App(customtkinter.CTk):
@@ -27,7 +25,7 @@ class App(customtkinter.CTk):
         self.db = db
 
         self.title("Tender Ledger")
-        self.geometry(f"{RESOLUTION_WIDTH}x{RESOLUTION_HEIGHT}")
+        self.center_window()
 
         self.page_container = customtkinter.CTkFrame(self)
         self.page_container.pack(side="top", fill="both", expand=True)
@@ -35,7 +33,7 @@ class App(customtkinter.CTk):
         self.page_container.grid_columnconfigure(0, weight=1)
         self.page_container.grid(row=0, column=1)
         
-
+        
         # Setup navbar TODO - only display when logged in
         self.navbar = NavBar(self, self, db)
         self.navbar.grid(row=0, column=0, sticky="nsw")
@@ -63,4 +61,16 @@ class App(customtkinter.CTk):
         p.grid(row=0, column=1, sticky="nsew")
         p.tkraise()
 
-    
+    def center_window(self):
+        """
+        Center the window of the main app
+
+        # TODO - place this function in some utils file so that the popups can use this instead
+        """
+        width = self.winfo_screenwidth()
+        height = self.winfo_screenheight()
+        x = int((width/2) - (RESOLUTION_WIDTH/2))
+        y = int((height/2) - (RESOLUTION_HEIGHT/1.5))
+
+        # Launch window of custom resolution in center of screen
+        self.geometry(f"{RESOLUTION_WIDTH}x{RESOLUTION_HEIGHT}+{x}+{y}")
