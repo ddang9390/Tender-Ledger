@@ -38,6 +38,7 @@ class AddExpensePopup(customtkinter.CTkToplevel):
         self.db = db
         self.expense_to_edit = None
 
+        # Position the popup and change its title
         self.center_window()
         if editing:
             self.title(UPDATE_TITLE)
@@ -120,6 +121,7 @@ class AddExpensePopup(customtkinter.CTkToplevel):
         self.location = customtkinter.CTkEntry(input_frame)
         self.location.grid(row=4, column=1, pady=10, padx=10)
 
+        # Fill fields if editing an expense
         if self.expense_to_edit != None:
             # Formatting date so that it can be set properly
             date = datetime.datetime.strptime(self.expense_to_edit[1], "%Y-%m-%d").date()

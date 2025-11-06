@@ -19,7 +19,6 @@ class ExpenseTable():
         """
         self.parent = parent
         self.controller = controller
-
         self.filter_section = filter_section
         self.user_id = self.controller.user_id
         self.db = db

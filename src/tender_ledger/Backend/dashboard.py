@@ -1,5 +1,5 @@
 # Author - Daniel Dang
-# Filename - dashboard_page.py
+# Filename - dashboard.py
 # Purpose - Generates the charts for the dashboard
 
 from matplotlib.figure import Figure
@@ -27,13 +27,16 @@ def generate_pie_charts(expenses):
     
     for expense in expenses:
         category = expense[CATEGORY_INDEX]
+        # Gathering categories that expenses used
         if category not in categories.keys():
             categories[category] = 0
 
+        # Gathering payment methods that expenses used
         payment_method = expense[PAYMENT_METHOD_INDEX]
         if payment_method not in payment_methods.keys():
             payment_methods[payment_method] = 0
 
+        # Sum up number of times categories and payment methods were used
         categories[category] += 1
         payment_methods[payment_method] += 1
 

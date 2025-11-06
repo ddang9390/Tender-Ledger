@@ -27,15 +27,14 @@ def add_category(user_id, name, db):
     
 
 
-def update_category(user_id, name, testing=False):
+def update_category(user_id, name, db):
     """
     Update a custom category for the user
 
     Arguments:
         user_id (int): The user's id
         name (string): The custom category's name
-        testing (bool): If True, the testing DB will be used
-                        Else, use the prod DB
+        db (DatabaseManager): Instance of database manager being used
 
     Returns:
         bool: True if able to update category
@@ -43,14 +42,13 @@ def update_category(user_id, name, testing=False):
     """
     updated_at = datetime.now()
 
-def delete_category(id, testing=False):
+def delete_category(id, db):
     """
     Delete a custom category for the user
 
     Arguments:
         id (int): The custom category's id
-        testing (bool): If True, the testing DB will be used
-                        Else, use the prod DB
+        db (DatabaseManager): Instance of database manager being used
 
     Returns:
         bool: True if able to delete category

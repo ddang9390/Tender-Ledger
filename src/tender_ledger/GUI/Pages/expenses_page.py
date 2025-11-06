@@ -52,8 +52,7 @@ class ExpensesPage(customtkinter.CTkFrame):
         self.filter_frame.grid(row=1, column=0, columnspan=2, pady=20, sticky="nsew")
         self.filter_section = FilterSection(self.filter_frame, self, True)
 
-
-        #--------Table Stuff--------#
+        # Creating table
         self.expense_table_frame = customtkinter.CTkFrame(self) 
         self.expense_table_frame.grid(row=2, column=0, columnspan=2, sticky="nsew")
         self.expense_table = ExpenseTable(self.expense_table_frame, self, self.filter_section, self.db)

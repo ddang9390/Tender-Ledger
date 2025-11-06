@@ -1,15 +1,11 @@
 # Author - Daniel Dang
 # Filename - confirmation_popup.py
-# Purpose - Handles the appearance and fucntion of the confirmation popup
+# Purpose - Handles the appearance and function of the confirmation popup
 
-import sqlite3
 import customtkinter
 from ...Backend.expenses import delete_expense
 
-# Defining constants
-ADD_TITLE = "Add Expense"
-UPDATE_TITLE = "Edit Expense"
-
+# Defining constants, change title depending on type of page popup is from
 TITLES = {
     "Expense": "Delete Expense",
     "User": "Delete User",

@@ -187,6 +187,7 @@ def get_expenses_for_user(user_id, db, start_date=None, end_date=None, category=
     if order:
         pass
 
+    # Execute the sql query
     sql = select_clause + where_clause + order_by_clause
     try:
         db.cur.execute(sql, val)
@@ -221,6 +222,7 @@ def get_total_spending(user_id, db, start_date=None, end_date=None):
     end_clause = ";"
 
     val = [user_id]
+    # Handle date filters
     if start_date:
         start_clause = " AND date_of_purchase >= ?"
         val.append(start_date)
@@ -229,6 +231,7 @@ def get_total_spending(user_id, db, start_date=None, end_date=None):
         end_clause = " AND date_of_purchase <= ?;"
         val.append(end_date)
 
+    # Execute the sql query
     sql = select_clause + where_clause + start_clause + end_clause
     try:
         db.cur.execute(sql, val)

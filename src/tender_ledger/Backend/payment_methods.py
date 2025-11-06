@@ -25,15 +25,14 @@ def add_payment_method(user_id, name, db):
 
     return db.execute_statement(sql, val)
 
-def update_payment_method(user_id, name, testing=False):
+def update_payment_method(user_id, name, db):
     """
     Update a custom payment method for the user
 
     Arguments:
         user_id (int): The user's id
         name (string): The custom payment method's name
-        testing (bool): If True, the testing DB will be used
-                        Else, use the prod DB
+        db (DatabaseManager): Instance of database manager being used
 
     Returns:
         bool: True if able to update payment method
@@ -41,14 +40,13 @@ def update_payment_method(user_id, name, testing=False):
     """
     updated_at = datetime.now()
 
-def delete_payment_method(id, testing=False):
+def delete_payment_method(id, db):
     """
     Delete a custom payment method for the user
 
     Arguments:
         id (int): The custom payment method's id
-        testing (bool): If True, the testing DB will be used
-                        Else, use the prod DB
+        db (DatabaseManager): Instance of database manager being used
 
     Returns:
         bool: True if able to delete payment method

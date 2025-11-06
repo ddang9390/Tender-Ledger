@@ -1,3 +1,7 @@
+# Author - Daniel Dang
+# Filename - filter_section.py
+# Purpose - Handles the appearance and fucntion of the filter section
+
 import customtkinter
 
 class FilterSection:
@@ -7,7 +11,7 @@ class FilterSection:
 
         Argumgents:
             parent (CTkFrame): The container that will be containing this page
-            controller (ExpensesPage): The expenses page that acts as a controller
+            controller: The page that acts as a controller
             for_expenses (bool): True if the filter section is for the Expenses page.
                                  False if not
         """

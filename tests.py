@@ -13,12 +13,11 @@ TEST_DB_NAME = "test_tender_ledger.db"
 TEST_DB_PATH = DB_DIR + "/" + TEST_DB_NAME
 
 #TODO - break apart into multiple test files
-#TODO - get the test_setup_database function to run before the other test cases
 class Tests(unittest.TestCase):
     def __init__(self, methodName = "runTest"):
         super().__init__(methodName)
         self.db = DatabaseManager(testing=True)
-
+        self.user_id = -99
         
     # For testing user functionality
     def test_adding_users(self):
@@ -48,7 +47,6 @@ class Tests(unittest.TestCase):
         try:
             result = add_user(username, password, self.db)
             result = add_user(username, password, self.db)
-
 
             self.assertFalse(result)
         except Exception as e:
@@ -90,13 +88,27 @@ class Tests(unittest.TestCase):
         """
         Tests if the category can be added properly
         """
-        pass
+        self.db.clear_tables()
+        try:
+            result = add_category(self.user_id, "testing", self.db)
+            self.assertTrue(result)
+        except Exception as e:
+            print(e)
+            self.fail("Unable to add category")
+
 
     def test_unable_to_add_duplicate_category(self):
         """
         Tests if unable to add category with duplicate names
         """
-        pass
+        self.db.clear_tables()
+        try:
+            result = add_category(self.user_id, "testing", self.db)
+            result = add_category(self.user_id, "testing", self.db)
+            self.assertFalse(result)
+        except Exception as e:
+            print(e)
+            self.fail("Unable to add category")
 
     def test_update_category(self):
         """
@@ -110,6 +122,43 @@ class Tests(unittest.TestCase):
         """
         pass
 
+    def test_get_default_categories(self):
+        """
+        Tests if able to get default categories for user
+        """  
+        self.db.clear_tables()
+        try:
+            result = get_categories_for_user(self.user_id, self.db)
+            self.assertEqual(len(result.keys()), 9)
+        except sqlite3.Error as e:
+            print(f"Error fetching categories: {e}")
+            return {}
+        
+    def test_get_categories_for_user(self):
+        """
+        Tests if able to get categories for user
+        """  
+        self.db.clear_tables()
+        try:
+            add_category(self.user_id, "testing", self.db)
+            result = get_categories_for_user(self.user_id, self.db)
+            self.assertEqual(len(result.keys()), 10)
+        except sqlite3.Error as e:
+            print(f"Error fetching categories: {e}")
+            return {}
+        
+    def test_not_getting_categories_from_other_users(self):
+        """
+        Tests if unable to get categories from other users
+        """  
+        self.db.clear_tables()
+        try:
+            add_category(self.user_id, "testing", self.db)
+            result = get_categories_for_user(-1, self.db)
+            self.assertEqual(len(result.keys()), 9)
+        except sqlite3.Error as e:
+            print(f"Error fetching categories: {e}")
+            return {}
 
 
     # For testing payment method functionality
@@ -117,13 +166,29 @@ class Tests(unittest.TestCase):
         """
         Tests if the payment method can be added properly
         """
-        pass
+        """
+        Tests if the category can be added properly
+        """
+        self.db.clear_tables()
+        try:
+            result = add_payment_method(self.user_id, "testing", self.db)
+            self.assertTrue(result)
+        except Exception as e:
+            print(e)
+            self.fail("Unable to add payment method")
 
     def test_unable_to_add_duplicate_payment_method(self):
         """
         Tests if unable to add payment method with duplicate names
         """
-        pass
+        self.db.clear_tables()
+        try:
+            result = add_payment_method(self.user_id, "testing", self.db)
+            result = add_payment_method(self.user_id, "testing", self.db)
+            self.assertFalse(result)
+        except Exception as e:
+            print(e)
+            self.fail("Unable to add payment method")
 
     def test_update_payment_method(self):
         """
@@ -136,6 +201,44 @@ class Tests(unittest.TestCase):
         Tests if able to delete payment method
         """
         pass
+
+    def test_get_default_payment_methods(self):
+        """
+        Tests if able to get default payment methods for user
+        """  
+        self.db.clear_tables()
+        try:
+            result = get_payment_methods_for_user(self.user_id, self.db)
+            self.assertEqual(len(result.keys()), 2)
+        except sqlite3.Error as e:
+            print(f"Error fetching categories: {e}")
+            return {}
+        
+    def test_get_payment_methods_for_user(self):
+        """
+        Tests if able to get payment methods for user
+        """  
+        self.db.clear_tables()
+        try:
+            add_payment_method(self.user_id, "testing", self.db)
+            result = get_payment_methods_for_user(self.user_id, self.db)
+            self.assertEqual(len(result.keys()), 3)
+        except sqlite3.Error as e:
+            print(f"Error fetching payment methods: {e}")
+            return {}
+        
+    def test_not_getting_payment_methods_from_other_users(self):
+        """
+        Tests if unable to get payment methods from other users
+        """  
+        self.db.clear_tables()
+        try:
+            add_payment_method(self.user_id, "testing", self.db)
+            result = get_payment_methods_for_user(-1, self.db)
+            self.assertEqual(len(result.keys()), 2)
+        except sqlite3.Error as e:
+            print(f"Error fetching payment methods: {e}")
+            return {}
 
 
     # For testing expenses functionality
