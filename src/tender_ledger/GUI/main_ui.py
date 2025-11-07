@@ -41,7 +41,7 @@ class App(customtkinter.CTk):
         self.page_container.grid_columnconfigure(0, weight=1)
         self.page_container.grid(row=0, column=1)
         
-        
+
         # Setup navbar TODO - only display when logged in
         self.navbar = NavBar(self, self, db)
         self.navbar.grid(row=0, column=0, sticky="nsw")
@@ -52,6 +52,7 @@ class App(customtkinter.CTk):
             "DashboardPage": DashboardPage(self.page_container, self, db),
             "ProfilePage": ProfilePage(self.page_container, self, db)
         }
+
 
         # Setup default page TODO - change to login
         self.show_page("ExpensesPage")

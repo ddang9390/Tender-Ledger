@@ -4,7 +4,7 @@
 
 import customtkinter
 from ...Backend.expenses import get_expenses_for_user, get_total_spending
-from ...Backend.dashboard import generate_pie_charts
+from ...Backend.dashboard import generate_pie_charts, generate_line_plot
 
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
@@ -22,6 +22,10 @@ class DashboardPage(customtkinter.CTkFrame):
         self.controller = controller
         self.db = db
 
+        # Have elements in main container expand properly
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_columnconfigure(1, weight=1)
+
         self.refresh_page()
         
     def refresh_page(self):
@@ -34,7 +38,7 @@ class DashboardPage(customtkinter.CTkFrame):
 
         # Header
         label = customtkinter.CTkLabel(self, text="Dashboard", font=self.controller.font_label)
-        label.grid(row=0, column=0)
+        label.grid(row=0, column=0, columnspan=2,sticky="nsew")
 
         # Filter Section
         # TODO - make date range filters
@@ -57,7 +61,7 @@ class DashboardPage(customtkinter.CTkFrame):
         total_spending_label = customtkinter.CTkLabel(self.summary_frame, text=f"Total Spending: ${total:.2f}", font=self.controller.font_label)
         total_spending_label.pack(side="left")
 
-        self.summary_frame.grid(row=1, column=0, sticky="nsew")
+        self.summary_frame.grid(row=1, column=0, columnspan=2,sticky="nsew")
 
     def create_chart_section(self):
         """
@@ -66,17 +70,34 @@ class DashboardPage(customtkinter.CTkFrame):
         """
         # Generate pie charts
         category_pie, payment_method_pie = generate_pie_charts(self.expenses)
-        self.chart_frame = customtkinter.CTkFrame(self)
+        self.chart_frame = customtkinter.CTkScrollableFrame(self)
+        self.chart_frame.grid(row=2, column=0, columnspan=2, sticky="nsew")
+
+        # Allow for columns in frame to be able to expand to fit in frame
+        self.chart_frame.grid_columnconfigure(0, weight=1)
+        self.chart_frame.grid_columnconfigure(1, weight=1)
 
         # Display category pie chart
-        category_pie_chart = FigureCanvasTkAgg(figure=category_pie, master=self.chart_frame)
-        category_pie_chart.get_tk_widget().grid(row=0, column=0)
+        category_chart_container = customtkinter.CTkFrame(self.chart_frame)
+        category_chart_container.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
+
+        category_pie_chart = FigureCanvasTkAgg(figure=category_pie, master=category_chart_container)
+        category_pie_chart.get_tk_widget().pack()
+        
 
         # Display payment method pie chart
-        payment_method_pie_chart = FigureCanvasTkAgg(figure=payment_method_pie, master=self.chart_frame)
-        payment_method_pie_chart.get_tk_widget().grid(row=0, column=1)
+        payment_container = customtkinter.CTkFrame(self.chart_frame)
+        payment_container.grid(row=0, column=1, padx=10, pady=10, sticky="nsew")
 
-        self.chart_frame.grid(row=2, column=0)
+        payment_method_pie_chart = FigureCanvasTkAgg(figure=payment_method_pie, master=payment_container)
+        payment_method_pie_chart.get_tk_widget().pack()
 
+        # Display line graph
+        line_container = customtkinter.CTkFrame(self.chart_frame)
+        line_container.grid(row=1, column=0, padx=10, pady=10, columnspan=2, sticky="nsew")
+        
+        line_plot = generate_line_plot(self.expenses)
+        line_plot_chart = FigureCanvasTkAgg(figure=line_plot, master=line_container)
+        line_plot_chart.get_tk_widget().pack()
 
     
