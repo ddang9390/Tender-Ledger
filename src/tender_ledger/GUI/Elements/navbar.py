@@ -18,7 +18,7 @@ class NavBar(customtkinter.CTkFrame):
         self.controller = controller
         self.db = db
 
-        label = customtkinter.CTkLabel(self, text="Navbar")
+        label = customtkinter.CTkLabel(self, text="Navbar", font=self.controller.font_label)
         label.grid(row=0, column=0, padx=20, pady=20)
 
         expenses_button = customtkinter.CTkButton(self, text="Expenses", command=lambda: controller.show_page("ExpensesPage"))

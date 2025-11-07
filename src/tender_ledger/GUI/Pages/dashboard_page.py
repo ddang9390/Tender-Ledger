@@ -33,7 +33,7 @@ class DashboardPage(customtkinter.CTkFrame):
         self.expenses = get_expenses_for_user(self.user_id, self.db)
 
         # Header
-        label = customtkinter.CTkLabel(self, text="Dashboard")
+        label = customtkinter.CTkLabel(self, text="Dashboard", font=self.controller.font_label)
         label.grid(row=0, column=0)
 
         # Filter Section
@@ -54,7 +54,7 @@ class DashboardPage(customtkinter.CTkFrame):
         # Display Total Spending label
         # TODO - integrate start and end dates when search section is complete
         total = get_total_spending(self.user_id, self.db)
-        total_spending_label = customtkinter.CTkLabel(self.summary_frame, text=f"Total Spending: ${total:.2f}")
+        total_spending_label = customtkinter.CTkLabel(self.summary_frame, text=f"Total Spending: ${total:.2f}", font=self.controller.font_label)
         total_spending_label.pack(side="left")
 
         self.summary_frame.grid(row=1, column=0, sticky="nsew")

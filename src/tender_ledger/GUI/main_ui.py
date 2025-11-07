@@ -3,6 +3,7 @@
 # Purpose - Acts as the main window for the project
 
 import customtkinter
+from pathlib import Path
 from .Pages.expenses_page import ExpensesPage
 from .Pages.dashboard_page import DashboardPage
 from .Pages.profile_page import ProfilePage  
@@ -12,6 +13,8 @@ from .Elements.navbar import NavBar
 RESOLUTION_WIDTH = 1100
 RESOLUTION_HEIGHT = 580
 
+ROOT_DIR = Path(__file__).parent
+THEME_FILE = ROOT_DIR / 'theme.json'
 
 class App(customtkinter.CTk):
     def __init__(self, db):
@@ -23,6 +26,11 @@ class App(customtkinter.CTk):
         """
         super().__init__()
         self.db = db
+
+        # Setting global theme for visual appearance
+        # TODO - actually change the values in the file
+        customtkinter.set_default_color_theme(THEME_FILE)
+        self.set_styles()
 
         self.title("Tender Ledger")
         self.center_window()
@@ -74,3 +82,9 @@ class App(customtkinter.CTk):
 
         # Launch window of custom resolution in center of screen
         self.geometry(f"{RESOLUTION_WIDTH}x{RESOLUTION_HEIGHT}+{x}+{y}")
+
+    def set_styles(self):
+        """
+        Define styles to be used by certain parts of the app
+        """
+        self.font_label = customtkinter.CTkFont(family="Roboto", size=18, weight="bold")

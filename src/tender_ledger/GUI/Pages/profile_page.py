@@ -18,7 +18,7 @@ class ProfilePage(customtkinter.CTkFrame):
         self.controller = controller
         self.db = db
 
-        label = customtkinter.CTkLabel(self, text="My Profile")
+        label = customtkinter.CTkLabel(self, text="My Profile", font=self.controller.font_label)
         label.pack()
 
     def refresh_page(self):

@@ -11,8 +11,6 @@ from ..Elements.filter_section import FilterSection
 from ...Backend.categories import get_categories_for_user
 from ...Backend.payment_methods import get_payment_methods_for_user
 
-
-
 class ExpensesPage(customtkinter.CTkFrame):
     def __init__(self, parent, controller, db):
         """
@@ -41,7 +39,7 @@ class ExpensesPage(customtkinter.CTkFrame):
         
         
         # Creating header section
-        label = customtkinter.CTkLabel(self, text="My Expenses")
+        label = customtkinter.CTkLabel(self, text="My Expenses", font=self.controller.font_label)
         label.grid(row=0, column=0, sticky="w")
 
         add_button = customtkinter.CTkButton(self, text="Add", command=self.display_popup)
