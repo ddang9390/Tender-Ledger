@@ -21,8 +21,12 @@ class ProfilePage(customtkinter.CTkFrame):
         label = customtkinter.CTkLabel(self, text="My Profile", font=self.controller.font_label)
         label.pack()
 
-    def refresh_page(self):
+    def refresh_page(self, user_id):
         """
         Updates the page
+
+        Argument:
+            user_id (int): The user's id
         """
+        self.user_id = user_id
         print("hello")

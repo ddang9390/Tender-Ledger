@@ -119,19 +119,20 @@ class ExpenseTable():
             end = len(self.expenses)
 
         # Add expenses to the table
-        for i in range(start, end):
-            expense = self.expenses[i]
-            date = expense[1]
-            amount = f"${expense[0]:.2f}"
-            category = expense[3]
-            payment_method = expense[2]
-            location = expense[4]
+        if len(self.expenses) > 0: 
+            for i in range(start, end):
+                expense = self.expenses[i]
+                date = expense[1]
+                amount = f"${expense[0]:.2f}"
+                category = expense[3]
+                payment_method = expense[2]
+                location = expense[4]
 
-            # Use item identifier of Treeview, makes getting expense ID easier
-            expense_id = expense[-1]
+                # Use item identifier of Treeview, makes getting expense ID easier
+                expense_id = expense[-1]
 
-            display_values = (date, amount, category, payment_method, location, "Edit", "Delete")
-            self.expense_table.insert('', 'end', values=display_values, iid=expense_id)
+                display_values = (date, amount, category, payment_method, location, "Edit", "Delete")
+                self.expense_table.insert('', 'end', values=display_values, iid=expense_id)
 
         # Refresh pagination options
         self.create_pagination_options()

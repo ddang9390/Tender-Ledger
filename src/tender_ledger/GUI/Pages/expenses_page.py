@@ -26,14 +26,17 @@ class ExpensesPage(customtkinter.CTkFrame):
         self.controller = controller
         self.db = db
 
-        self.refresh_page()
+        # TODO - remove when no longer default page
+        self.refresh_page(user_id=-1)
         
-    def refresh_page(self):
+    def refresh_page(self, user_id):
         """
         Updates the page
+        
+        Argument:
+            user_id (int): The user's id
         """
-        #TODO - change user id once login functionality is implemented
-        self.user_id = -1
+        self.user_id = user_id
         self.categories = get_categories_for_user(self.user_id, self.db)
         self.payment_methods = get_payment_methods_for_user(self.user_id, self.db)
         

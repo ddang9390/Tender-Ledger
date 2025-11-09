@@ -7,6 +7,7 @@ from pathlib import Path
 from .Pages.expenses_page import ExpensesPage
 from .Pages.dashboard_page import DashboardPage
 from .Pages.profile_page import ProfilePage  
+from .Pages.login_page import LoginPage
 from .Elements.navbar import NavBar
 
 # Constants (might allow for custom resolutions later)
@@ -35,27 +36,28 @@ class App(customtkinter.CTk):
         self.title("Tender Ledger")
         self.center_window()
 
+        self.user_id = -1
+
+        # Setup pages
         self.page_container = customtkinter.CTkFrame(self)
         self.page_container.pack(side="top", fill="both", expand=True)
         self.page_container.grid_rowconfigure(0, weight=1)
         self.page_container.grid_columnconfigure(0, weight=1)
         self.page_container.grid(row=0, column=1)
-        
 
-        # Setup navbar TODO - only display when logged in
-        self.navbar = NavBar(self, self, db)
-        self.navbar.grid(row=0, column=0, sticky="nsw")
-
-        # Setup pages
         self.pages = {
             "ExpensesPage": ExpensesPage(self.page_container, self, db),
             "DashboardPage": DashboardPage(self.page_container, self, db),
-            "ProfilePage": ProfilePage(self.page_container, self, db)
+            "ProfilePage": ProfilePage(self.page_container, self, db),
+            "LoginPage": LoginPage(self.page_container, self, db)
         }
-
 
         # Setup default page TODO - change to login
         self.show_page("ExpensesPage")
+
+    def show_navbar(self):
+        self.navbar = NavBar(self, self, self.db)
+        self.navbar.grid(row=0, column=0, sticky="nsw")
 
     def show_page(self, page):
         """
@@ -65,8 +67,14 @@ class App(customtkinter.CTk):
             page (String): The new page to be displayed
         """
         p = self.pages[page]
-        p.refresh_page()
 
+        # Show or hide the navbar
+        if self.user_id:
+            self.show_navbar()
+        else:
+            self.navbar.grid_forget()
+
+        p.refresh_page(self.user_id)
         p.grid(row=0, column=1, sticky="nsew")
         p.tkraise()
 

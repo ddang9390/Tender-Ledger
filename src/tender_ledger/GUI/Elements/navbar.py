@@ -31,3 +31,14 @@ class NavBar(customtkinter.CTkFrame):
         profile_button.grid(row=3, column=0, padx=20, pady=20)
 
         #TODO - add logout button for returning to login page
+        logout_button = customtkinter.CTkButton(self, text="Logout", command=self.logout)
+        logout_button.grid(row=4, column=0, sticky="s")
+
+    def logout(self):
+        """
+        Log the user out and send them to the login page
+        """
+        print("grdg")
+        self.controller.user_id = None
+        self.controller.show_page("LoginPage")
+        

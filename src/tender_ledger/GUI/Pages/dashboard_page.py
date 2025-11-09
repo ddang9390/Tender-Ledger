@@ -26,14 +26,16 @@ class DashboardPage(customtkinter.CTkFrame):
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=1)
 
-        self.refresh_page()
         
-    def refresh_page(self):
+    def refresh_page(self, user_id):
         """
         Updates the page
+
+        Argument:
+            user_id (int): The user's id
         """
         # TODO - change user id
-        self.user_id = -1
+        self.user_id = user_id
         self.expenses = get_expenses_for_user(self.user_id, self.db)
 
         # Header
