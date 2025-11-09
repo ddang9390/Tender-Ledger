@@ -38,7 +38,6 @@ class NavBar(customtkinter.CTkFrame):
         """
         Log the user out and send them to the login page
         """
-        print("grdg")
         self.controller.user_id = None
         self.controller.show_page("LoginPage")
         

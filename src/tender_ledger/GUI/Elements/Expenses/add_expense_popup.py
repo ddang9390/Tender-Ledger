@@ -190,9 +190,6 @@ class AddExpensePopup(customtkinter.CTkToplevel):
         Argument:
             editing (int): ID of the expense to edit
         """
-        #TODO - change user id to actual user's id once login function is implemented
-        user_id = -1
-
         amount = self.amount.get()
         date_of_purchase = self.date.get_date()
         payment_method_id = self.payment_methods[self.method.get()]
@@ -203,7 +200,7 @@ class AddExpensePopup(customtkinter.CTkToplevel):
             self.amount_label.configure(text_color = "red")
         else:
             if not editing:
-                add_expense(user_id, amount, date_of_purchase, payment_method_id, category_id, location, self.db)
+                add_expense(self.controller.user_id, amount, date_of_purchase, payment_method_id, category_id, location, self.db)
             else:
                 update_expense(amount, date_of_purchase, payment_method_id, category_id, location, editing,self.db)
             self.expense_page.refresh_table()

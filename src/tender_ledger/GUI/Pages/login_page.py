@@ -3,6 +3,7 @@
 # Purpose - Handles the appearance and logic of the login page
 
 import customtkinter
+from ...Backend.users import get_user
 
 class LoginPage(customtkinter.CTkFrame):
     def __init__(self, parent, controller, db):
@@ -60,4 +61,12 @@ class LoginPage(customtkinter.CTkFrame):
         """
         Logs the user in if there is a matching username and password combination
         """
-        print(self.username.get())
+        username = self.username.get()
+        password = self.password.get()
+
+
+        user = get_user(username, password, self.db)
+
+        if len(user) > 0:
+            self.controller.user_id = user[0][0]
+            self.controller.show_page("DashboardPage")

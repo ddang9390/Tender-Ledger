@@ -55,3 +55,30 @@ def delete_user(username, db):
     val = (username,)
 
     return db.execute_statement(sql, val)
+
+def get_user(username, password, db):
+    """
+    Finds a matching user
+
+    Arguments:
+        username (string): The user's username
+        db (DatabaseManager): Instance of database manager being used
+
+    Returns:
+        bool: True if able to delete user
+              False if not
+    """
+    sql = """
+          SELECT *
+          FROM users
+          WHERE
+            username = ?
+            AND password = ?
+          """
+    val = (username, password,)
+
+    try:
+        db.cur.execute(sql, val)
+        return db.cur.fetchall()
+    except Exception as e:
+        print(e)
