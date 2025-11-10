@@ -113,7 +113,10 @@ class ExpenseTable():
             self.expense_table.delete(row)
 
         # Calculate start and end indices for pagination
-        start = self.options_per_page * (self.current_page-1)
+        if self.current_page != 0:
+            start = self.options_per_page * (self.current_page-1)
+        else:
+            start = 0
         end = start + self.options_per_page
         if end > len(self.expenses):
             end = len(self.expenses)

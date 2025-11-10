@@ -32,11 +32,15 @@ class App(customtkinter.CTk):
         # TODO - actually change the values in the file
         customtkinter.set_default_color_theme(THEME_FILE)
         self.set_styles()
+        self.grid_rowconfigure(0, weight=1)
+        self.grid_columnconfigure(1, weight=1) 
 
         self.title("Tender Ledger")
         self.center_window()
 
-        self.user_id = -1
+        #self.user_id = -1
+        self.user_id = None
+        self.navbar = NavBar(self, self, self.db)
 
         # Setup pages
         self.page_container = customtkinter.CTkFrame(self)
@@ -44,6 +48,7 @@ class App(customtkinter.CTk):
         self.page_container.grid_rowconfigure(0, weight=1)
         self.page_container.grid_columnconfigure(0, weight=1)
         self.page_container.grid(row=0, column=1)
+
 
         self.pages = {
             "ExpensesPage": ExpensesPage(self.page_container, self, db),
@@ -53,10 +58,9 @@ class App(customtkinter.CTk):
         }
 
         # Setup default page TODO - change to login
-        self.show_page("ExpensesPage")
+        self.show_page("LoginPage")
 
     def show_navbar(self):
-        self.navbar = NavBar(self, self, self.db)
         self.navbar.grid(row=0, column=0, sticky="nsw")
 
     def show_page(self, page):
@@ -71,8 +75,14 @@ class App(customtkinter.CTk):
         # Show or hide the navbar
         if self.user_id:
             self.show_navbar()
+            self.page_container.grid(row=0, column=1)
+            self.grid_columnconfigure(0, weight=0)
+            
         else:
             self.navbar.grid_forget()
+            self.page_container.grid(row=0, column=0, sticky="nsew")
+            self.grid_columnconfigure(0, weight=1)
+
 
         p.refresh_page(self.user_id)
         p.grid(row=0, column=1, sticky="nsew")

@@ -19,6 +19,7 @@ class LoginPage(customtkinter.CTkFrame):
         self.controller = controller
         self.db = db
 
+
         
     def refresh_page(self, user_id):
         """
@@ -28,10 +29,15 @@ class LoginPage(customtkinter.CTkFrame):
             user_id (int): The user's id
         """
         self.user_id = user_id
-
+        
+        # Make widths of columns the same
+        self.grid_columnconfigure(0, weight=1, uniform="group1")
+        self.grid_columnconfigure(1, weight=1, uniform="group1")
+        self.grid_columnconfigure(2, weight=1, uniform="group1")
+        
         # Setup Header
         label = customtkinter.CTkLabel(self, text="Login", font=self.controller.font_label)
-        label.grid(row=0, column=0, columnspan=2,sticky="nsew")
+        label.grid(row=0, column=1, sticky="nsew")
 
         self.setup_inputs()
 
@@ -50,12 +56,12 @@ class LoginPage(customtkinter.CTkFrame):
         # Setting up password field
         password_label = customtkinter.CTkLabel(self, text="Password:")
         password_label.grid(row=2, column=0, pady=10, padx=10)
-        self.password = customtkinter.CTkEntry(self)
+        self.password = customtkinter.CTkEntry(self, show="*")
         self.password.grid(row=2, column=1, pady=10, padx=10)
 
         # Add confirm button
         login_button = customtkinter.CTkButton(self, text="Login", command=self.login)
-        login_button.grid(row=3, column=0, padx=20, pady=20)
+        login_button.grid(row=3, column=1, padx=20, pady=20)
 
     def login(self):
         """

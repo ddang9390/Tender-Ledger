@@ -18,21 +18,24 @@ class NavBar(customtkinter.CTkFrame):
         self.controller = controller
         self.db = db
 
+        self.grid_rowconfigure(4, weight=1)
+
+
         label = customtkinter.CTkLabel(self, text="Navbar", font=self.controller.font_label)
-        label.grid(row=0, column=0, padx=20, pady=20)
+        label.grid(row=0, column=0, padx=20, pady=20, sticky="n")
 
         expenses_button = customtkinter.CTkButton(self, text="Expenses", command=lambda: controller.show_page("ExpensesPage"))
-        expenses_button.grid(row=1, column=0, padx=20, pady=20)
+        expenses_button.grid(row=1, column=0, padx=20, pady=20, sticky="n")
 
         dashboard_button = customtkinter.CTkButton(self, text="Dashboard", command=lambda: controller.show_page("DashboardPage"))
-        dashboard_button.grid(row=2, column=0, padx=20, pady=20)
+        dashboard_button.grid(row=2, column=0, padx=20, pady=20, sticky="n")
 
         profile_button = customtkinter.CTkButton(self, text="My Profile", command=lambda: controller.show_page("ProfilePage"))
-        profile_button.grid(row=3, column=0, padx=20, pady=20)
+        profile_button.grid(row=3, column=0, padx=20, pady=20, sticky="n")
 
         #TODO - add logout button for returning to login page
         logout_button = customtkinter.CTkButton(self, text="Logout", command=self.logout)
-        logout_button.grid(row=4, column=0, sticky="s")
+        logout_button.grid(row=4, column=0, pady=20, sticky="s")
 
     def logout(self):
         """
