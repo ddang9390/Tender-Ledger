@@ -8,6 +8,7 @@ from .Pages.expenses_page import ExpensesPage
 from .Pages.dashboard_page import DashboardPage
 from .Pages.profile_page import ProfilePage  
 from .Pages.login_page import LoginPage
+from .Pages.register_page import RegisterPage
 from .Elements.navbar import NavBar
 
 # Constants (might allow for custom resolutions later)
@@ -54,7 +55,8 @@ class App(customtkinter.CTk):
             "ExpensesPage": ExpensesPage(self.page_container, self, db),
             "DashboardPage": DashboardPage(self.page_container, self, db),
             "ProfilePage": ProfilePage(self.page_container, self, db),
-            "LoginPage": LoginPage(self.page_container, self, db)
+            "LoginPage": LoginPage(self.page_container, self, db),
+            "RegisterPage": RegisterPage(self.page_container, self, db)
         }
 
         # Setup default page TODO - change to login

@@ -1,11 +1,11 @@
 # Author - Daniel Dang
-# Filename - login.py
-# Purpose - Handles the appearance and logic of the login page
+# Filename - register_page.py
+# Purpose - Handles the appearance and logic of the register page
 
 import customtkinter
-from ...Backend.users import get_user
+from ...Backend.users import add_user
 
-class LoginPage(customtkinter.CTkFrame):
+class RegisterPage(customtkinter.CTkFrame):
     def __init__(self, parent, controller, db):
         """
         Initializes a new instance of the LoginPage
@@ -36,7 +36,7 @@ class LoginPage(customtkinter.CTkFrame):
         self.grid_columnconfigure(2, weight=1, uniform="group1")
         
         # Setup Header
-        label = customtkinter.CTkLabel(self, text="Login", font=self.controller.font_label)
+        label = customtkinter.CTkLabel(self, text="Register", font=self.controller.font_label)
         label.grid(row=0, column=1, sticky="nsew")
 
         self.setup_inputs()
@@ -52,32 +52,41 @@ class LoginPage(customtkinter.CTkFrame):
         username_label.grid(row=1, column=0, pady=10, padx=10)
         self.username = customtkinter.CTkEntry(self)
         self.username.grid(row=1, column=1, pady=10, padx=10)
-        self.username.bind('<Return>', lambda x:self.login())
+        self.username.bind('<Return>', lambda x:self.register())
 
         # Setting up password field
         password_label = customtkinter.CTkLabel(self, text="Password:")
         password_label.grid(row=2, column=0, pady=10, padx=10)
         self.password = customtkinter.CTkEntry(self, show="*")
         self.password.grid(row=2, column=1, pady=10, padx=10)
-        self.password.bind('<Return>', lambda x:self.login())
+        self.password.bind('<Return>', lambda x:self.register())
+
+        # Setting up confirm password field
+        confirm_password_label = customtkinter.CTkLabel(self, text="Confirm Password:")
+        confirm_password_label.grid(row=3, column=0, pady=10, padx=10)
+        self.confirm_password = customtkinter.CTkEntry(self, show="*")
+        self.confirm_password.grid(row=3, column=1, pady=10, padx=10)
+        self.confirm_password.bind('<Return>', lambda x:self.register())
 
         # Add confirm button
-        login_button = customtkinter.CTkButton(self, text="Login", command=self.login)
-        login_button.grid(row=3, column=1, padx=20, pady=20)
+        login_button = customtkinter.CTkButton(self, text="Register", command=self.register)
+        login_button.grid(row=4, column=1, padx=20, pady=20)
 
-        # Add Register button
-        register_button = customtkinter.CTkButton(self, text="Register", command=lambda:self.controller.show_page("RegisterPage"))
-        register_button.grid(row=4, column=1, padx=20, pady=20)
+        # Add Cancel button
+        register_button = customtkinter.CTkButton(self, text="Cancel", command=lambda:self.controller.show_page("LoginPage"))
+        register_button.grid(row=5, column=1, padx=20, pady=20)
 
-    def login(self):
+    def register(self):
         """
         Logs the user in if there is a matching username and password combination
         """
         username = self.username.get()
         password = self.password.get()
+        confirm_password = self.confirm_password.get()
 
-        user = get_user(username, password, self.db)
-
-        if len(user) > 0:
-            self.controller.user_id = user[0][0]
-            self.controller.show_page("DashboardPage")
+        if password != confirm_password:
+            print("no no no")
+        else:
+            if username:
+                add_user(username, password, self.db)
+                self.controller.show_page("LoginPage")
