@@ -61,7 +61,7 @@ class DashboardPage(customtkinter.CTkFrame):
         # Display Total Spending label
         # TODO - integrate start and end dates when search section is complete
         total = get_total_spending(self.user_id, self.db)
-        print(total)
+
         if total == None:
             total = 0
 
@@ -83,6 +83,10 @@ class DashboardPage(customtkinter.CTkFrame):
         # Allow for columns in frame to be able to expand to fit in frame
         self.chart_frame.grid_columnconfigure(0, weight=1)
         self.chart_frame.grid_columnconfigure(1, weight=1)
+
+        # Handle scrolling with mouse wheel
+        self.chart_frame.bind("<Enter>", lambda event: self.bind_mousewheel())
+        self.chart_frame.bind("<Leave>", lambda event: self.unbind_mousewheel())
 
         # Display category pie chart
         category_chart_container = customtkinter.CTkFrame(self.chart_frame)
@@ -108,3 +112,34 @@ class DashboardPage(customtkinter.CTkFrame):
         line_plot_chart.get_tk_widget().pack()
 
     
+    def bind_mousewheel(self):
+        """
+        Bind mouse wheel to scrolling when mouse enters the scrollable frame
+        """
+        self.chart_frame.bind_all("<MouseWheel>", self.on_mousewheel)
+
+        # For Linux
+        self.chart_frame.bind_all("<Button-4>", self.on_mousewheel)
+        self.chart_frame.bind_all("<Button-5>", self.on_mousewheel)
+
+    def unbind_mousewheel(self):
+        """
+        Unbind mouse wheel when mouse leaves the scrollable frame
+        """
+        self.chart_frame.unbind_all("<MouseWheel>")
+
+        # For Linux
+        self.chart_frame.unbind_all("<Button-4>")
+        self.chart_frame.unbind_all("<Button-5>")
+
+    def on_mousewheel(self, event):
+        """
+        Handle mouse wheel scrolling
+        """
+        # Scrolling up
+        if event.num == 4 or event.delta > 0:
+            self.chart_frame._parent_canvas.yview_scroll(-1, "units")
+            
+        # Scrolling down
+        elif event.num == 5 or event.delta < 0:
+            self.chart_frame._parent_canvas.yview_scroll(1, "units")
