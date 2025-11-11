@@ -6,6 +6,7 @@ import datetime
 import customtkinter
 from tkcalendar import DateEntry
 from ....Backend.expenses import add_expense, update_expense, get_expense
+from ...Elements.error_message import ErrorMessage
 
 # Defining constants
 ADD_TITLE = "Add Expense"
@@ -49,9 +50,12 @@ class AddExpensePopup(customtkinter.CTkToplevel):
         # Register validation commands for user input
         self.validate_input_cmd = self.register(self.validate_amount_input)
 
+
         # Setting up inputs and buttons
         self.setup_inputs()
         self.setup_buttons(editing)
+
+        
 
     def center_window(self):
         """
@@ -77,11 +81,15 @@ class AddExpensePopup(customtkinter.CTkToplevel):
         input_frame = customtkinter.CTkFrame(self)
         input_frame.grid(row=0, column=0, sticky="nsew")
 
+        # Setting up error message
+        self.error_message = ErrorMessage(input_frame, self.controller)
+
+
         # Setting up date field
         date_label = customtkinter.CTkLabel(input_frame, text="Date:")
-        date_label.grid(row=0, column=0, pady=10, padx=10)
+        date_label.grid(row=1, column=0, pady=10, padx=10)
         self.date = DateEntry(input_frame, selectmode='day', state='normal', showweeknumbers=False)
-        self.date.grid(row=0, column=1, pady=10, padx=10)
+        self.date.grid(row=1, column=1, pady=10, padx=10)
         
         # Ensures that the DateEntry is at the top level to prevent clicking the fields behind it
         self.date._top_cal.transient(self)
@@ -89,37 +97,37 @@ class AddExpensePopup(customtkinter.CTkToplevel):
 
         # Setting up amount field
         self.amount_label = customtkinter.CTkLabel(input_frame, text="Amount (*):")
-        self.amount_label.grid(row=1, column=0, pady=10, padx=10)
+        self.amount_label.grid(row=2, column=0, pady=10, padx=10)
         self.amount = customtkinter.CTkEntry(
             input_frame,
             validate="key",
             validatecommand=(self.validate_input_cmd, '%P')
         )
-        self.amount.grid(row=1, column=1, pady=10, padx=10)
+        self.amount.grid(row=2, column=1, pady=10, padx=10)
 
         # Setting up category field
         categories = []
         for category in self.categories.keys():
             categories.append(category)
         category_label = customtkinter.CTkLabel(input_frame, text="Category:")
-        category_label.grid(row=2, column=0, pady=10)
+        category_label.grid(row=3, column=0, pady=10)
         self.category = customtkinter.CTkOptionMenu(input_frame, values=categories)
-        self.category.grid(row=2, column= 1, pady=10)
+        self.category.grid(row=3, column= 1, pady=10)
 
         # Setting up Method of Purchase field
         method_of_purchase = []
         for method in self.payment_methods.keys():
             method_of_purchase.append(method)
         method_label = customtkinter.CTkLabel(input_frame, text="Method of Purchase:")
-        method_label.grid(row=3, column=0, pady=10, padx=10)
+        method_label.grid(row=4, column=0, pady=10, padx=10)
         self.method = customtkinter.CTkOptionMenu(input_frame, values=method_of_purchase)
-        self.method.grid(row=3, column= 1, pady=10, padx=10)
+        self.method.grid(row=4, column= 1, pady=10, padx=10)
 
         # Setting up Location field
         location_label = customtkinter.CTkLabel(input_frame, text="Location:")
-        location_label.grid(row=4, column=0, pady=10, padx=10)
+        location_label.grid(row=5, column=0, pady=10, padx=10)
         self.location = customtkinter.CTkEntry(input_frame)
-        self.location.grid(row=4, column=1, pady=10, padx=10)
+        self.location.grid(row=5, column=1, pady=10, padx=10)
 
         # Fill fields if editing an expense
         if self.expense_to_edit != None:
@@ -198,6 +206,7 @@ class AddExpensePopup(customtkinter.CTkToplevel):
  
         if amount == "" or amount == None:
             self.amount_label.configure(text_color = "red")
+            self.error_message.show(0, 0, "Please fill in all required fields", col_span=2)
         else:
             if not editing:
                 add_expense(self.controller.user_id, amount, date_of_purchase, payment_method_id, category_id, location, self.db)

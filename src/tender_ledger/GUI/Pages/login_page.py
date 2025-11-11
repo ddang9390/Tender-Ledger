@@ -4,6 +4,7 @@
 
 import customtkinter
 from ...Backend.users import get_user
+from ..Elements.error_message import ErrorMessage
 
 class LoginPage(customtkinter.CTkFrame):
     def __init__(self, parent, controller, db):
@@ -19,6 +20,7 @@ class LoginPage(customtkinter.CTkFrame):
         self.controller = controller
         self.db = db
 
+        #TODO - make login frame with a border
 
         
     def refresh_page(self, user_id):
@@ -29,6 +31,10 @@ class LoginPage(customtkinter.CTkFrame):
             user_id (int): The user's id
         """
         self.user_id = user_id
+
+        # Setup error message
+        self.error_message = ErrorMessage(self, self.controller)
+        self.error_message.hide()
         
         # Make widths of columns the same
         self.grid_columnconfigure(0, weight=1, uniform="group1")
@@ -41,7 +47,7 @@ class LoginPage(customtkinter.CTkFrame):
 
         self.setup_inputs()
 
-        # Setup register link
+
 
     def setup_inputs(self):
         """
@@ -49,25 +55,25 @@ class LoginPage(customtkinter.CTkFrame):
         """
         # Setting up username field
         username_label = customtkinter.CTkLabel(self, text="Username:")
-        username_label.grid(row=1, column=0, pady=10, padx=10)
+        username_label.grid(row=2, column=0, pady=10, padx=10)
         self.username = customtkinter.CTkEntry(self)
-        self.username.grid(row=1, column=1, pady=10, padx=10)
+        self.username.grid(row=2, column=1, pady=10, padx=10)
         self.username.bind('<Return>', lambda x:self.login())
 
         # Setting up password field
         password_label = customtkinter.CTkLabel(self, text="Password:")
-        password_label.grid(row=2, column=0, pady=10, padx=10)
+        password_label.grid(row=3, column=0, pady=10, padx=10)
         self.password = customtkinter.CTkEntry(self, show="*")
-        self.password.grid(row=2, column=1, pady=10, padx=10)
+        self.password.grid(row=3, column=1, pady=10, padx=10)
         self.password.bind('<Return>', lambda x:self.login())
 
         # Add confirm button
         login_button = customtkinter.CTkButton(self, text="Login", command=self.login)
-        login_button.grid(row=3, column=1, padx=20, pady=20)
+        login_button.grid(row=4, column=1, padx=20, pady=20)
 
         # Add Register button
-        register_button = customtkinter.CTkButton(self, text="Register", command=lambda:self.controller.show_page("RegisterPage"))
-        register_button.grid(row=4, column=1, padx=20, pady=20)
+        register_button = customtkinter.CTkButton(self, text="Register", command=self.register)
+        register_button.grid(row=5, column=1, padx=20, pady=20)
 
     def login(self):
         """
@@ -81,3 +87,13 @@ class LoginPage(customtkinter.CTkFrame):
         if len(user) > 0:
             self.controller.user_id = user[0][0]
             self.controller.show_page("DashboardPage")
+
+        else:
+            self.error_message.show(1, 1, "Invalid username or password")
+
+    def register(self):
+        """
+        Go to the register page
+        """
+        self.error_message.hide()
+        self.controller.show_page("RegisterPage")

@@ -238,4 +238,4 @@ def get_total_spending(user_id, db, start_date=None, end_date=None):
         return float(db.cur.fetchall()[0][0])
     except Exception as e:
         print(e)
-        return -1
+        return 0

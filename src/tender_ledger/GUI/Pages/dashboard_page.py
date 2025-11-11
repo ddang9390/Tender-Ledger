@@ -61,6 +61,10 @@ class DashboardPage(customtkinter.CTkFrame):
         # Display Total Spending label
         # TODO - integrate start and end dates when search section is complete
         total = get_total_spending(self.user_id, self.db)
+        print(total)
+        if total == None:
+            total = 0
+
         total_spending_label = customtkinter.CTkLabel(self.summary_frame, text=f"Total Spending: ${total:.2f}", font=self.controller.font_label)
         total_spending_label.pack(side="left")
 
