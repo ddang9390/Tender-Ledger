@@ -4,6 +4,7 @@
 
 import customtkinter
 from ...Backend.users import add_user
+from ...Backend.password_utils import hash_password
 from ..Elements.error_message import ErrorMessage
 from ..Elements.password_field import PasswordField
 
@@ -98,6 +99,7 @@ class RegisterPage(customtkinter.CTkFrame):
             self.error_message.show(row=1, col=1, message="Please fill in all fields")
 
         else:
+            password = hash_password(password)
             add_user(username, password, self.db)
             self.controller.show_page("LoginPage")
 

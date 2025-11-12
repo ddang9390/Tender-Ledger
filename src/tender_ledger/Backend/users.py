@@ -62,10 +62,11 @@ def get_user(username, password, db):
 
     Arguments:
         username (string): The user's username
+        password (string): The user's password
         db (DatabaseManager): Instance of database manager being used
 
     Returns:
-        bool: True if able to delete user
+        bool: True if able to get user
               False if not
     """
     sql = """
@@ -76,6 +77,32 @@ def get_user(username, password, db):
             AND password = ?
           """
     val = (username, password,)
+
+    try:
+        db.cur.execute(sql, val)
+        return db.cur.fetchall()
+    except Exception as e:
+        print(e)
+
+def get_user_by_username(username, db):
+    """
+    Finds a matching user by just their username
+
+    Arguments:
+        username (string): The user's username
+        db (DatabaseManager): Instance of database manager being used
+
+    Returns:
+        bool: True if able to get user
+              False if not
+    """
+    sql = """
+          SELECT *
+          FROM users
+          WHERE
+            username = ?
+          """
+    val = (username,)
 
     try:
         db.cur.execute(sql, val)

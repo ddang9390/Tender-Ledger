@@ -3,7 +3,8 @@
 # Purpose - Handles the appearance and logic of the login page
 
 import customtkinter
-from ...Backend.users import get_user
+from ...Backend.users import get_user_by_username
+from ...Backend.password_utils import verify_password
 from ..Elements.error_message import ErrorMessage
 from ..Elements.password_field import PasswordField
 
@@ -91,14 +92,16 @@ class LoginPage(customtkinter.CTkFrame):
         username = self.username.get()
         password = self.password.get()
 
-        user = get_user(username, password, self.db)
-
+        user = get_user_by_username(username, self.db)
         if len(user) > 0:
-            self.controller.user_id = user[0][0]
-            self.controller.show_page("DashboardPage")
-
-        else:
-            self.error_message.show(1, 1, "Invalid username or password")
+            # Check if password is correct
+            user_pw = user[0][2]
+            if verify_password(password, user_pw):
+                self.controller.user_id = user[0][0]
+                self.controller.show_page("DashboardPage")
+                return
+        
+        self.error_message.show(1, 1, "Invalid username or password")
 
     def register(self):
         """
