@@ -5,6 +5,8 @@
 import customtkinter
 from ...Backend.users import get_user
 from ..Elements.error_message import ErrorMessage
+from ..Elements.password_field import PasswordField
+
 
 class LoginPage(customtkinter.CTkFrame):
     def __init__(self, parent, controller, db):
@@ -17,10 +19,13 @@ class LoginPage(customtkinter.CTkFrame):
             db (DatabaseManager): Instance of database manager being used
         """
         super().__init__(parent)
+        self.parent = parent
         self.controller = controller
         self.db = db
 
         #TODO - make login frame with a border
+
+        self.showing = False
 
         
     def refresh_page(self, user_id):
@@ -63,9 +68,8 @@ class LoginPage(customtkinter.CTkFrame):
         # Setting up password field
         password_label = customtkinter.CTkLabel(self, text="Password:")
         password_label.grid(row=3, column=0, pady=10, padx=10)
-        self.password = customtkinter.CTkEntry(self, show="*")
+        self.password = PasswordField(self, self.login)
         self.password.grid(row=3, column=1, pady=10, padx=10)
-        self.password.bind('<Return>', lambda x:self.login())
 
         # Add confirm button
         login_button = customtkinter.CTkButton(self, text="Login", command=self.login)
@@ -75,9 +79,14 @@ class LoginPage(customtkinter.CTkFrame):
         register_button = customtkinter.CTkButton(self, text="Register", command=self.register)
         register_button.grid(row=5, column=1, padx=20, pady=20)
 
-    def login(self):
+    
+
+    def login(self, event=None):
         """
         Logs the user in if there is a matching username and password combination
+
+        Argument:
+            event: Key press event for pressing enter
         """
         username = self.username.get()
         password = self.password.get()

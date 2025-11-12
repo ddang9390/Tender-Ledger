@@ -5,6 +5,7 @@
 import customtkinter
 from ...Backend.users import add_user
 from ..Elements.error_message import ErrorMessage
+from ..Elements.password_field import PasswordField
 
 class RegisterPage(customtkinter.CTkFrame):
     def __init__(self, parent, controller, db):
@@ -62,16 +63,14 @@ class RegisterPage(customtkinter.CTkFrame):
         # Setting up password field
         password_label = customtkinter.CTkLabel(self, text="Password:")
         password_label.grid(row=3, column=0, pady=10, padx=10)
-        self.password = customtkinter.CTkEntry(self, show="*")
+        self.password = PasswordField(self, self.register)
         self.password.grid(row=3, column=1, pady=10, padx=10)
-        self.password.bind('<Return>', lambda x:self.register())
 
-        # Setting up confirm password field
+        # Setting up confirm password field 
         confirm_password_label = customtkinter.CTkLabel(self, text="Confirm Password:")
         confirm_password_label.grid(row=4, column=0, pady=10, padx=10)
-        self.confirm_password = customtkinter.CTkEntry(self, show="*")
+        self.confirm_password = PasswordField(self, self.register)
         self.confirm_password.grid(row=4, column=1, pady=10, padx=10)
-        self.confirm_password.bind('<Return>', lambda x:self.register())
 
         # Add confirm button
         login_button = customtkinter.CTkButton(self, text="Register", command=self.register)
@@ -81,9 +80,12 @@ class RegisterPage(customtkinter.CTkFrame):
         register_button = customtkinter.CTkButton(self, text="Cancel", command=self.login)
         register_button.grid(row=6, column=1, padx=20, pady=20)
 
-    def register(self):
+    def register(self, event=None):
         """
         Logs the user in if there is a matching username and password combination
+
+        Argument:
+            event: Key press event for pressing enter
         """
         username = self.username.get()
         password = self.password.get()
