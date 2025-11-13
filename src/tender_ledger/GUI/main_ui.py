@@ -10,13 +10,14 @@ from .Pages.profile_page import ProfilePage
 from .Pages.login_page import LoginPage
 from .Pages.register_page import RegisterPage
 from .Elements.navbar import NavBar
+from ..Backend.path_utils import get_theme_path
 
 # Constants (might allow for custom resolutions later)
 RESOLUTION_WIDTH = 1100
 RESOLUTION_HEIGHT = 580
 
-ROOT_DIR = Path(__file__).parent
-THEME_FILE = ROOT_DIR / 'theme.json'
+#ROOT_DIR = Path(__file__).parent
+#THEME_FILE = ROOT_DIR / 'theme.json'
 
 class App(customtkinter.CTk):
     def __init__(self, db):
@@ -31,7 +32,9 @@ class App(customtkinter.CTk):
 
         # Setting global theme for visual appearance
         # TODO - actually change the values in the file
-        customtkinter.set_default_color_theme(THEME_FILE)
+        theme = get_theme_path()
+        customtkinter.set_default_color_theme(theme)
+        
         self.set_styles()
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=1) 

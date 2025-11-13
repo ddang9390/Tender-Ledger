@@ -5,6 +5,7 @@
 import sqlite3
 from .categories import add_category
 from .payment_methods import add_payment_method
+from .path_utils import get_database_path
 
 DB_DIR = "data"
 DB_NAME = "tender_ledger.db"
@@ -35,8 +36,8 @@ class DatabaseManager:
             testing (bool): If true, set up database for testing purposes
                             Else, set up database for prod
         """
-        path = TEST_DB_PATH if testing else DB_PATH
         name = TEST_DB_NAME if testing else DB_NAME
+        path = get_database_path(testing)
 
         try:
             # Connect to database and create it if it doesn't exist
