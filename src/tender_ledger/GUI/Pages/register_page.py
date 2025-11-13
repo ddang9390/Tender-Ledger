@@ -3,7 +3,7 @@
 # Purpose - Handles the appearance and logic of the register page
 
 import customtkinter
-from ...Backend.users import add_user
+from ...Backend.users import add_user, get_user_by_username
 from ...Backend.password_utils import hash_password
 from ..Elements.error_message import ErrorMessage
 from ..Elements.password_field import PasswordField
@@ -91,6 +91,11 @@ class RegisterPage(customtkinter.CTkFrame):
         username = self.username.get()
         password = self.password.get()
         confirm_password = self.confirm_password.get()
+
+        # See if username is a duplicate
+        if get_user_by_username(username, self.db):
+            self.error_message.show(row=1, col=1, message="The username already exists")
+            return
 
         if password != confirm_password:
             self.error_message.show(row=1, col=1, message="Passwords must match")
