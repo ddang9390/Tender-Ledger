@@ -88,8 +88,7 @@ class FilterSection:
         """
         Clear the filters in the filter section
         """
-        # TODO - this used to work when using get() method but had to change to get_date() to actually get the date
-        # However this seem to break the clear function. find a way to fix this
+        # Clear date fields
         self.start_date.delete(0, customtkinter.END)
         self.end_date.delete(0, customtkinter.END)
 

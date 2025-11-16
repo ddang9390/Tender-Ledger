@@ -101,9 +101,15 @@ class ExpenseTable():
         """
         Refreshes the table by clearing it and then repopulating it
         """
-        # Get values from filter section
-        start_date = self.filter_section.start_date.get_date()
-        end_date = self.filter_section.end_date.get_date()
+        # Get date values
+        start_date = self.filter_section.start_date.get()
+        # Ensure date fields are not empty
+        if start_date:
+            start_date = self.filter_section.start_date.get_date()
+        end_date = self.filter_section.end_date.get()
+        if end_date:
+            end_date = self.filter_section.end_date.get_date()
+
         search = self.filter_section.search_bar.get()
         category_search = self.controller.categories[self.filter_section.category_filter.get()] if self.filter_section.category_filter.get() != "--Category--" else None
         payment_method_search = self.controller.payment_methods[self.filter_section.method_filter.get()] if self.filter_section.method_filter.get() != "--Payment Method--" else None
