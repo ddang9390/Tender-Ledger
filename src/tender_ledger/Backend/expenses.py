@@ -186,7 +186,7 @@ def get_expenses_for_user(user_id, db, start_date=None, end_date=None, category=
     # Handling sorting by columns
     if order:
         pass
-
+    
     # Execute the sql query
     sql = select_clause + where_clause + order_by_clause
     try:

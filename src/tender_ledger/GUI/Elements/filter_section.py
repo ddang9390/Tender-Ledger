@@ -3,6 +3,7 @@
 # Purpose - Handles the appearance and fucntion of the filter section
 
 import customtkinter
+from tkcalendar import DateEntry
 
 class FilterSection:
     def __init__(self, parent, controller, for_expenses=False):
@@ -19,6 +20,9 @@ class FilterSection:
         self.controller = controller
         self.for_expenses = for_expenses
 
+        self.input_frame = customtkinter.CTkFrame(self.parent)
+        self.input_frame.pack()
+
         self.create_filter_section()
         
 
@@ -26,41 +30,68 @@ class FilterSection:
         """
         Displays the filter section for filtering the expenses table
         """
-        # TODO - date range filter
+        # Setting up date field
+        start_date_label = customtkinter.CTkLabel(self.input_frame, text="Start Date")
+        start_date_label.grid(row=0, column=0)
+        self.start_date = DateEntry(self.input_frame, selectmode='day', state='normal', showweeknumbers=False)
+        self.start_date.grid(row=1, column=0)
+
+        # Ensures that the DateEntry is at the top level to prevent clicking the fields behind it
+        #self.start_date._top_cal.transient(self)
+        self.start_date._top_cal.lift()
+        
+        end_date_label = customtkinter.CTkLabel(self.input_frame, text="End Date")
+        end_date_label.grid(row=0, column=1)
+        self.end_date = DateEntry(self.input_frame, selectmode='day', state='normal', showweeknumbers=False)
+        self.end_date.grid(row=1, column=1)
+
+        # Have date range filters empty by default
+        self.start_date.delete(0, customtkinter.END)
+        self.end_date.delete(0, customtkinter.END)
 
         # Creating filters that are only meant for the expenses page:
         if self.for_expenses:
-            # Generic search bar
-            self.search_bar = customtkinter.CTkEntry(self.parent, placeholder_text = "Search")
-            self.search_bar.pack(side="left")
-
             # Category Filter
+            category_label = customtkinter.CTkLabel(self.input_frame, text="Categories")
+            category_label.grid(row=0, column=2)
             categories = ["--Category--"]
             for category in self.controller.categories.keys():
                 categories.append(category)
-            self.category_filter = customtkinter.CTkOptionMenu(self.parent, values=categories)
-            self.category_filter.pack(side="left")
+            self.category_filter = customtkinter.CTkOptionMenu(self.input_frame, values=categories)
+            self.category_filter.grid(row=1, column=2)
 
             # Payment Method Filter
+            payment_method_label = customtkinter.CTkLabel(self.input_frame, text="Payment Methods")
+            payment_method_label.grid(row=0, column=3)
             method_of_purchase = ["--Payment Method--"]
             for method in self.controller.payment_methods.keys():
                 method_of_purchase.append(method)
-            self.method_filter = customtkinter.CTkOptionMenu(self.parent, values=method_of_purchase)
-            self.method_filter.pack(side="left", padx=10)
+            self.method_filter = customtkinter.CTkOptionMenu(self.input_frame, values=method_of_purchase)
+            self.method_filter.grid(row=1, column=3, padx=10)
+
+            # Generic search bar
+            self.search_bar = customtkinter.CTkEntry(self.input_frame, placeholder_text = "Search")
+            self.search_bar.grid(row=1, column=4)
 
         # Search button
-        search_button = customtkinter.CTkButton(self.parent, text="Search", command=self.controller.refresh_table)
-        search_button.pack(side="right")
+        search_button = customtkinter.CTkButton(self.input_frame, text="Search", command=self.controller.refresh_table, width=100)
+        search_button.grid(row=1, column=5)
 
         # Reset button
-        reset_button = customtkinter.CTkButton(self.parent, text="Reset", command=self.clear_filters)
-        reset_button.pack(side="right")
+        reset_button = customtkinter.CTkButton(self.input_frame, text="Reset", command=self.clear_filters, width=100)
+        reset_button.grid(row=1, column=6)
         
+        self.input_frame.pack()
+
+
     def clear_filters(self):
         """
         Clear the filters in the filter section
         """
-        # TODO - include date range stuff here
+        # TODO - this used to work when using get() method but had to change to get_date() to actually get the date
+        # However this seem to break the clear function. find a way to fix this
+        self.start_date.delete(0, customtkinter.END)
+        self.end_date.delete(0, customtkinter.END)
 
         if self.for_expenses:
             clear = customtkinter.StringVar(value="")
