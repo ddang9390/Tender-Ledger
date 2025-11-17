@@ -160,7 +160,7 @@ class AddExpensePopup(customtkinter.CTkToplevel):
 
         try:
             # Check if the value is a valid float
-            new_val = float(val)
+            float(val)
 
             # Check if the value has more than 2 decimal places
             if "." in val and len(val.split('.')[1]) > 2:

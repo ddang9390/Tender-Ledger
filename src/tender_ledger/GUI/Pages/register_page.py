@@ -155,10 +155,10 @@ class RegisterPage(customtkinter.CTkFrame):
 
         try:
             # Check if the value is a valid float
-            new_val = int(val)
+            int(val)
 
             # Keep phone number within correct length
-            if len(self.phone.get()) > 9:
+            if len(val) > 10:
                 return False
             
             return True
