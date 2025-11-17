@@ -7,12 +7,9 @@ from .categories import add_category
 from .payment_methods import add_payment_method
 from .path_utils import get_database_path
 
-DB_DIR = "data"
+# Names of databases
 DB_NAME = "tender_ledger.db"
-DB_PATH = DB_DIR + "/" + DB_NAME
-
 TEST_DB_NAME = "test_tender_ledger.db"
-TEST_DB_PATH = DB_DIR + "/" + TEST_DB_NAME
 
 DEFAULT_CATEGOREIS = ["Food", 
                       "Utilities", 
@@ -72,7 +69,12 @@ class DatabaseManager:
                     CREATE TABLE IF NOT EXISTS users(
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
                         username TEXT UNIQUE NOT NULL,
-                        password TEXT,
+                        password TEXT NOT NULL,
+                        first_name TEXT,
+                        last_name TEXT,
+                        birthday DATETIME,
+                        email TEXT UNIQUE NOT NULL,
+                        phone INTEGER NOT NULL,
                         created_at DATETIME,
                         updated_at DATETIME
                     )

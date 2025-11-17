@@ -4,13 +4,18 @@
 
 from datetime import datetime
 
-def add_user(username, password, db):
+def add_user(username, password, first_name, last_name, birthday, email, phone, db):
     """
     Add a user
 
     Arguments:
         username (string): The user's username
         password (string): The user's password
+        first_name (string): The user's first name
+        last_name (string): The user's last name
+        birthday (string): The user's birthday
+        email (string): The user's email
+        phone (int): The user's phone number
         db (DatabaseManager): Instance of database manager being used
 
     Returns:
@@ -19,12 +24,12 @@ def add_user(username, password, db):
     """
     created_at = datetime.now()
 
-    sql = "INSERT INTO users (username, password, created_at) VALUES (?, ?, ?);"
-    val = (username, password, created_at)
+    sql = "INSERT INTO users (username, password, created_at, first_name, last_name, birthday, email, phone) VALUES (?, ?, ?, ?, ?, ?, ?, ?);"
+    val = (username, password, first_name, last_name, birthday, email, phone, created_at)
 
     return db.execute_statement(sql, val)
 
-def update_user(username, password, db):
+def update_user(username, password, first_name, last_name, birthday, email, phone, db):
     """
     Update a user
 

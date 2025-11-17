@@ -3,6 +3,8 @@
 # Purpose - Handles the appearance and logic of the register page
 
 import customtkinter
+import re
+from tkcalendar import DateEntry
 from ...Backend.users import add_user, get_user_by_username
 from ...Backend.password_utils import hash_password
 from ..Elements.error_message import ErrorMessage
@@ -23,6 +25,10 @@ class RegisterPage(customtkinter.CTkFrame):
         self.db = db
 
         #TODO - make register frame with a border
+
+
+        # Register validation commands for user input
+        self.validate_input_cmd = self.register(self.validate_phone_field)
         
     def refresh_page(self, user_id):
         """
@@ -48,40 +54,123 @@ class RegisterPage(customtkinter.CTkFrame):
 
         self.setup_inputs()
 
-
-
+    ###########################################
+    # TODO - move stuff in between lines of # to another file so that this can be reused for the profile page
     def setup_inputs(self):
         """
         Setup the input fields
         """
+        # Setting up first name field
+        first_name_label = customtkinter.CTkLabel(self, text="First Name:")
+        first_name_label.grid(row=2, column=0, pady=10, padx=10)
+        self.firstname = customtkinter.CTkEntry(self)
+        self.firstname.grid(row=2, column=1, pady=10, padx=10)
+        self.firstname.bind('<Return>', lambda x:self.register_user())
+
+        # Setting up last name field
+        last_name_label = customtkinter.CTkLabel(self, text="Last Name:")
+        last_name_label.grid(row=3, column=0, pady=10, padx=10)
+        self.lastname = customtkinter.CTkEntry(self)
+        self.lastname.grid(row=3, column=1, pady=10, padx=10)
+        self.lastname.bind('<Return>', lambda x:self.register_user())
+
+        # Setting up birthday field
+        birthday_label = customtkinter.CTkLabel(self, text="Birthday:")
+        birthday_label.grid(row=4, column=0, pady=10, padx=10)
+        self.birthday = DateEntry(self, selectmode='day', state='normal', showweeknumbers=False)
+        self.birthday.grid(row=4, column=1, pady=10, padx=10)
+
+
         # Setting up username field
-        username_label = customtkinter.CTkLabel(self, text="Username:")
-        username_label.grid(row=2, column=0, pady=10, padx=10)
+        username_label = customtkinter.CTkLabel(self, text="Username *:")
+        username_label.grid(row=5, column=0, pady=10, padx=10)
         self.username = customtkinter.CTkEntry(self)
-        self.username.grid(row=2, column=1, pady=10, padx=10)
-        self.username.bind('<Return>', lambda x:self.register())
+        self.username.grid(row=5, column=1, pady=10, padx=10)
+        self.username.bind('<Return>', lambda x:self.register_user())
 
         # Setting up password field
-        password_label = customtkinter.CTkLabel(self, text="Password:")
-        password_label.grid(row=3, column=0, pady=10, padx=10)
-        self.password = PasswordField(self, self.register)
-        self.password.grid(row=3, column=1, pady=10, padx=10)
+        password_label = customtkinter.CTkLabel(self, text="Password *:")
+        password_label.grid(row=6, column=0, pady=10, padx=10)
+        self.password = PasswordField(self, self.register_user)
+        self.password.grid(row=6, column=1, pady=10, padx=10)
 
         # Setting up confirm password field 
         confirm_password_label = customtkinter.CTkLabel(self, text="Confirm Password:")
-        confirm_password_label.grid(row=4, column=0, pady=10, padx=10)
-        self.confirm_password = PasswordField(self, self.register)
-        self.confirm_password.grid(row=4, column=1, pady=10, padx=10)
+        confirm_password_label.grid(row=7, column=0, pady=10, padx=10)
+        self.confirm_password = PasswordField(self, self.register_user)
+        self.confirm_password.grid(row=7, column=1, pady=10, padx=10)
+
+        # Setting up email field
+        email_label = customtkinter.CTkLabel(self, text="Email *:")
+        email_label.grid(row=8, column=0, pady=10, padx=10)
+        self.email = customtkinter.CTkEntry(self)
+        self.email.grid(row=8, column=1, pady=10, padx=10)
+        self.email.bind('<Return>', lambda x:self.register_user())
+
+        # Setting up phone field
+        phone_label = customtkinter.CTkLabel(self, text="Phone *:")
+        phone_label.grid(row=9, column=0, pady=10, padx=10)
+        self.phone = customtkinter.CTkEntry(
+            self,
+            validate="key",
+            validatecommand=(self.validate_input_cmd, '%P'))
+        self.phone.grid(row=9, column=1, pady=10, padx=10)
+        self.phone.bind('<Return>', lambda x:self.register_user())
+
 
         # Add confirm button
-        login_button = customtkinter.CTkButton(self, text="Register", command=self.register)
-        login_button.grid(row=5, column=1, padx=20, pady=20)
+        login_button = customtkinter.CTkButton(self, text="Register", command=self.register_user)
+        login_button.grid(row=10, column=1, padx=20, pady=20)
 
         # Add Cancel button
         register_button = customtkinter.CTkButton(self, text="Cancel", command=self.login)
-        register_button.grid(row=6, column=1, padx=20, pady=20)
+        register_button.grid(row=11, column=1, padx=20, pady=20)
 
-    def register(self, event=None):
+    def is_valid_email(self, email):
+        """
+        Checks if the inputted email is valid
+
+        Returns:
+            bool: True if the input is a valid email
+                  False if not
+        """
+        regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+
+        if re.match(regex, email):
+            return True
+        
+        return False
+
+    def validate_phone_field(self, val):
+        """
+        Ensures that the Phone field only accepts numbers
+
+        Returns:
+            bool: True if the input is a valid number
+                  False if not
+        """
+        # Allow the field to be empty
+        if val == "":
+            return True
+
+        try:
+            # Check if the value is a valid float
+            new_val = int(val)
+
+            # Keep phone number within correct length
+            if len(self.phone.get()) > 9:
+                return False
+            
+            return True
+        
+        except ValueError:
+            return False
+        
+
+        
+    #####################################
+
+    def register_user(self, event=None):
         """
         Logs the user in if there is a matching username and password combination
 
@@ -90,6 +179,11 @@ class RegisterPage(customtkinter.CTkFrame):
         """
         username = self.username.get()
         password = self.password.get()
+        first_name = self.firstname.get()
+        last_name = self.lastname.get()
+        birthday = self.birthday.get()
+        email = self.email.get()
+        phone = self.phone.get()
         confirm_password = self.confirm_password.get()
 
         # See if username is a duplicate
@@ -100,12 +194,18 @@ class RegisterPage(customtkinter.CTkFrame):
         if password != confirm_password:
             self.error_message.show(row=1, col=1, message="Passwords must match")
 
-        elif username == "" or password == "":
+        elif username == "" or password == "" or email == "" or phone == "":
             self.error_message.show(row=1, col=1, message="Please fill in all fields")
+
+        elif not self.is_valid_email(email):
+            self.error_message.show(row=1, col=1, message="Invalid email")
+
+        elif len(phone) != 10:
+            self.error_message.show(row=1, col=1, message="Invalid phone")
 
         else:
             password = hash_password(password)
-            add_user(username, password, self.db)
+            add_user(username, password, first_name, last_name, birthday, email, phone, self.db)
             self.controller.show_page("LoginPage")
 
     def login(self):
