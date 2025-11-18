@@ -10,7 +10,7 @@ class FilterSection:
         """
         Initializes a new instance of the filter section
 
-        Argumgents:
+        Arguments:
             parent (CTkFrame): The container that will be containing this page
             controller: The page that acts as a controller
             for_expenses (bool): True if the filter section is for the Expenses page.

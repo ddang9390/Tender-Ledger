@@ -9,7 +9,7 @@ class PasswordField(customtkinter.CTkFrame):
         """
         Initializes a new instance of the LoginPage
 
-        Argumgents:
+        Arguments:
             parent (CTkFrame): The container that will be containing this page
             command: The function that should be called when pressing 'Enter'
         """

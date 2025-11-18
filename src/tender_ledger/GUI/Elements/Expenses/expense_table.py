@@ -11,7 +11,7 @@ class ExpenseTable():
         """
         Initializes a new instance of the Expense Table
 
-        Argumgents:
+        Arguments:
             parent (CTkFrame): The container that will be containing this page
             controller (ExpensesPage): The expenses page that acts as a controller
             filter_section (FilterSection): The filter section that will modify the table

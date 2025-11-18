@@ -18,7 +18,7 @@ class ConfirmationPopup(customtkinter.CTkToplevel):
         """
         Initializes a new instance of the ProfilePage
 
-        Argumgents:
+        Arguments:
             parent (CTkFrame): The container that will be containing this page
             controller (App): The main ui that acts as a controller for deciding what page is visible
             db (DatabaseManager): Instance of database manager being used

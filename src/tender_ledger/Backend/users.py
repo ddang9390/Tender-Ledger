@@ -24,7 +24,7 @@ def add_user(username, password, first_name, last_name, birthday, email, phone, 
     """
     created_at = datetime.now()
 
-    sql = "INSERT INTO users (username, password, created_at, first_name, last_name, birthday, email, phone) VALUES (?, ?, ?, ?, ?, ?, ?, ?);"
+    sql = "INSERT INTO users (username, password, first_name, last_name, birthday, email, phone, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?);"
     val = (username, password, first_name, last_name, birthday, email, phone, created_at)
 
     return db.execute_statement(sql, val)
@@ -108,6 +108,32 @@ def get_user_by_username(username, db):
             username = ?
           """
     val = (username,)
+
+    try:
+        db.cur.execute(sql, val)
+        return db.cur.fetchall()
+    except Exception as e:
+        print(e)
+
+def get_user_by_id(id, db):
+    """
+    Finds a matching user by just their id
+
+    Arguments:
+        id (int): The user's id
+        db (DatabaseManager): Instance of database manager being used
+
+    Returns:
+        bool: True if able to get user
+              False if not
+    """
+    sql = """
+          SELECT *
+          FROM users
+          WHERE
+            id = ?
+          """
+    val = (id,)
 
     try:
         db.cur.execute(sql, val)

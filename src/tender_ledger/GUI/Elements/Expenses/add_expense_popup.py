@@ -21,7 +21,7 @@ class AddExpensePopup(customtkinter.CTkToplevel):
         """
         Initializes a new instance of the Add Expense Popup
 
-        Argumgents:
+        Arguments:
             parent (CTkFrame): The container that will be containing this page
             controller (App): The main ui that acts as a controller for deciding what page is visible
             categories (dict): Contains names of categories as values and ids as keys

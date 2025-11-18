@@ -1,43 +1,57 @@
 # Author - Daniel Dang
-# Filename - register_page.py
-# Purpose - Handles the appearance and logic of the register page
+# Filename - user_form.py
+# Purpose - Handles the appearance and logic of the user form
 
-import customtkinter
 import re
+import customtkinter
 from tkcalendar import DateEntry
-from ...Backend.users import add_user, get_user_by_username
-from ...Backend.password_utils import hash_password
-from ..Elements.error_message import ErrorMessage
 from ..Elements.password_field import PasswordField
 
 class UserForm(customtkinter.CTkFrame):
-    def __init__(self, parent, controller, db, confirm_command, cancel_command):
+    def __init__(self, parent, controller, db, confirm_command, cancel_command, user=None):
         """
         Initializes a new instance of the LoginPage
 
-        Argumgents:
+        Arguments:
             parent (CTkFrame): The container that will be containing this page
             controller (App): The main ui that acts as a controller for deciding what page is visible
             db (DatabaseManager): Instance of database manager being used
             confirm_command: Command for confirm button
             cancel_command: Command for cancel button
+            user (dict): Dictionary containing the user's info
         """
         super().__init__(parent)
         self.parent = parent
         self.controller = controller
         self.db = db
 
-        self.confirm_command = confirm_command
-        self.cancel_command = cancel_command
+        if confirm_command and cancel_command:
+            self.confirm_command = confirm_command
+            self.cancel_command = cancel_command
+
+        else:
+            self.confirm_command = self.update_user()
+            self.cancel_command = self.cancel()
+
 
         self.input_frame = customtkinter.CTkFrame(self)
         self.input_frame.grid(row=0, column=0, sticky="nsew")
 
+        self.modify_mode = True
 
         # Register validation commands for user input
         self.validate_input_cmd = self.register(self.validate_phone_field)
         self.setup_inputs()
         
+    def set_user(self, user):
+        """
+        Fill in the fields using the user's info
+
+        Argument:
+            user (dict): Dictionary containing the user's info
+        """
+        self.user = user
+        self.modify_mode = False
 
     def setup_inputs(self):
         """
@@ -148,3 +162,15 @@ class UserForm(customtkinter.CTkFrame):
         
         except ValueError:
             return False
+
+    def update_user(self):
+        """
+        Updates the user's info using what is in the form
+        """
+        pass
+
+    def cancel(self):
+        """
+        Return to the profile view page
+        """
+        pass

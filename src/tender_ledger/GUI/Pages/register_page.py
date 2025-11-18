@@ -3,12 +3,9 @@
 # Purpose - Handles the appearance and logic of the register page
 
 import customtkinter
-import re
-from tkcalendar import DateEntry
 from ...Backend.users import add_user, get_user_by_username
 from ...Backend.password_utils import hash_password
 from ..Elements.error_message import ErrorMessage
-from ..Elements.password_field import PasswordField
 from ..Elements.user_form import UserForm
 
 class RegisterPage(customtkinter.CTkFrame):
@@ -16,7 +13,7 @@ class RegisterPage(customtkinter.CTkFrame):
         """
         Initializes a new instance of the LoginPage
 
-        Argumgents:
+        Arguments:
             parent (CTkFrame): The container that will be containing this page
             controller (App): The main ui that acts as a controller for deciding what page is visible
             db (DatabaseManager): Instance of database manager being used

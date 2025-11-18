@@ -9,7 +9,7 @@ class NavBar(customtkinter.CTkFrame):
         """
         Initializes a new instance of the Navbar
 
-        Argumgents:
+        Arguments:
             parent (CTkFrame): The container that will be containing this page
             controller (App): The main ui that acts as a controller for deciding what page is visible
             db (DatabaseManager): Instance of database manager being used
@@ -19,7 +19,6 @@ class NavBar(customtkinter.CTkFrame):
         self.db = db
 
         self.grid_rowconfigure(4, weight=1)
-
 
         label = customtkinter.CTkLabel(self, text="Navbar", font=self.controller.font_label)
         label.grid(row=0, column=0, padx=20, pady=20, sticky="n")
@@ -33,7 +32,6 @@ class NavBar(customtkinter.CTkFrame):
         profile_button = customtkinter.CTkButton(self, text="My Profile", command=lambda: controller.show_page("ProfilePage"))
         profile_button.grid(row=3, column=0, padx=20, pady=20, sticky="n")
 
-        #TODO - add logout button for returning to login page
         logout_button = customtkinter.CTkButton(self, text="Logout", command=self.logout)
         logout_button.grid(row=4, column=0, pady=20, sticky="s")
 
