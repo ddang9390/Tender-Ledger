@@ -32,8 +32,10 @@ class ProfilePage(customtkinter.CTkFrame):
         self.page_frame = customtkinter.CTkFrame(self.tabview.tab("Profile"))
         self.page_frame.grid(row=0, column=0)
 
-        self.user_form = UserForm(self.page_frame, self.controller, self.db, None, None)
+        self.user_form = UserForm(self.page_frame, self.controller, self.db, None, None, False)
         self.user_form.pack()
+
+
 
     def refresh_page(self, user_id):
         """
@@ -52,8 +54,9 @@ class ProfilePage(customtkinter.CTkFrame):
             "last_name" : got_user[0][4],
             "birthday" : got_user[0][5],
             "email" : got_user[0][6],
-            "password" : got_user[0][7]
+            "phone" : got_user[0][7]
         }
+        self.user_form.set_user(user)
 
         # Set Profile tab to be default tab
         self.tabview.set("Profile")
