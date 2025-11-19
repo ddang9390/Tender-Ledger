@@ -71,6 +71,9 @@ class UserForm(customtkinter.CTkFrame):
             
 
     def setup_input_fields(self):
+        """
+        Setup entry fields for the user form
+        """
         enable_entry = "normal" if self.modify_mode else "disabled"
 
         user_id = self.user["user_id"] if self.user else None
@@ -142,9 +145,13 @@ class UserForm(customtkinter.CTkFrame):
 
 
     def setup_modify_form(self):
+        """
+        Setup the form that will be displayed when adding or editing users
+        """
         self.modify_mode = True
         self.setup_input_fields()
 
+        # Label for the confirm button
         confirm_label = "Update" if self.user else "Register"
 
         # Add confirm button
@@ -157,6 +164,9 @@ class UserForm(customtkinter.CTkFrame):
 
 
     def setup_view_form(self):
+        """
+        Setup the form that will be displayed when viewing user details
+        """
         self.setup_input_fields()
 
         # Add edit button
@@ -165,6 +175,9 @@ class UserForm(customtkinter.CTkFrame):
 
 
     def clear_form(self):
+        """
+        Clear the frame holding the user form
+        """
         for child in self.input_frame.winfo_children():
             child.destroy()
 
