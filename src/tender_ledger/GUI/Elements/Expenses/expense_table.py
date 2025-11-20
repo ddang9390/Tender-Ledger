@@ -204,7 +204,7 @@ class ExpenseTable():
         self.calculate_total_pages()
 
         # If at the beginning, disable prev button and ensure next button is enabled
-        if self.current_page == 1:
+        if self.current_page == 1 or self.current_page == 0:
             self.prev_button.configure(state="disabled")
         else:
             self.prev_button.configure(state="normal")  

@@ -3,6 +3,7 @@
 # Purpose - Handles the appearance of the dashboard page
 
 import customtkinter
+import platform
 from ...Backend.expenses import get_expenses_for_user, get_total_spending
 from ...Backend.dashboard import generate_pie_charts, generate_line_plot
 
@@ -27,6 +28,9 @@ class DashboardPage(customtkinter.CTkFrame):
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=1)
 
+        # Detect OS for custom scrolling
+        self.is_linux = platform.system() in ["Linux"]
+
         
     def refresh_page(self, user_id):
         """
@@ -35,7 +39,6 @@ class DashboardPage(customtkinter.CTkFrame):
         Argument:
             user_id (int): The user's id
         """
-        # TODO - change user id
         self.user_id = user_id
         self.expenses = get_expenses_for_user(self.user_id, self.db)
 
@@ -62,9 +65,6 @@ class DashboardPage(customtkinter.CTkFrame):
         # TODO - integrate start and end dates when search section is complete
         total = get_total_spending(self.user_id, self.db)
 
-        if total == None:
-            total = 0
-
         total_spending_label = customtkinter.CTkLabel(self.summary_frame, text=f"Total Spending: ${total:.2f}", font=self.controller.font_label)
         total_spending_label.pack(side="left")
 
@@ -85,8 +85,9 @@ class DashboardPage(customtkinter.CTkFrame):
         self.chart_frame.grid_columnconfigure(1, weight=1)
 
         # Handle scrolling with mouse wheel
-        self.chart_frame.bind("<Enter>", lambda event: self.bind_mousewheel())
-        self.chart_frame.bind("<Leave>", lambda event: self.unbind_mousewheel())
+        if self.is_linux:
+            self.chart_frame.bind("<Enter>", lambda event: self.bind_mousewheel())
+            self.chart_frame.bind("<Leave>", lambda event: self.unbind_mousewheel())
 
         # Display category pie chart
         category_chart_container = customtkinter.CTkFrame(self.chart_frame)

@@ -211,7 +211,7 @@ def get_total_spending(user_id, db, start_date=None, end_date=None):
     """
     select_clause = """
           SELECT
-              SUM(amount)
+              COALESCE(SUM(amount), 0)
           FROM
               expenses
           """

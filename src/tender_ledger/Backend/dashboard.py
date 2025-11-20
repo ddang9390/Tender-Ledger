@@ -25,7 +25,7 @@ def generate_pie_charts(expenses):
     """
     categories = {}
     payment_methods = {}
-    
+
     for expense in expenses:
         category = expense[CATEGORY_INDEX]
         # Gathering categories that expenses used

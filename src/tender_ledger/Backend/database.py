@@ -11,7 +11,7 @@ from .path_utils import get_database_path
 DB_NAME = "tender_ledger.db"
 TEST_DB_NAME = "test_tender_ledger.db"
 
-DEFAULT_CATEGOREIS = ["Food", 
+DEFAULT_CATEGORIES = ["Food", 
                       "Utilities", 
                       "Housing", 
                       "Healthcare",
@@ -100,8 +100,7 @@ class DatabaseManager:
         
         
         # Inserting default categories
-        for category in DEFAULT_CATEGOREIS:
-            add_category(None, category, self)
+        self.insert_default_categories()
 
     def set_up_payment_methods_table(self):
         """
@@ -121,8 +120,7 @@ class DatabaseManager:
         self.con.commit()
         
         # Inserting default payment methods
-        for payment_method in DEFAULT_PAYMENT_METHODS:
-            add_payment_method(None, payment_method, self)
+        self.insert_default_payment_methods()
 
     def set_up_expenses_table(self):
         """
@@ -158,10 +156,8 @@ class DatabaseManager:
         self.con.commit()
 
         # Leave the defaults alone
-        for payment_method in DEFAULT_PAYMENT_METHODS:
-            add_payment_method(None, payment_method, self)
-        for category in DEFAULT_CATEGOREIS:
-            add_category(None, category, self)
+        self.insert_default_payment_methods()
+        self.insert_default_categories()
     
     def execute_statement(self, sql, val):
         """
@@ -180,3 +176,21 @@ class DatabaseManager:
         except Exception as e:
             print(e)
             return False
+        
+    def insert_default_payment_methods(self):
+        """
+        Insert default payment methods if they don't already exist
+        """
+        for payment_method in DEFAULT_PAYMENT_METHODS:
+            self.cur.execute("SELECT id FROM payment_methods WHERE name = ? AND user_id IS NULL", (payment_method,))
+            if self.cur.fetchone() is None:
+                add_payment_method(None, payment_method, self)
+
+    def insert_default_categories(self):
+        """
+        Insert default categories if they don't already exist
+        """
+        for category in DEFAULT_CATEGORIES:
+            self.cur.execute("SELECT id FROM categories WHERE name = ? AND user_id IS NULL", (category,))
+            if self.cur.fetchone() is None:
+                add_category(None, category, self)
