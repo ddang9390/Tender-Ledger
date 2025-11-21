@@ -6,6 +6,9 @@ import re
 import customtkinter
 from tkcalendar import DateEntry
 from ..Elements.password_field import PasswordField
+from ..Elements.error_message import ErrorMessage
+from ...Backend.users import check_if_username_exists, update_user
+from ...Backend.password_utils import hash_password
 
 class UserForm(customtkinter.CTkFrame):
     def __init__(self, parent, controller, db, confirm_command, cancel_command, modify=True):
@@ -63,6 +66,10 @@ class UserForm(customtkinter.CTkFrame):
         """
         self.clear_form()
 
+        # Setup error message
+        self.error_message = ErrorMessage(self.input_frame, self.controller)
+        self.error_message.hide()
+
         if self.modify_mode:
             self.setup_modify_form()
 
@@ -75,8 +82,7 @@ class UserForm(customtkinter.CTkFrame):
         Setup entry fields for the user form
         """
         enable_entry = "normal" if self.modify_mode else "disabled"
-
-        user_id = self.user["user_id"] if self.user else None
+        
         username = customtkinter.StringVar(value=self.user["username"]) if self.user else None
         first_name = customtkinter.StringVar(value=self.user["first_name"]) if self.user else None
         last_name = customtkinter.StringVar(value=self.user["last_name"]) if self.user else None
@@ -155,12 +161,12 @@ class UserForm(customtkinter.CTkFrame):
         confirm_label = "Update" if self.user else "Register"
 
         # Add confirm button
-        register_button = customtkinter.CTkButton(self.input_frame, text=confirm_label, command=self.confirm_command)
-        register_button.grid(row=10, column=1, padx=20, pady=20)
+        confirm_button = customtkinter.CTkButton(self.input_frame, text=confirm_label, command=self.confirm_command)
+        confirm_button.grid(row=10, column=1, padx=20, pady=20)
 
         # Add Cancel button
-        register_button = customtkinter.CTkButton(self.input_frame, text="Cancel", command=self.cancel_command)
-        register_button.grid(row=10, column=0, padx=20, pady=20)
+        cancel_button = customtkinter.CTkButton(self.input_frame, text="Cancel", command=self.cancel_command)
+        cancel_button.grid(row=10, column=0, padx=20, pady=20)
 
 
     def setup_view_form(self):
@@ -228,7 +234,39 @@ class UserForm(customtkinter.CTkFrame):
         Argument:
             event: Key press event for pressing enter
         """
-        print("updating user")
+        user_id = self.user["user_id"] if self.user else None
+        username = self.username.get()
+        password = self.password.get()
+        first_name = self.firstname.get()
+        last_name = self.lastname.get()
+        birthday = self.birthday.get()
+        email = self.email.get()
+        phone = self.phone.get()
+        confirm_password = self.confirm_password.get()
+
+        # Check if username is a duplicate
+        if check_if_username_exists(user_id, username, self.db):
+            self.error_message.show(row=1, col=1, message="Username already exists")
+
+        if password != confirm_password:
+            self.error_message.show(row=1, col=1, message="Passwords must match")
+
+        elif username == "" or password == "" or email == "" or phone == "":
+            self.error_message.show(row=1, col=1, message="Please fill in all fields")
+
+        elif not self.is_valid_email(email):
+            self.error_message.show(row=1, col=1, message="Invalid email")
+
+        elif len(phone) != 10:
+            self.error_message.show(row=1, col=1, message="Invalid phone")
+
+        # Update user when all validations have passed
+        else:
+            password = hash_password(password)
+            update_user(user_id, username, password, first_name, last_name, birthday, email, phone, self.db)
+
+            # TODO - make confirmation message
+            self.cancel()
 
     def cancel(self):
         """

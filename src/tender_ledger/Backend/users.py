@@ -29,13 +29,19 @@ def add_user(username, password, first_name, last_name, birthday, email, phone, 
 
     return db.execute_statement(sql, val)
 
-def update_user(username, password, first_name, last_name, birthday, email, phone, db):
+def update_user(id, username, password, first_name, last_name, birthday, email, phone, db):
     """
     Update a user
 
     Arguments:
+        id (int): The user's id
         username (string): The user's username
         password (string): The user's password
+        first_name (string): The user's first name
+        last_name (string): The user's last name
+        birthday (string): The user's birthday
+        email (string): The user's email
+        phone (int): The user's phone number
         db (DatabaseManager): Instance of database manager being used
 
     Returns:
@@ -43,6 +49,25 @@ def update_user(username, password, first_name, last_name, birthday, email, phon
               False if not
     """
     updated_at = datetime.now()
+    sql = """
+            UPDATE users
+            SET 
+                username = ?,
+                password = ?,
+                first_name = ?,
+                last_name = ?,
+                birthday = ?,
+                email = ?,
+                phone = ?,
+                updated_at = ?
+            WHERE
+                id = ?
+          """
+    
+    val = (username, password, first_name, last_name, birthday, email, phone, updated_at, id)
+
+    return db.execute_statement(sql, val)
+    
 
 def delete_user(username, db):
     """
@@ -138,5 +163,27 @@ def get_user_by_id(id, db):
     try:
         db.cur.execute(sql, val)
         return db.cur.fetchall()
+    except Exception as e:
+        print(e)
+
+def check_if_username_exists(id, username, db):
+    """
+    Checks if a username already exists and is not being used
+    by the current user
+
+    Arguments:
+    """
+    sql = """
+            SELECT
+                COUNT(*)
+            FROM users
+            WHERE 
+                id != ? AND
+                username = ?
+          """
+    val = [id, username]
+    try:
+        db.cur.execute(sql, val)
+        return db.cur.fetchall()[0][0] != 0
     except Exception as e:
         print(e)
