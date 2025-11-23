@@ -266,7 +266,7 @@ class UserForm(customtkinter.CTkFrame):
             update_user(user_id, username, password, first_name, last_name, birthday, email, phone, self.db)
 
             # TODO - make confirmation message
-            self.cancel()
+            self.controller.refresh_page(user_id)
 
     def cancel(self):
         """
