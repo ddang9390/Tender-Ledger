@@ -25,12 +25,12 @@ def add_payment_method(user_id, name, db):
 
     return db.execute_statement(sql, val)
 
-def update_payment_method(user_id, name, db):
+def update_payment_method(id, name, db):
     """
     Update a custom payment method for the user
 
     Arguments:
-        user_id (int): The user's id
+        id (int): The payment method's id
         name (string): The custom payment method's name
         db (DatabaseManager): Instance of database manager being used
 
@@ -39,6 +39,16 @@ def update_payment_method(user_id, name, db):
               False if not
     """
     updated_at = datetime.now()
+
+    sql = """
+          UPDATE payment_methods
+          SET
+            name = ?,
+            updated_at = ?
+          WHERE id = ?
+          """
+    val = (name, updated_at, id,)
+    return db.execute_statement(sql, val)
 
 def delete_payment_method(id, db):
     """
@@ -110,6 +120,38 @@ def get_payment_methods_for_list(user_id, db):
         
         return rows
 
+    except Exception as e:
+        print(e)
+        return []
+    
+    
+def get_payment_method(id, db):
+    """
+    Get a single payment method
+
+    Arguments:
+        id (int): ID of the payment method
+        db (DatabaseManager): Instance of database manager being used
+
+    Returns:
+        list: Contains a tuple that contains info about the payment method
+    """
+    select_clause = """
+                    SELECT
+                        id, name, user_id
+                    FROM
+                        payment_methods
+                    """
+    where_clause = """
+                    WHERE
+                        id = ?
+                   """
+    val = [id,]
+
+    sql = select_clause + where_clause
+    try:
+        db.cur.execute(sql, val)
+        return db.cur.fetchall()
     except Exception as e:
         print(e)
         return []

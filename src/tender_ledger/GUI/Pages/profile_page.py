@@ -7,6 +7,7 @@ from ...Backend.users import get_user_by_id
 from ..Elements.user_form import UserForm
 from ..Elements.customizations import Customizations
 
+
 class ProfilePage(customtkinter.CTkFrame):
     def __init__(self, parent, controller, db):
         """
@@ -73,11 +74,19 @@ class ProfilePage(customtkinter.CTkFrame):
         self.tabview.set("Profile")
 
     def on_tab_changed(self, event):
+        """
+        Handles the behavior of the TabView when the tabs are clicked on
+
+        Argument:
+            event (string): The name of the tab that was clicked on
+        """
         if event == "Customization":
             self.customizations.set_user(self.user_id)
             self.tabview.set("Customization")
             
         if event == "Profile":
             self.refresh_page(self.user_id)
+
+    
         
 

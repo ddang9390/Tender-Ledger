@@ -80,7 +80,12 @@ class ConfirmationPopup(customtkinter.CTkToplevel):
 
         #TODO - expand to handle deleting other types
         """
-        delete_expense(self.action[1], self.db)
-        self.action[2].refresh_table()
-        self.destroy()
+        if self.action[0] == "Expense":
+            delete_expense(self.action[1], self.db)
+            self.action[2].refresh_table()
+            self.destroy()
+        elif self.action[0] == "Category":
+            print("fsfd")
+        elif self.action[0] == "Payment Method":
+            print("ppay")
             

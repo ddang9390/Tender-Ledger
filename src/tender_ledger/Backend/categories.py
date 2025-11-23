@@ -27,12 +27,12 @@ def add_category(user_id, name, db):
     
 
 
-def update_category(user_id, name, db):
+def update_category(id, name, db):
     """
     Update a custom category for the user
 
     Arguments:
-        user_id (int): The user's id
+        id (int): The category's id
         name (string): The custom category's name
         db (DatabaseManager): Instance of database manager being used
 
@@ -41,6 +41,17 @@ def update_category(user_id, name, db):
               False if not
     """
     updated_at = datetime.now()
+
+    sql = """
+          UPDATE categories
+          SET
+            name = ?,
+            updated_at = ?
+          WHERE id = ?
+          """
+    val = (name, updated_at, id,)
+    return db.execute_statement(sql, val)
+
 
 def delete_category(id, db):
     """
@@ -112,6 +123,37 @@ def get_categories_for_list(user_id, db):
         
         return rows
 
+    except Exception as e:
+        print(e)
+        return []
+    
+def get_category(id, db):
+    """
+    Get a single category
+
+    Arguments:
+        id (int): ID of the category
+        db (DatabaseManager): Instance of database manager being used
+
+    Returns:
+        list: Contains a tuple that contains info about the category
+    """
+    select_clause = """
+                    SELECT
+                        id, name, user_id
+                    FROM
+                        categories
+                    """
+    where_clause = """
+                    WHERE
+                        id = ?
+                   """
+    val = [id,]
+
+    sql = select_clause + where_clause
+    try:
+        db.cur.execute(sql, val)
+        return db.cur.fetchall()
     except Exception as e:
         print(e)
         return []

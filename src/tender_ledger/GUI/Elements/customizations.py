@@ -5,6 +5,8 @@
 import customtkinter
 from ...Backend.categories import get_categories_for_list
 from ...Backend.payment_methods import get_payment_methods_for_list
+from ..Elements.confirmation_popup import ConfirmationPopup
+from ..Elements.add_popup import AddPopup
 from tkinter import ttk
 
 class Customizations(customtkinter.CTkFrame):
@@ -18,6 +20,7 @@ class Customizations(customtkinter.CTkFrame):
             db (DatabaseManager): Instance of database manager being used
         """
         super().__init__(parent)
+        self.parent = parent
         self.controller = controller
         self.db = db
 
@@ -44,9 +47,13 @@ class Customizations(customtkinter.CTkFrame):
         categories_frame = customtkinter.CTkFrame(self)
         categories_frame.grid(row=0, column=0, sticky="nsew")
 
-
+        # Label
         label = customtkinter.CTkLabel(categories_frame, text="Categories")
         label.grid(row=0, column=0)
+
+        # Add button
+        add_button = customtkinter.CTkButton(categories_frame, text="Add", command=lambda: self.display_popup("Category"))
+        add_button.grid(row=0, column=1, sticky="e")
 
         # Adding columns to table
         columns = ('name', 'edit', 'delete')
@@ -61,6 +68,9 @@ class Customizations(customtkinter.CTkFrame):
         self.category_table.column('name', width=150)
         self.category_table.column('edit', width=50, anchor="center")
         self.category_table.column('delete', width=50, anchor="center")
+
+        # Bind left click event
+        self.category_table.bind("<Button-1>", self.category_action_click)
 
         # Add categories to list
         if categories:
@@ -86,9 +96,12 @@ class Customizations(customtkinter.CTkFrame):
         methods_frame = customtkinter.CTkFrame(self)
         methods_frame.grid(row=0, column=1, sticky="nsew")
 
-
         label = customtkinter.CTkLabel(methods_frame, text="Payment Methods")
         label.grid(row=0, column=0)
+
+        # Add button
+        add_button = customtkinter.CTkButton(methods_frame, text="Add", command=lambda: self.display_popup("Payment Method"))
+        add_button.grid(row=0, column=1, sticky="e")
 
         # Adding columns to table
         columns = ('name', 'edit', 'delete')
@@ -103,6 +116,9 @@ class Customizations(customtkinter.CTkFrame):
         self.method_table.column('name', width=150)
         self.method_table.column('edit', width=50, anchor="center")
         self.method_table.column('delete', width=50, anchor="center")
+
+        # Bind left click event
+        self.method_table.bind("<Button-1>", self.method_action_click)
 
         # Add methods to list
         if methods:
@@ -124,3 +140,87 @@ class Customizations(customtkinter.CTkFrame):
         """
         for child in self.winfo_children():
             child.destroy()
+
+
+    # TODO - REFACTOR THIS - IT'S A COPIED AND PASTED FUNCTION
+    def category_action_click(self, event):
+        """
+        Handles on click events for the table. User should be clicking on the values in the 
+        Action column for this to work. Edit and delete functionality will depend on which half
+        of the cell the user clicks on
+        """
+        # Get coordinates of event click
+        x = event.x
+        y = event.y
+
+        # Get region of event and return if not a cell
+        region = self.category_table.identify_region(x, y)
+        if region != "cell": return
+
+        # Get column
+        col_index = self.category_table.identify_column(x)
+        col = self.category_table.column(col_index)
+
+        if col["id"] == "edit" or col["id"] == "delete":
+            # Get expense id
+            category_id = int(self.category_table.identify_row(y))
+
+            if col["id"] == "edit":
+                self.display_popup("Category", editing=category_id)
+            else:
+                # Display confirmation popup before deleting expense
+                deleting = ("Category", category_id, self)
+                self.display_popup("Category",deleting=deleting)
+
+    def method_action_click(self, event):
+        """
+        Handles on click events for the table. User should be clicking on the values in the 
+        Action column for this to work. Edit and delete functionality will depend on which half
+        of the cell the user clicks on
+        """
+        # Get coordinates of event click
+        x = event.x
+        y = event.y
+
+        # Get region of event and return if not a cell
+        region = self.category_table.identify_region(x, y)
+        if region != "cell": return
+
+        # Get column
+        col_index = self.category_table.identify_column(x)
+        col = self.category_table.column(col_index)
+
+        if col["id"] == "edit" or col["id"] == "delete":
+            # Get expense id
+            category_id = int(self.category_table.identify_row(y))
+
+            if col["id"] == "edit":
+                self.display_popup("Payment Method", editing=category_id)
+            else:
+                # Display confirmation popup before deleting expense
+                deleting = ("Payment Method", category_id, self)
+                self.display_popup("Payment Method", deleting=deleting)
+
+    def display_popup(self, action, deleting=None, editing=None):
+        """
+        Displays the popup for adding or deleting expenses
+
+        Argument:
+            action (String): Could be either 'Category' or 'Payment Method'
+            deleting (tuple): First element contains type being deleted, second contains ID
+            editing (int): Contains ID of expense to edit
+        """
+        if not deleting and not editing:
+            popup = AddPopup(self, self.controller, self.db, action)
+        elif editing:
+            popup = AddPopup(self, self.controller, self.db, action, editing=editing)
+        else:
+            popup = ConfirmationPopup(parent=self, controller=self.controller,db=self.db, action=deleting)
+
+        # Ensures that the popup is updated and visible before grabbing it
+        popup.update_idletasks()
+        popup.deiconify()
+
+        # Display the popup
+        popup.grab_set()
+        popup.wait_window(popup)
