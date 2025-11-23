@@ -65,7 +65,13 @@ def delete_category(id, db):
         bool: True if able to delete category
               False if not
     """
-    pass
+    sql = """
+            DELETE FROM categories
+            WHERE id = ?
+          """
+    val = (id,)
+
+    return db.execute_statement(sql, val)
 
 def get_categories_for_user(user_id, db):
     """

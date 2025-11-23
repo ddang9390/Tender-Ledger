@@ -210,6 +210,7 @@ class Customizations(customtkinter.CTkFrame):
             deleting (tuple): First element contains type being deleted, second contains ID
             editing (int): Contains ID of expense to edit
         """
+        # TODO - fix adding
         if not deleting and not editing:
             popup = AddPopup(self, self.controller, self.db, action)
         elif editing:

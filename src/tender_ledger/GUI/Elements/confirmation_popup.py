@@ -4,6 +4,9 @@
 
 import customtkinter
 from ...Backend.expenses import delete_expense
+from ...Backend.categories import delete_category
+from ...Backend.payment_methods import delete_payment_method
+
 
 # Defining constants, change title depending on type of page popup is from
 TITLES = {
@@ -83,9 +86,12 @@ class ConfirmationPopup(customtkinter.CTkToplevel):
         if self.action[0] == "Expense":
             delete_expense(self.action[1], self.db)
             self.action[2].refresh_table()
-            self.destroy()
-        elif self.action[0] == "Category":
-            print("fsfd")
-        elif self.action[0] == "Payment Method":
-            print("ppay")
             
+        elif self.action[0] == "Category":
+            print(self.action)
+            delete_category(self.action[1], self.db)
+        elif self.action[0] == "Payment Method":
+            print(self.action)
+            delete_payment_method(self.action[1], self.db)
+
+        self.destroy()

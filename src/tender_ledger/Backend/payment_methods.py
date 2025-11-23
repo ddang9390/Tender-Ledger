@@ -62,7 +62,13 @@ def delete_payment_method(id, db):
         bool: True if able to delete payment method
               False if not
     """
-    pass
+    sql = """
+            DELETE FROM payment_methods
+            WHERE id = ?
+          """
+    val = (id,)
+
+    return db.execute_statement(sql, val)
 
 def get_payment_methods_for_user(user_id, db):
     """
