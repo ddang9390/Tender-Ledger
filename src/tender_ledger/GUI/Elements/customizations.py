@@ -3,8 +3,8 @@
 # Purpose - Handles the appearance of the customization section from the Profile page
 
 import customtkinter
-from ...Backend.categories import get_categories_for_user
-from ...Backend.payment_methods import get_payment_methods_for_user
+from ...Backend.categories import get_categories_for_list
+from ...Backend.payment_methods import get_payment_methods_for_list
 from tkinter import ttk
 
 class Customizations(customtkinter.CTkFrame):
@@ -39,7 +39,7 @@ class Customizations(customtkinter.CTkFrame):
         """
         Setup the Categories list
         """
-        categories = get_categories_for_user(self.user_id, self.db)
+        categories = get_categories_for_list(self.user_id, self.db)
 
         categories_frame = customtkinter.CTkFrame(self)
         categories_frame.grid(row=0, column=0, sticky="nsew")
@@ -63,12 +63,16 @@ class Customizations(customtkinter.CTkFrame):
         self.category_table.column('delete', width=50, anchor="center")
 
         # Add categories to list
-        # if categories:
-        #     for category in categories:
-        #         # category format: (id, name, user_id)
-        #         category_id = category[0]
-        #         category_name = category[1]
-        #         self.category_table.insert('', 'end', iid=category_id, values=(category_name, "Edit", "Delete"))
+        if categories:
+            for category in categories:
+                category_id = category[0]
+                category_name = category[1]
+                edit = ""
+                delete = ""
+                if category[2]:
+                    edit = "Edit"
+                    delete = "Delete"
+                self.category_table.insert('', 'end', iid=category_id, values=(category_name, edit, delete))
 
 
         self.category_table.grid(row=1, column=0, sticky="nsew")
@@ -77,7 +81,7 @@ class Customizations(customtkinter.CTkFrame):
         """
         Setup the Payment Methods list
         """
-        methods = get_payment_methods_for_user(self.user_id, self.db)
+        methods = get_payment_methods_for_list(self.user_id, self.db)
 
         methods_frame = customtkinter.CTkFrame(self)
         methods_frame.grid(row=0, column=1, sticky="nsew")
@@ -101,12 +105,16 @@ class Customizations(customtkinter.CTkFrame):
         self.method_table.column('delete', width=50, anchor="center")
 
         # Add methods to list
-        # if methods:
-        #     for method in methods:
-        #         # category format: (id, name, user_id)
-        #         method_id = method[0]
-        #         method_name = method[1]
-        #         self.method_table.insert('', 'end', iid=method_id, values=(method_name, "Edit", "Delete"))
+        if methods:
+            for method in methods:
+                method_id = method[0]
+                method_name = method[1]
+                edit = ""
+                delete = ""
+                if method[2]:
+                    edit = "Edit"
+                    delete = "Delete"
+                self.method_table.insert('', 'end', iid=method_id, values=(method_name, edit, delete))
         self.method_table.grid(row=1, column=0)
         
 

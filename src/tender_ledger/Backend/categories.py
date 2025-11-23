@@ -72,7 +72,7 @@ def get_categories_for_user(user_id, db):
     categories = {}
     try:
         sql = """
-                SELECT id, name 
+                SELECT id, name
                 FROM categories
                 WHERE user_id = ? OR user_id IS NULL
               """
@@ -88,3 +88,30 @@ def get_categories_for_user(user_id, db):
     except Exception as e:
         print(e)
         return categories
+    
+def get_categories_for_list(user_id, db):
+    """
+    Gets the categories for the Customizations tab from the Profile page
+
+    Arguments:
+        user_id (int): The user's id
+        db (DatabaseManager): Instance of database manager being used
+
+    Returns:
+        list: A list containing the category's id, name, and corresponding user id
+    """
+    try:
+        sql = """
+                SELECT id, name, user_id
+                FROM categories
+                WHERE user_id = ? OR user_id IS NULL
+              """
+        
+        db.cur.execute(sql, (user_id,))
+        rows = db.cur.fetchall()
+        
+        return rows
+
+    except Exception as e:
+        print(e)
+        return []

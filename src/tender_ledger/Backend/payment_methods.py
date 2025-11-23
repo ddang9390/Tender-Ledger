@@ -86,3 +86,30 @@ def get_payment_methods_for_user(user_id, db):
     except Exception as e:
         print(e)
         return payment_methods
+    
+def get_payment_methods_for_list(user_id, db):
+    """
+    Gets the payment methods for the Customizations tab from the Profile page
+
+    Arguments:
+        user_id (int): The user's id
+        db (DatabaseManager): Instance of database manager being used
+
+    Returns:
+        list: A list containing the method's id, name, and corresponding user id
+    """
+    try:
+        sql = """
+                SELECT id, name, user_id
+                FROM payment_methods
+                WHERE user_id = ? OR user_id IS NULL
+              """
+        
+        db.cur.execute(sql, (user_id,))
+        rows = db.cur.fetchall()
+        
+        return rows
+
+    except Exception as e:
+        print(e)
+        return []
