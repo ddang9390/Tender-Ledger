@@ -21,10 +21,6 @@ class Customizations(customtkinter.CTkFrame):
         self.controller = controller
         self.db = db
 
-        self.customizations_frame = customtkinter.CTkFrame(self)
-        self.customizations_frame.grid(row=0, column=0, sticky="nsew")
-        
-
     def set_user(self, user_id):
         """
         Fill in the fields using the user's info
@@ -32,44 +28,91 @@ class Customizations(customtkinter.CTkFrame):
         Argument:
             user_id (int): The user's ID
         """
+        self.clear_form()
         self.user_id = user_id
-        self.setup_lists()
 
-
-    def setup_lists(self):
-        """
-        Setup the lists for the Categories and Payment Methods
-        """
         self.setup_categories()
         self.setup_payment_methods()
+
 
     def setup_categories(self):
         """
         Setup the Categories list
         """
         categories = get_categories_for_user(self.user_id, self.db)
-        print(categories)
-        label = customtkinter.CTkLabel(self.customizations_frame, text="Categories")
+
+        categories_frame = customtkinter.CTkFrame(self)
+        categories_frame.grid(row=0, column=0, sticky="nsew")
+
+
+        label = customtkinter.CTkLabel(categories_frame, text="Categories")
         label.grid(row=0, column=0)
 
         # Adding columns to table
-        columns = ('date', 'amount', 'category', 'payment method', 'location', 'edit', 'delete')
-        self.category_table = ttk.Treeview(self.customizations_frame, columns=columns, show='headings')
+        columns = ('name', 'edit', 'delete')
+        self.category_table = ttk.Treeview(categories_frame, columns=columns, show='headings')
 
         # Add headers to columns
-        self.category_table.heading('date', text='Date')
-        self.category_table.heading('amount', text='Amount')
-        self.category_table.heading('category', text='Category')
-        self.category_table.heading('payment method', text='Payment Method')
-        self.category_table.heading('location', text='Location')
+        self.category_table.heading('name', text='Category')
         self.category_table.heading('edit', text="Edit")
         self.category_table.heading('delete', text="Delete")
+
+        # Control column width
+        self.category_table.column('name', width=150)
+        self.category_table.column('edit', width=50, anchor="center")
+        self.category_table.column('delete', width=50, anchor="center")
+
+        # Add categories to list
+        # if categories:
+        #     for category in categories:
+        #         # category format: (id, name, user_id)
+        #         category_id = category[0]
+        #         category_name = category[1]
+        #         self.category_table.insert('', 'end', iid=category_id, values=(category_name, "Edit", "Delete"))
+
+
+        self.category_table.grid(row=1, column=0, sticky="nsew")
 
     def setup_payment_methods(self):
         """
         Setup the Payment Methods list
         """
         methods = get_payment_methods_for_user(self.user_id, self.db)
-        print(methods)
-        label = customtkinter.CTkLabel(self.customizations_frame, text="Payment Methods")
-        label.grid(row=0, column=1)
+
+        methods_frame = customtkinter.CTkFrame(self)
+        methods_frame.grid(row=0, column=1, sticky="nsew")
+
+
+        label = customtkinter.CTkLabel(methods_frame, text="Payment Methods")
+        label.grid(row=0, column=0)
+
+        # Adding columns to table
+        columns = ('name', 'edit', 'delete')
+        self.method_table = ttk.Treeview(methods_frame, columns=columns, show='headings')
+
+        # Add headers to columns
+        self.method_table.heading('name', text='Payment Method')
+        self.method_table.heading('edit', text="Edit")
+        self.method_table.heading('delete', text="Delete")
+
+        # Control column width
+        self.method_table.column('name', width=150)
+        self.method_table.column('edit', width=50, anchor="center")
+        self.method_table.column('delete', width=50, anchor="center")
+
+        # Add methods to list
+        # if methods:
+        #     for method in methods:
+        #         # category format: (id, name, user_id)
+        #         method_id = method[0]
+        #         method_name = method[1]
+        #         self.method_table.insert('', 'end', iid=method_id, values=(method_name, "Edit", "Delete"))
+        self.method_table.grid(row=1, column=0)
+        
+
+    def clear_form(self):
+        """
+        Clear the frame holding the user form
+        """
+        for child in self.winfo_children():
+            child.destroy()

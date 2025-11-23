@@ -21,6 +21,9 @@ class ProfilePage(customtkinter.CTkFrame):
         self.controller = controller
         self.db = db
 
+        self.grid_rowconfigure(1, weight=1)
+        self.grid_columnconfigure(0, weight=1)
+
         label = customtkinter.CTkLabel(self, text="My Profile (CURRENTLY DEVELOPING)", font=self.controller.font_label)
         label.grid(row=0, column=0)
 
@@ -30,17 +33,18 @@ class ProfilePage(customtkinter.CTkFrame):
         self.tabview.add("Profile")
         self.tabview.add("Customization")
 
-        self.page_frame = customtkinter.CTkFrame(self.tabview.tab("Profile"))
-        self.page_frame.grid(row=0, column=0)
+        self.tabview.tab("Profile").grid_columnconfigure(0, weight=1)
+        self.tabview.tab("Profile").grid_rowconfigure(0, weight=1)
+        
+        self.tabview.tab("Customization").grid_columnconfigure(0, weight=1)
+        self.tabview.tab("Customization").grid_rowconfigure(0, weight=1)
 
-        self.customization_frame = customtkinter.CTkFrame(self.tabview.tab("Customization"))
-        self.customization_frame.grid(row=0, column=0)
 
-        self.user_form = UserForm(self.page_frame, self, self.db, None, None, False)
-        self.user_form.pack()
+        self.user_form = UserForm(self.tabview.tab("Profile"), self, self.db, None, None, False)
+        self.user_form.grid(row=0, column=0, sticky="nsew")
 
-        self.customizations = Customizations(self.customization_frame, self, self.db)
-        self.customizations.pack()
+        self.customizations = Customizations(self.tabview.tab("Customization"), self, self.db)
+        self.customizations.grid(row=0, column=0, sticky="nsew")
 
         self.tabview._segmented_button.configure(command=self.on_tab_changed)
 
@@ -70,15 +74,10 @@ class ProfilePage(customtkinter.CTkFrame):
 
     def on_tab_changed(self, event):
         if event == "Customization":
-            self.page_frame.grid_forget()
-            self.customization_frame.grid(row=0, column=0)
-
             self.customizations.set_user(self.user_id)
+            self.tabview.set("Customization")
             
         if event == "Profile":
-            self.customization_frame.grid_forget()
-            self.page_frame.grid(row=0, column=0)
-
             self.refresh_page(self.user_id)
         
 
