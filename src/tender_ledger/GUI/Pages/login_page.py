@@ -36,6 +36,7 @@ class LoginPage(customtkinter.CTkFrame):
         Argument:
             user_id (int): The user's id
         """
+        self.clear_form()
         self.user_id = user_id
 
         # Setup error message
@@ -53,7 +54,12 @@ class LoginPage(customtkinter.CTkFrame):
 
         self.setup_inputs()
 
-
+    def clear_form(self):
+        """
+        Clear the login page
+        """
+        for child in self.winfo_children():
+            child.destroy()
 
     def setup_inputs(self):
         """
