@@ -136,6 +136,7 @@ class AddPopup(customtkinter.CTkToplevel):
             self.error_message.show(0, 0, "Please fill in all required fields", col_span=2)
         else:
             if not editing:
+                print("not editing")
                 if self.action == 'Category':
                     add_category(self.controller.user_id, name, self.db)
                 elif self.action == 'Payment Method':
@@ -147,4 +148,5 @@ class AddPopup(customtkinter.CTkToplevel):
                     update_payment_method(editing, name, self.db)
 
             # TODO - refresh customizations table
+            self.parent.refresh()
             self.destroy()

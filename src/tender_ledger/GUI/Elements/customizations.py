@@ -31,8 +31,15 @@ class Customizations(customtkinter.CTkFrame):
         Argument:
             user_id (int): The user's ID
         """
-        self.clear_form()
         self.user_id = user_id
+        self.refresh()
+
+
+    def refresh(self):
+        """
+        Refreshes the Customizations tab
+        """
+        self.clear_form()
 
         self.setup_categories()
         self.setup_payment_methods()
@@ -183,22 +190,22 @@ class Customizations(customtkinter.CTkFrame):
         y = event.y
 
         # Get region of event and return if not a cell
-        region = self.category_table.identify_region(x, y)
+        region = self.method_table.identify_region(x, y)
         if region != "cell": return
 
         # Get column
-        col_index = self.category_table.identify_column(x)
-        col = self.category_table.column(col_index)
+        col_index = self.method_table.identify_column(x)
+        col = self.method_table.column(col_index)
 
         if col["id"] == "edit" or col["id"] == "delete":
             # Get expense id
-            category_id = int(self.category_table.identify_row(y))
+            method_id = int(self.method_table.identify_row(y))
 
             if col["id"] == "edit":
-                self.display_popup("Payment Method", editing=category_id)
+                self.display_popup("Payment Method", editing=method_id)
             else:
                 # Display confirmation popup before deleting expense
-                deleting = ("Payment Method", category_id, self)
+                deleting = ("Payment Method", method_id, self)
                 self.display_popup("Payment Method", deleting=deleting)
 
     def display_popup(self, action, deleting=None, editing=None):
@@ -210,11 +217,13 @@ class Customizations(customtkinter.CTkFrame):
             deleting (tuple): First element contains type being deleted, second contains ID
             editing (int): Contains ID of expense to edit
         """
-        # TODO - fix adding
+        # TODO - need scrollbars
         if not deleting and not editing:
             popup = AddPopup(self, self.controller, self.db, action)
+
         elif editing:
             popup = AddPopup(self, self.controller, self.db, action, editing=editing)
+
         else:
             popup = ConfirmationPopup(parent=self, controller=self.controller,db=self.db, action=deleting)
 
