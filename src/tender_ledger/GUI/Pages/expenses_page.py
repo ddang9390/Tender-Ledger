@@ -10,6 +10,7 @@ from ..Elements.confirmation_popup import ConfirmationPopup
 from ..Elements.filter_section import FilterSection 
 from ...Backend.categories import get_categories_for_user
 from ...Backend.payment_methods import get_payment_methods_for_user
+from ...Backend.csv_utils import download_expenses_csv, import_expenses_csv
 
 class ExpensesPage(customtkinter.CTkFrame):
     def __init__(self, parent, controller, db):
@@ -30,7 +31,6 @@ class ExpensesPage(customtkinter.CTkFrame):
         self.grid_rowconfigure(2, weight=1)
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=1)
-
  
         
     def refresh_page(self, user_id):
@@ -50,17 +50,20 @@ class ExpensesPage(customtkinter.CTkFrame):
         label = customtkinter.CTkLabel(self, text="My Expenses", font=self.controller.font_label)
         label.grid(row=0, column=0, sticky="w")
 
+        download_button = customtkinter.CTkButton(self, text="Download", command=self.download_csv)
+        download_button.grid(row=0, column=1, sticky="e")
+
         add_button = customtkinter.CTkButton(self, text="Add", command=self.display_popup)
-        add_button.grid(row=0, column=1, sticky="e")
+        add_button.grid(row=0, column=2, sticky="e")
 
         # Creating filter section
         self.filter_frame = customtkinter.CTkFrame(self)
-        self.filter_frame.grid(row=1, column=0, columnspan=2, pady=20, sticky="nsew")
+        self.filter_frame.grid(row=1, column=0, columnspan=3, pady=20, sticky="nsew")
         self.filter_section = FilterSection(self.filter_frame, self, True)
 
         # Creating table
         self.expense_table_frame = customtkinter.CTkFrame(self) 
-        self.expense_table_frame.grid(row=2, column=0, columnspan=2, sticky="nsew")
+        self.expense_table_frame.grid(row=2, column=0, columnspan=3, sticky="nsew")
         self.expense_table = ExpenseTable(self.expense_table_frame, self, self.filter_section, self.db)
 
     def display_popup(self, deleting=None, editing=None):
@@ -88,4 +91,22 @@ class ExpensesPage(customtkinter.CTkFrame):
         popup.wait_window(popup)
 
     def refresh_table(self):
+        """
+        Refresh the expenses table
+        """
         self.expense_table.refresh_table()
+
+    def download_csv(self):
+        """
+        Downloads a csv file using the expenses in the table
+        """
+        # Remove the last values from the expenses which were their ids
+        to_download = [expense[:-1] for expense in self.expense_table.expenses]
+
+        download_expenses_csv(to_download)
+
+    def import_csv(self):
+        """
+        Import a csv file and add them to the user's expenses
+        """
+        print("importing")

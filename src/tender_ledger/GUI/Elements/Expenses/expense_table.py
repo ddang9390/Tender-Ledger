@@ -27,7 +27,7 @@ class ExpenseTable():
 
         # Setting page options
         self.current_page = 1
-        self.options_per_page = 5
+        self.options_per_page = 10
 
         # Creating table and pagination options
         self.create_table()
