@@ -101,7 +101,12 @@ class ExpensesPage(customtkinter.CTkFrame):
         Downloads a csv file using the expenses in the table
         """
         # Remove the last values from the expenses which were their ids
-        to_download = [expense[:-1] for expense in self.expense_table.expenses]
+        to_download = [list(expense[:-1]) for expense in self.expense_table.expenses]
+
+        # Formatting data by reordering the columns
+        for expense in to_download:
+            expense[0], expense[1] = expense[1], expense[0]
+            expense[2], expense[3] = expense[3], expense[2]
 
         download_expenses_csv(to_download)
 
