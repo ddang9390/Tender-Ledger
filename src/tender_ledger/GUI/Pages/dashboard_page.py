@@ -6,6 +6,7 @@ import customtkinter
 import platform
 from ...Backend.expenses import get_expenses_for_user, get_total_spending
 from ...Backend.dashboard import generate_pie_charts, generate_line_plot
+from ..Elements.filter_section import FilterSection
 
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
@@ -24,12 +25,20 @@ class DashboardPage(customtkinter.CTkFrame):
         self.db = db
 
         # Have elements in main container expand properly
-        self.grid_rowconfigure(2, weight=1)
+        self.grid_rowconfigure(3, weight=1)
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=1)
 
         # Detect OS for custom scrolling
         self.is_linux = platform.system() in ["Linux"]
+
+        self.start_date = None
+        self.end_date = None
+
+        # Create Filter Section
+        self.filter_frame = customtkinter.CTkFrame(self)
+        self.filter_frame.grid(row=1, column=0, columnspan=2, sticky="nsew")
+        self.filter_section = FilterSection(self.filter_frame, self)
 
         
     def refresh_page(self, user_id):
@@ -40,14 +49,11 @@ class DashboardPage(customtkinter.CTkFrame):
             user_id (int): The user's id
         """
         self.user_id = user_id
-        self.expenses = get_expenses_for_user(self.user_id, self.db)
+        self.expenses = get_expenses_for_user(self.user_id, self.db, start_date=self.start_date, end_date=self.end_date)
 
         # Header
         label = customtkinter.CTkLabel(self, text="Dashboard", font=self.controller.font_label)
-        label.grid(row=0, column=0, columnspan=2,sticky="nsew")
-
-        # Filter Section
-        # TODO - make date range filters
+        label.grid(row=0, column=0, columnspan=2, sticky="nsew")
 
         # Summary Row
         self.create_summary_section()
@@ -62,13 +68,21 @@ class DashboardPage(customtkinter.CTkFrame):
         self.summary_frame = customtkinter.CTkFrame(self)
 
         # Display Total Spending label
-        # TODO - integrate start and end dates when search section is complete
-        total = get_total_spending(self.user_id, self.db)
+        total = get_total_spending(self.user_id, self.db, self.start_date, self.end_date)
 
         total_spending_label = customtkinter.CTkLabel(self.summary_frame, text=f"Total Spending: ${total:.2f}", font=self.controller.font_label)
-        total_spending_label.pack(side="left")
+        total_spending_label.grid(row=0, column=0)
 
-        self.summary_frame.grid(row=1, column=0, columnspan=2,sticky="nsew")
+        self.summary_frame.grid(row=2, column=0, columnspan=2,sticky="nsew")
+
+    def filter_page(self):
+        """
+        Filters the dashboard page
+        """
+        self.start_date = self.filter_section.start_date.get_date()
+        self.end_date = self.filter_section.end_date.get_date()
+
+        self.refresh_page(self.user_id)
 
     def create_chart_section(self):
         """
@@ -78,7 +92,7 @@ class DashboardPage(customtkinter.CTkFrame):
         # Generate pie charts
         category_pie, payment_method_pie = generate_pie_charts(self.expenses)
         self.chart_frame = customtkinter.CTkScrollableFrame(self)
-        self.chart_frame.grid(row=2, column=0, columnspan=2, sticky="nsew")
+        self.chart_frame.grid(row=3, column=0, columnspan=2, sticky="nsew")
 
         # Allow for columns in frame to be able to expand to fit in frame
         self.chart_frame.grid_columnconfigure(0, weight=1)
@@ -91,7 +105,7 @@ class DashboardPage(customtkinter.CTkFrame):
 
         # Display category pie chart
         category_chart_container = customtkinter.CTkFrame(self.chart_frame)
-        category_chart_container.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
+        category_chart_container.grid(row=0, column=0, padx=10)
 
         category_pie_chart = FigureCanvasTkAgg(figure=category_pie, master=category_chart_container)
         category_pie_chart.get_tk_widget().pack()
@@ -99,7 +113,7 @@ class DashboardPage(customtkinter.CTkFrame):
 
         # Display payment method pie chart
         payment_container = customtkinter.CTkFrame(self.chart_frame)
-        payment_container.grid(row=0, column=1, padx=10, pady=10, sticky="nsew")
+        payment_container.grid(row=0, column=1, padx=10,  sticky="nsew")
 
         payment_method_pie_chart = FigureCanvasTkAgg(figure=payment_method_pie, master=payment_container)
         payment_method_pie_chart.get_tk_widget().pack()
@@ -144,3 +158,5 @@ class DashboardPage(customtkinter.CTkFrame):
         # Scrolling down
         elif event.num == 5 or event.delta < 0:
             self.chart_frame._parent_canvas.yview_scroll(1, "units")
+
+    

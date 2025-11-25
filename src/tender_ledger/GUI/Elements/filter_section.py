@@ -23,6 +23,9 @@ class FilterSection:
         self.input_frame = customtkinter.CTkFrame(self.parent)
         self.input_frame.pack()
 
+        # Different search commands
+        self.refresh_command = self.controller.refresh_table if self.for_expenses else self.controller.filter_page
+
         self.create_filter_section()
         
 
@@ -74,7 +77,7 @@ class FilterSection:
             self.search_bar.grid(row=1, column=4)
 
         # Search button
-        search_button = customtkinter.CTkButton(self.input_frame, text="Search", command=self.controller.refresh_table, width=100)
+        search_button = customtkinter.CTkButton(self.input_frame, text="Search", command=self.refresh_command, width=100)
         search_button.grid(row=1, column=5)
 
         # Reset button
