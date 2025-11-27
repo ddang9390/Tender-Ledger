@@ -25,7 +25,7 @@ class ProfilePage(customtkinter.CTkFrame):
         self.grid_rowconfigure(1, weight=1)
         self.grid_columnconfigure(0, weight=1)
 
-        label = customtkinter.CTkLabel(self, text="My Profile (CURRENTLY DEVELOPING)", font=self.controller.font_label)
+        label = customtkinter.CTkLabel(self, text="My Profile", font=self.controller.font_label)
         label.grid(row=0, column=0)
 
         self.tabview = customtkinter.CTkTabview(self)

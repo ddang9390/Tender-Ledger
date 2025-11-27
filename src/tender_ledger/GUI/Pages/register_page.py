@@ -83,6 +83,7 @@ class RegisterPage(customtkinter.CTkFrame):
         else:
             password = hash_password(password)
             add_user(username, password, first_name, last_name, birthday, email, phone, self.db)
+            self.controller.show_message("Successfully registered user")
             self.controller.show_page("LoginPage")
 
     def login(self):

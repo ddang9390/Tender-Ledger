@@ -136,15 +136,20 @@ class AddPopup(customtkinter.CTkToplevel):
             self.error_message.show(0, 0, "Please fill in all required fields", col_span=2)
         else:
             if not editing:
+                # TODO - handle duplicate names
                 if self.action == 'Category':
                     add_category(self.controller.user_id, name, self.db)
+                    self.controller.controller.show_message("Successfully added category")
                 elif self.action == 'Payment Method':
                     add_payment_method(self.controller.user_id, name, self.db)
+                    self.controller.controller.show_message("Successfully added payment method")
             else:
                 if self.action == 'Category':
                     update_category(editing, name, self.db)
+                    self.controller.controller.show_message("Successfully updated category")
                 elif self.action == 'Payment Method':
                     update_payment_method(editing, name, self.db)
+                    self.controller.controller.show_message("Successfully updated payment method")
 
             self.parent.refresh()
             self.destroy()

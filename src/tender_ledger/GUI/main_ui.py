@@ -3,21 +3,20 @@
 # Purpose - Acts as the main window for the project
 
 import customtkinter
-from pathlib import Path
+
 from .Pages.expenses_page import ExpensesPage
 from .Pages.dashboard_page import DashboardPage
 from .Pages.profile_page import ProfilePage  
 from .Pages.login_page import LoginPage
 from .Pages.register_page import RegisterPage
 from .Elements.navbar import NavBar
+from .Elements.notification import Notification
 from ..Backend.path_utils import get_theme_path
 
 # Constants (might allow for custom resolutions later)
 RESOLUTION_WIDTH = 1100
 RESOLUTION_HEIGHT = 580
 
-#ROOT_DIR = Path(__file__).parent
-#THEME_FILE = ROOT_DIR / 'theme.json'
 
 class App(customtkinter.CTk):
     def __init__(self, db):
@@ -42,7 +41,6 @@ class App(customtkinter.CTk):
         self.title("Tender Ledger")
         self.center_window()
 
-        #self.user_id = -1
         self.user_id = None
         self.navbar = NavBar(self, self, self.db)
 
@@ -66,6 +64,9 @@ class App(customtkinter.CTk):
         self.show_page("LoginPage")
 
     def show_navbar(self):
+        """
+        Displays the navbar
+        """
         self.navbar.grid(row=0, column=0, sticky="nsw")
 
     def show_page(self, page):
@@ -92,6 +93,13 @@ class App(customtkinter.CTk):
         p.refresh_page(self.user_id)
         p.grid(row=0, column=1, sticky="nsew")
         p.tkraise()
+
+    def show_message(self, message):
+        """
+        Displays a notification popup
+        """
+        Notification(self, message)
+
 
     def center_window(self):
         """

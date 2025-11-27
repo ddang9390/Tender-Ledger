@@ -110,6 +110,8 @@ class ExpensesPage(customtkinter.CTkFrame):
 
         download_expenses_csv(to_download)
 
+        self.controller.show_message("Successfully downloaded expenses")
+
     def import_csv(self):
         """
         Import a csv file and add them to the user's expenses
