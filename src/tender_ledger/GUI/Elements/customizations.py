@@ -150,6 +150,7 @@ class Customizations(customtkinter.CTkFrame):
 
 
     # TODO - REFACTOR THIS - IT'S A COPIED AND PASTED FUNCTION
+    # TODO - affects rows without edit and delete text as well
     def category_action_click(self, event):
         """
         Handles on click events for the table. User should be clicking on the values in the 

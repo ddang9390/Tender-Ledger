@@ -3,14 +3,13 @@
 # Purpose - Contains test cases for ensuring that the code in the project works properly
 
 import unittest
+import datetime
 from src.tender_ledger.Backend.database import *
 from src.tender_ledger.Backend.categories import *
 from src.tender_ledger.Backend.expenses import *
 from src.tender_ledger.Backend.payment_methods import *
 from src.tender_ledger.Backend.users import *
 
-TEST_DB_NAME = "test_tender_ledger.db"
-TEST_DB_PATH = DB_DIR + "/" + TEST_DB_NAME
 
 #TODO - break apart into multiple test files
 class Tests(unittest.TestCase):
@@ -27,9 +26,14 @@ class Tests(unittest.TestCase):
         self.db.clear_tables()
         username = "username"
         password = "123456"
+        first_name = "first"
+        last_name = "last"
+        birthday = datetime.now()
+        email = "ee@e.com"
+        phone = 1234567890
 
         try:
-            result = add_user(username, password, self.db)
+            result = add_user(username, password, first_name, last_name, birthday, email, phone, self.db)
             delete_user(username, self.db)
 
             self.assertTrue(result)
@@ -43,10 +47,15 @@ class Tests(unittest.TestCase):
         self.db.clear_tables()
         username = "duplicate"
         password = "123456"
+        first_name = "first"
+        last_name = "last"
+        birthday = datetime.now()
+        email = "ee@e.com"
+        phone = 1234567890
 
         try:
-            result = add_user(username, password, self.db)
-            result = add_user(username, password, self.db)
+            result = add_user(username, password, first_name, last_name, birthday, email, phone, self.db)
+            result = add_user(username, password, first_name, last_name, birthday, email, phone, self.db)
 
             self.assertFalse(result)
         except Exception as e:
@@ -71,9 +80,14 @@ class Tests(unittest.TestCase):
         self.db.clear_tables()
         username = "delete_me"
         password = "123456"
+        first_name = "first"
+        last_name = "last"
+        birthday = datetime.now()
+        email = "ee@e.com"
+        phone = 1234567890
 
         try:
-            result = add_user(username, password, self.db)
+            result = add_user(username, password, first_name, last_name, birthday, email, phone, self.db)
             result = delete_user(username, self.db)
 
             self.assertTrue(result)
@@ -246,8 +260,6 @@ class Tests(unittest.TestCase):
         """
         Tests if the expense can be added properly
         """
-        con = sqlite3.connect(TEST_DB_PATH)
-        cur = con.cursor()
         self.db.clear_tables()
 
         # Parameters for test expense
@@ -260,7 +272,7 @@ class Tests(unittest.TestCase):
 
         try:
             result = add_expense(user_id,amount, date_of_purchase, payment_method_id, category_id, location, self.db)
-            con.close()
+
 
             self.assertTrue(result)
         except Exception as e:

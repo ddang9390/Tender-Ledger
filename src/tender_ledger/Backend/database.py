@@ -89,11 +89,13 @@ class DatabaseManager:
                     CREATE TABLE IF NOT EXISTS categories(
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
                         user_id INTEGER,
-                        name TEXT UNIQUE NOT NULL,
+                        name TEXT NOT NULL,
                         created_at DATETIME,
                         updated_at DATETIME,
                     
-                        FOREIGN KEY (user_id) REFERENCES users(id)
+                        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+                        
+                        UNIQUE(user_id, name)
                     )
                     """)
         self.con.commit()
@@ -110,11 +112,13 @@ class DatabaseManager:
                     CREATE TABLE IF NOT EXISTS payment_methods(
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
                         user_id INTEGER,
-                        name TEXT UNIQUE NOT NULL,
+                        name TEXT NOT NULL,
                         created_at DATETIME,
                         updated_at DATETIME,
                     
-                        FOREIGN KEY (user_id) REFERENCES users(id)
+                        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+                         
+                        UNIQUE(user_id, name)
                     )
                     """)
         self.con.commit()
@@ -138,9 +142,9 @@ class DatabaseManager:
                         created_at DATETIME,
                         updated_at DATETIME,
                     
-                        FOREIGN KEY (user_id) REFERENCES users(id),
-                        FOREIGN KEY (payment_method_id) REFERENCES payment_methods(id),
-                        FOREIGN KEY (category_id) REFERENCES categories(id)
+                        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+                        FOREIGN KEY (payment_method_id) REFERENCES payment_methods(id) ON DELETE SET NULL,
+                        FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL
                     )
                     """)
         self.con.commit()

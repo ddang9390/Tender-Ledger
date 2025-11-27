@@ -138,18 +138,30 @@ class AddPopup(customtkinter.CTkToplevel):
             if not editing:
                 # TODO - handle duplicate names
                 if self.action == 'Category':
-                    add_category(self.controller.user_id, name, self.db)
-                    self.controller.controller.show_message("Successfully added category")
+                    if add_category(self.controller.user_id, name, self.db):
+                        self.controller.controller.show_message("Successfully added category")
+                    else:
+                        self.controller.controller.show_message("Name already exists")
+                        return
                 elif self.action == 'Payment Method':
-                    add_payment_method(self.controller.user_id, name, self.db)
-                    self.controller.controller.show_message("Successfully added payment method")
+                    if add_payment_method(self.controller.user_id, name, self.db):
+                        self.controller.controller.show_message("Successfully added payment method")
+                    else:
+                        self.controller.controller.show_message("Name already exists")
+                        return
             else:
                 if self.action == 'Category':
-                    update_category(editing, name, self.db)
-                    self.controller.controller.show_message("Successfully updated category")
+                    if update_category(editing, name, self.db):
+                        self.controller.controller.show_message("Successfully updated category")
+                    else:
+                        self.controller.controller.show_message("Name already exists")
+                        return
                 elif self.action == 'Payment Method':
-                    update_payment_method(editing, name, self.db)
-                    self.controller.controller.show_message("Successfully updated payment method")
+                    if update_payment_method(editing, name, self.db):
+                        self.controller.controller.show_message("Successfully updated payment method")
+                    else:
+                        self.controller.controller.show_message("Name already exists")
+                        return
 
             self.parent.refresh()
             self.destroy()
