@@ -77,7 +77,7 @@ class Customizations(customtkinter.CTkFrame):
         self.category_table.column('delete', width=50, anchor="center")
 
         # Bind left click event
-        self.category_table.bind("<Button-1>", self.category_action_click)
+        self.category_table.bind("<Button-1>", lambda event: self.action_click(event, True))
 
         # Add categories to list
         if categories:
@@ -90,7 +90,6 @@ class Customizations(customtkinter.CTkFrame):
                     edit = "Edit"
                     delete = "Delete"
                 self.category_table.insert('', 'end', iid=category_id, values=(category_name, edit, delete))
-
 
         self.category_table.grid(row=1, column=0, sticky="nsew")
 
@@ -125,7 +124,7 @@ class Customizations(customtkinter.CTkFrame):
         self.method_table.column('delete', width=50, anchor="center")
 
         # Bind left click event
-        self.method_table.bind("<Button-1>", self.method_action_click)
+        self.method_table.bind("<Button-1>", lambda event: self.action_click(event, False))
 
         # Add methods to list
         if methods:
@@ -148,66 +147,50 @@ class Customizations(customtkinter.CTkFrame):
         for child in self.winfo_children():
             child.destroy()
 
-
-    # TODO - REFACTOR THIS - IT'S A COPIED AND PASTED FUNCTION
-    # TODO - affects rows without edit and delete text as well
-    def category_action_click(self, event):
+    def action_click(self, event, is_category):
         """
         Handles on click events for the table. User should be clicking on the values in the 
         Action column for this to work. Edit and delete functionality will depend on which half
         of the cell the user clicks on
+
+        Arguments:
+            event: Key press event for clicking the mouse
+            is_category (bool): True if the table is for categories
+                                False if the table is for payment methods
         """
+        # Assign variables depending on type of table
+        table = self.category_table if is_category else self.method_table
+        popup_type = "Category" if is_category else "Payment Method"
+
         # Get coordinates of event click
         x = event.x
         y = event.y
 
         # Get region of event and return if not a cell
-        region = self.category_table.identify_region(x, y)
+        region = table.identify_region(x, y)
         if region != "cell": return
 
         # Get column
-        col_index = self.category_table.identify_column(x)
-        col = self.category_table.column(col_index)
+        col_index = table.identify_column(x)
+        col = table.column(col_index)
 
         if col["id"] == "edit" or col["id"] == "delete":
-            # Get expense id
-            category_id = int(self.category_table.identify_row(y))
+            id = int(table.identify_row(y))
+
+            # Return if the cell is not 'Edit' or 'Delete'
+            cell_value = table.set(id, col["id"])
+            if not cell_value or cell_value.strip() == "":
+                return
 
             if col["id"] == "edit":
-                self.display_popup("Category", editing=category_id)
+                self.display_popup(popup_type, editing=id)
+
             else:
                 # Display confirmation popup before deleting expense
-                deleting = ("Category", category_id, self)
-                self.display_popup("Category",deleting=deleting)
+                deleting = (popup_type, id, self)
+                self.display_popup(popup_type,deleting=deleting)
 
-    def method_action_click(self, event):
-        """
-        Handles on click events for the table. User should be clicking on the values in the 
-        Action column for this to work. Edit and delete functionality will depend on which half
-        of the cell the user clicks on
-        """
-        # Get coordinates of event click
-        x = event.x
-        y = event.y
 
-        # Get region of event and return if not a cell
-        region = self.method_table.identify_region(x, y)
-        if region != "cell": return
-
-        # Get column
-        col_index = self.method_table.identify_column(x)
-        col = self.method_table.column(col_index)
-
-        if col["id"] == "edit" or col["id"] == "delete":
-            # Get expense id
-            method_id = int(self.method_table.identify_row(y))
-
-            if col["id"] == "edit":
-                self.display_popup("Payment Method", editing=method_id)
-            else:
-                # Display confirmation popup before deleting expense
-                deleting = ("Payment Method", method_id, self)
-                self.display_popup("Payment Method", deleting=deleting)
 
     def display_popup(self, action, deleting=None, editing=None):
         """
