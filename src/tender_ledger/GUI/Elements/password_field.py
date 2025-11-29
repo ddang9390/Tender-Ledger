@@ -25,13 +25,12 @@ class PasswordField(customtkinter.CTkFrame):
         """
         Setup the password field and the toggle button
         """
-        self.password = customtkinter.CTkEntry(self, show="*")
-        self.password.grid(row=0, column=0)
+        self.password = customtkinter.CTkEntry(self, show="*", width=250)
+        self.password.grid(row=0, column=0 )
         self.password.bind('<Return>', self.command)
 
-        # TODO - replace text with show/hide image
-        self.password_reveal = customtkinter.CTkButton(self, text="Show Password", command=self.show_hide_password)
-        self.password_reveal.grid(row=0, column=1)
+        self.password_reveal = customtkinter.CTkButton(self, text="👁", command=self.show_hide_password, width=50, font=("Arial", 16))
+        self.password_reveal.grid(row=0, column=1, sticky="ew")
 
     def show_hide_password(self):
         """
@@ -39,11 +38,11 @@ class PasswordField(customtkinter.CTkFrame):
         """
         if not self.showing:
             self.password.configure(show="")
-            self.password_reveal.configure(text="Hide Password")
+            self.password_reveal.configure(text="🔒")
             self.showing = True
         else:
             self.password.configure(show="*")
-            self.password_reveal.configure(text="Show Password")
+            self.password_reveal.configure(text="👁")
             self.showing = False
 
     def get(self):
