@@ -163,3 +163,34 @@ def get_category(id, db):
     except Exception as e:
         print(e)
         return []
+    
+def get_category_by_name(name, db):
+        """
+        Get a single category
+
+        Arguments:
+            name (string): Name of the category
+            db (DatabaseManager): Instance of database manager being used
+
+        Returns:
+            list: Contains a tuple that contains info about the category
+        """
+        select_clause = """
+                        SELECT
+                            id, name, user_id
+                        FROM
+                            categories
+                        """
+        where_clause = """
+                        WHERE
+                            name = ?
+                    """
+        val = [name,]
+
+        sql = select_clause + where_clause
+        try:
+            db.cur.execute(sql, val)
+            return db.cur.fetchall()
+        except Exception as e:
+            print(e)
+            return []

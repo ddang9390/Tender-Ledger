@@ -100,6 +100,7 @@ def get_payment_methods_for_user(user_id, db):
         return payment_methods
 
     except Exception as e:
+        print("fsdfd")
         print(e)
         return payment_methods
     
@@ -153,6 +154,37 @@ def get_payment_method(id, db):
                         id = ?
                    """
     val = [id,]
+
+    sql = select_clause + where_clause
+    try:
+        db.cur.execute(sql, val)
+        return db.cur.fetchall()
+    except Exception as e:
+        print(e)
+        return []
+    
+def get_payment_method_by_name(name, db):
+    """
+    Get a single payment method
+
+    Arguments:
+        name (string): Name of the payment method
+        db (DatabaseManager): Instance of database manager being used
+
+    Returns:
+        list: Contains a tuple that contains info about the payment method
+    """
+    select_clause = """
+                    SELECT
+                        id, name, user_id
+                    FROM
+                        payment_methods
+                    """
+    where_clause = """
+                    WHERE
+                        name = ?
+                   """
+    val = [name,]
 
     sql = select_clause + where_clause
     try:

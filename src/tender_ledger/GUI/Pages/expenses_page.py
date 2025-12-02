@@ -10,7 +10,7 @@ from ..Elements.confirmation_popup import ConfirmationPopup
 from ..Elements.filter_section import FilterSection 
 from ...Backend.categories import get_categories_for_user
 from ...Backend.payment_methods import get_payment_methods_for_user
-from ...Backend.csv_utils import download_expenses_csv, import_expenses_csv
+from ...Backend.csv_utils import download_expenses_csv, open_file
 
 class ExpensesPage(customtkinter.CTkFrame):
     def __init__(self, parent, controller, db):
@@ -50,20 +50,23 @@ class ExpensesPage(customtkinter.CTkFrame):
         label = customtkinter.CTkLabel(self, text="My Expenses", font=self.controller.font_label)
         label.grid(row=0, column=0, sticky="w")
 
+        import_button = customtkinter.CTkButton(self, text="Import", command=self.import_csv)
+        import_button.grid(row=0, column=0, sticky="e")
+
         download_button = customtkinter.CTkButton(self, text="Download", command=self.download_csv)
         download_button.grid(row=0, column=1, sticky="e")
 
         add_button = customtkinter.CTkButton(self, text="Add", command=self.display_popup)
-        add_button.grid(row=0, column=2, sticky="e")
+        add_button.grid(row=0, column=3, sticky="e")
 
         # Creating filter section
         self.filter_frame = customtkinter.CTkFrame(self)
-        self.filter_frame.grid(row=1, column=0, columnspan=3, pady=20, sticky="nsew")
+        self.filter_frame.grid(row=1, column=0, columnspan=4, pady=20, sticky="nsew")
         self.filter_section = FilterSection(self.filter_frame, self, True)
 
         # Creating table
         self.expense_table_frame = customtkinter.CTkFrame(self) 
-        self.expense_table_frame.grid(row=2, column=0, columnspan=3, sticky="nsew")
+        self.expense_table_frame.grid(row=2, column=0, columnspan=4, sticky="nsew")
         self.expense_table = ExpenseTable(self.expense_table_frame, self, self.filter_section, self.db)
 
     def display_popup(self, deleting=None, editing=None):
@@ -116,4 +119,9 @@ class ExpensesPage(customtkinter.CTkFrame):
         """
         Import a csv file and add them to the user's expenses
         """
-        print("importing")
+        if open_file(self.user_id, self.db):
+            print("success")
+            self.refresh_page(self.user_id)
+
+        else:
+            print("failure")
