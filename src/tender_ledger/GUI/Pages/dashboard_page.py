@@ -5,7 +5,7 @@
 import customtkinter
 import platform
 from ...Backend.expenses import get_expenses_for_user, get_total_spending
-from ...Backend.dashboard import generate_pie_charts, generate_line_plot
+from ...Backend.dashboard import generate_pie_charts, generate_line_plot, generate_bar_chart
 from ..Elements.filter_section import FilterSection
 
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
@@ -73,6 +73,11 @@ class DashboardPage(customtkinter.CTkFrame):
         total_spending_label = customtkinter.CTkLabel(self.summary_frame, text=f"Total Spending: ${total:.2f}", font=self.controller.font_label)
         total_spending_label.grid(row=0, column=0)
 
+        # Display Total Number of Purchases
+        total_purchases = len(self.expenses)
+        total_purchases_label = customtkinter.CTkLabel(self.summary_frame, text=f"Total Purchases: {total_purchases}", font=self.controller.font_label)
+        total_purchases_label.grid(row=0, column=1, padx=20)
+
         self.summary_frame.grid(row=2, column=0, columnspan=2,sticky="nsew")
 
     def filter_page(self):
@@ -103,9 +108,17 @@ class DashboardPage(customtkinter.CTkFrame):
             self.chart_frame.bind("<Enter>", lambda event: self.bind_mousewheel())
             self.chart_frame.bind("<Leave>", lambda event: self.unbind_mousewheel())
 
+        # Display line graph
+        line_container = customtkinter.CTkFrame(self.chart_frame)
+        line_container.grid(row=0, column=0, sticky="nsew")
+        
+        line_plot = generate_line_plot(self.expenses)
+        line_plot_chart = FigureCanvasTkAgg(figure=line_plot, master=line_container)
+        line_plot_chart.get_tk_widget().pack()
+
         # Display category pie chart
         category_chart_container = customtkinter.CTkFrame(self.chart_frame)
-        category_chart_container.grid(row=0, column=0, padx=10)
+        category_chart_container.grid(row=0, column=1, padx=10)
 
         category_pie_chart = FigureCanvasTkAgg(figure=category_pie, master=category_chart_container)
         category_pie_chart.get_tk_widget().pack()
@@ -113,18 +126,20 @@ class DashboardPage(customtkinter.CTkFrame):
 
         # Display payment method pie chart
         payment_container = customtkinter.CTkFrame(self.chart_frame)
-        payment_container.grid(row=0, column=1, padx=10,  sticky="nsew")
+        payment_container.grid(row=1, column=0, padx=10,  sticky="nsew")
 
         payment_method_pie_chart = FigureCanvasTkAgg(figure=payment_method_pie, master=payment_container)
         payment_method_pie_chart.get_tk_widget().pack()
 
-        # Display line graph
-        line_container = customtkinter.CTkFrame(self.chart_frame)
-        line_container.grid(row=1, column=0, padx=10, pady=10, columnspan=2, sticky="nsew")
+        # Display bar chart
+        bar_container = customtkinter.CTkFrame(self.chart_frame)
+        bar_container.grid(row=1, column=1)
+
+        bar_chart = generate_bar_chart(self.expenses)
+        bar_chart_fig = FigureCanvasTkAgg(figure=bar_chart, master=bar_container)
+        bar_chart_fig.get_tk_widget().pack()
+
         
-        line_plot = generate_line_plot(self.expenses)
-        line_plot_chart = FigureCanvasTkAgg(figure=line_plot, master=line_container)
-        line_plot_chart.get_tk_widget().pack()
 
     
     def bind_mousewheel(self):

@@ -3,6 +3,7 @@
 # Purpose - Generates the charts for the dashboard
 
 import datetime
+import numpy as np
 from matplotlib.figure import Figure
 
 
@@ -10,6 +11,7 @@ from matplotlib.figure import Figure
 # appear in the expenses list
 CATEGORY_INDEX = 3
 PAYMENT_METHOD_INDEX = 2
+AMOUNT_INDEX = 0
 
 def generate_pie_charts(expenses):
     """
@@ -87,3 +89,43 @@ def generate_line_plot(expenses):
     line_plot_axes.tick_params(axis='x', labelrotation=45)
 
     return line_plot
+
+def generate_bar_chart(expenses):
+    """
+    Generates a horizontal bar chart showing the ranking of categories by total spending
+
+    Argument:
+        expenses (List): List of the user's expenses
+
+    Returns:
+        bar_chart: Bar chart representing spending distribution
+    """
+    bar_chart = Figure()
+    bar_chart_axes = bar_chart.add_subplot(111)
+
+    categories = {}
+    for expense in expenses:
+        category = expense[CATEGORY_INDEX]
+        amount = expense[AMOUNT_INDEX]
+
+        # Gathering categories that expenses used
+        if category not in categories.keys():
+            categories[category] = 0
+
+
+        # Sum up number of times categories and payment methods were used
+        categories[category] += amount
+
+    spending = dict(sorted(categories.items(), key=lambda item: item[1]))
+    y_axes = np.arange(len(spending.keys()))
+    x_axes = np.arange(len(spending.values()))
+
+    bar_chart_axes.set_title("Top Spending by Categories")
+    bar_chart_axes.set_ylabel("Category")
+    bar_chart_axes.set_xlabel("Amount")
+
+    bar_chart_axes.barh(y_axes, x_axes)
+    bar_chart_axes.set_yticks(y_axes, labels=spending.keys())
+    bar_chart_axes.set_xticks(x_axes, labels=spending.values())
+
+    return bar_chart
