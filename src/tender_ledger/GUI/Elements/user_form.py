@@ -86,7 +86,7 @@ class UserForm(customtkinter.CTkFrame):
         username = customtkinter.StringVar(value=self.user["username"]) if self.user else None
         first_name = customtkinter.StringVar(value=self.user["first_name"]) if self.user else None
         last_name = customtkinter.StringVar(value=self.user["last_name"]) if self.user else None
-        birthday = customtkinter.StringVar(value=self.user["birthday"]) if self.user else None
+        birthday = self.user["birthday"] if self.user else None
         email = customtkinter.StringVar(value=self.user["email"]) if self.user else None
         phone = customtkinter.StringVar(value=self.user["phone"]) if self.user else None
 
@@ -109,6 +109,8 @@ class UserForm(customtkinter.CTkFrame):
         birthday_label.grid(row=4, column=0, pady=10, padx=10)
         self.birthday = DateEntry(self.input_frame, selectmode='day', state='normal', showweeknumbers=False)
         self.birthday.grid(row=4, column=1, pady=10, padx=10)
+        self.birthday.set_date(birthday)
+
 
 
         # Setting up username field
@@ -265,7 +267,6 @@ class UserForm(customtkinter.CTkFrame):
             password = hash_password(password)
             update_user(user_id, username, password, first_name, last_name, birthday, email, phone, self.db)
 
-            # TODO - make confirmation message
             self.controller.refresh_page(user_id)
 
     def cancel(self):

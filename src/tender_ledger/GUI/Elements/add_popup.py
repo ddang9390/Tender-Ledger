@@ -136,7 +136,6 @@ class AddPopup(customtkinter.CTkToplevel):
             self.error_message.show(0, 0, "Please fill in all required fields", col_span=2)
         else:
             if not editing:
-                # TODO - handle duplicate names
                 if self.action == 'Category':
                     if add_category(self.controller.user_id, name, self.db):
                         self.controller.controller.show_message("Successfully added category")
