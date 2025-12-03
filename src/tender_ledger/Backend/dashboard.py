@@ -44,17 +44,19 @@ def generate_pie_charts(expenses):
         payment_methods[payment_method] += 1
 
     # Making pie chart for distribution by categories
-    category_pie = Figure()
+    category_pie = Figure(figsize=(4, 3))
     category_pie_axes = category_pie.add_subplot(111)
     category_pie_axes.pie(categories.values(), labels = categories.keys(), autopct='%1.1f%%')
     category_pie_axes.set_title('Distribution by Categories')
 
     # Making pie chart for distribution by payment methods
-    payment_method_pie = Figure()
+    payment_method_pie = Figure(figsize=(4, 3))
     payment_method_pie_axes = payment_method_pie.add_subplot(111)
     payment_method_pie_axes.pie(payment_methods.values(), labels = payment_methods.keys(), autopct='%1.1f%%')
     payment_method_pie_axes.set_title('Distribution by Payment Methods')
     
+    category_pie.tight_layout()
+
     return category_pie, payment_method_pie
 
 def generate_line_plot(expenses):
@@ -79,7 +81,7 @@ def generate_line_plot(expenses):
     sorted_spending = dict(sorted(spending.items()))
 
     # Make line plot
-    line_plot = Figure()
+    line_plot = Figure(figsize=(4, 3))
     line_plot_axes = line_plot.add_subplot(111)
 
     line_plot_axes.plot(sorted_spending.keys(), sorted_spending.values(), marker='o')
@@ -87,6 +89,8 @@ def generate_line_plot(expenses):
     line_plot_axes.set_xlabel("Dates")
     line_plot_axes.set_ylabel("Amount")
     line_plot_axes.tick_params(axis='x', labelrotation=45)
+
+    line_plot.tight_layout()
 
     return line_plot
 
@@ -100,7 +104,7 @@ def generate_bar_chart(expenses):
     Returns:
         bar_chart: Bar chart representing spending distribution
     """
-    bar_chart = Figure()
+    bar_chart = Figure(figsize=(4, 3))
     bar_chart_axes = bar_chart.add_subplot(111)
 
     categories = {}
@@ -127,5 +131,8 @@ def generate_bar_chart(expenses):
     bar_chart_axes.barh(y_axes, x_axes)
     bar_chart_axes.set_yticks(y_axes, labels=spending.keys())
     bar_chart_axes.set_xticks(x_axes, labels=spending.values())
+    bar_chart_axes.tick_params(axis='x', labelrotation=45)
+
+    bar_chart.tight_layout()
 
     return bar_chart

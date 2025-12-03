@@ -110,7 +110,7 @@ class DashboardPage(customtkinter.CTkFrame):
 
         # Display line graph
         line_container = customtkinter.CTkFrame(self.chart_frame)
-        line_container.grid(row=0, column=0, sticky="nsew")
+        line_container.grid(row=0, column=0, pady=20, sticky="nsew")
         
         line_plot = generate_line_plot(self.expenses)
         line_plot_chart = FigureCanvasTkAgg(figure=line_plot, master=line_container)
@@ -124,20 +124,23 @@ class DashboardPage(customtkinter.CTkFrame):
         category_pie_chart.get_tk_widget().pack()
         
 
-        # Display payment method pie chart
-        payment_container = customtkinter.CTkFrame(self.chart_frame)
-        payment_container.grid(row=1, column=0, padx=10,  sticky="nsew")
-
-        payment_method_pie_chart = FigureCanvasTkAgg(figure=payment_method_pie, master=payment_container)
-        payment_method_pie_chart.get_tk_widget().pack()
-
         # Display bar chart
         bar_container = customtkinter.CTkFrame(self.chart_frame)
-        bar_container.grid(row=1, column=1)
+        bar_container.grid(row=1, column=0, pady=20)
 
         bar_chart = generate_bar_chart(self.expenses)
         bar_chart_fig = FigureCanvasTkAgg(figure=bar_chart, master=bar_container)
         bar_chart_fig.get_tk_widget().pack()
+
+
+        # Display payment method pie chart
+        payment_container = customtkinter.CTkFrame(self.chart_frame)
+        payment_container.grid(row=1, column=1, padx=10, pady=20, sticky="nsew")
+
+        payment_method_pie_chart = FigureCanvasTkAgg(figure=payment_method_pie, master=payment_container)
+        payment_method_pie_chart.get_tk_widget().pack()
+
+        
 
         
 
