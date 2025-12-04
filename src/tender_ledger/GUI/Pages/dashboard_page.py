@@ -50,6 +50,7 @@ class DashboardPage(customtkinter.CTkFrame):
         """
         self.user_id = user_id
         self.expenses = get_expenses_for_user(self.user_id, self.db, start_date=self.start_date, end_date=self.end_date)
+        print(self.expenses)
 
         # Header
         label = customtkinter.CTkLabel(self, text="Dashboard", font=self.controller.font_label)
@@ -84,8 +85,15 @@ class DashboardPage(customtkinter.CTkFrame):
         """
         Filters the dashboard page
         """
-        self.start_date = self.filter_section.start_date.get_date()
-        self.end_date = self.filter_section.end_date.get_date()
+        if self.filter_section.start_date.get() == "":
+            self.start_date = None
+        else:
+            self.start_date = self.filter_section.start_date.get_date()
+
+        if self.filter_section.end_date.get() == "":
+            self.end_date = None
+        else:
+            self.end_date = self.filter_section.end_date.get_date()
 
         self.refresh_page(self.user_id)
 
@@ -139,8 +147,6 @@ class DashboardPage(customtkinter.CTkFrame):
 
         payment_method_pie_chart = FigureCanvasTkAgg(figure=payment_method_pie, master=payment_container)
         payment_method_pie_chart.get_tk_widget().pack()
-
-        
 
         
 

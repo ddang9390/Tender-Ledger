@@ -9,7 +9,7 @@ class Notification(customtkinter.CTkFrame):
         """
         Creates a notification popup
         """
-        super().__init__(parent)
+        super().__init__(parent, border_width=2, border_color="white")
 
         # Place the notification
         self.place(relx=0.5, rely=0.02, anchor="n") 

@@ -85,7 +85,7 @@ class LoginPage(customtkinter.CTkFrame):
 
         # Add Register button
         register_button = customtkinter.CTkButton(self.login_frame, text="Register", command=self.register)
-        register_button.grid(row=7, column=1, padx=20, pady=20)
+        register_button.grid(row=7, column=1, padx=20, pady=(0, 40))
 
     
 

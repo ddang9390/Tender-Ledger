@@ -22,8 +22,13 @@ class RegisterPage(customtkinter.CTkFrame):
         self.controller = controller
         self.db = db
 
-        self.register_frame = customtkinter.CTkFrame(self)
-        self.register_frame.grid(row=0, column=0, sticky="nsew")
+        self.register_frame = customtkinter.CTkFrame(
+            self, 
+            border_width=2, 
+            border_color="gray",
+            corner_radius=10
+        )
+        self.register_frame.grid(row=0, column=0, padx=50, pady=50, sticky="nsew")
 
         
     def refresh_page(self, user_id):

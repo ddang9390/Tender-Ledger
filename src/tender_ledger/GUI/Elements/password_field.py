@@ -30,7 +30,7 @@ class PasswordField(customtkinter.CTkFrame):
         self.password.bind('<Return>', self.command)
 
         self.password_reveal = customtkinter.CTkButton(self, text="👁", command=self.show_hide_password, width=50, font=("Arial", 16))
-        self.password_reveal.grid(row=0, column=1, sticky="ew")
+        self.password_reveal.grid(row=0, column=1, padx=(20, 0), sticky="ew")
 
     def show_hide_password(self):
         """
