@@ -22,13 +22,22 @@ class RegisterPage(customtkinter.CTkFrame):
         self.controller = controller
         self.db = db
 
+        # Making row and column spacers to center register frame
+        self.grid_rowconfigure(0, weight=1)
+        self.grid_rowconfigure(1, weight=0)
+        self.grid_rowconfigure(2, weight=1)
+        
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_columnconfigure(1, weight=0)
+        self.grid_columnconfigure(2, weight=1) 
+
         self.register_frame = customtkinter.CTkFrame(
             self, 
             border_width=2, 
             border_color="gray",
             corner_radius=10
         )
-        self.register_frame.grid(row=0, column=0, padx=50, pady=50, sticky="nsew")
+        self.register_frame.grid(row=1, column=1, sticky="nsew")
 
         
     def refresh_page(self, user_id):

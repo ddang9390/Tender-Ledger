@@ -33,7 +33,7 @@ class NavBar(customtkinter.CTkFrame):
         profile_button.grid(row=3, column=0, padx=20, pady=20, sticky="n")
 
         logout_button = customtkinter.CTkButton(self, text="Logout", command=self.logout)
-        logout_button.grid(row=4, column=0, pady=20, sticky="s")
+        logout_button.grid(row=4, column=0, pady=50, sticky="s")
 
     def logout(self):
         """

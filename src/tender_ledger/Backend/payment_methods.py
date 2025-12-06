@@ -100,7 +100,6 @@ def get_payment_methods_for_user(user_id, db):
         return payment_methods
 
     except Exception as e:
-        print("fsdfd")
         print(e)
         return payment_methods
     

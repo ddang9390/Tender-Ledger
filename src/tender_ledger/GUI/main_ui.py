@@ -15,7 +15,7 @@ from ..Backend.path_utils import get_theme_path
 
 # Constants (might allow for custom resolutions later)
 RESOLUTION_WIDTH = 1100
-RESOLUTION_HEIGHT = 580
+RESOLUTION_HEIGHT = 820
 
 
 class App(customtkinter.CTk):
@@ -36,7 +36,7 @@ class App(customtkinter.CTk):
         
         self.set_styles()
         self.grid_rowconfigure(0, weight=1)
-        self.grid_columnconfigure(1, weight=1) 
+
 
         self.title("Tender Ledger")
         self.center_window()
@@ -49,8 +49,7 @@ class App(customtkinter.CTk):
         self.page_container.pack(side="top", fill="both", expand=True)
         self.page_container.grid_rowconfigure(0, weight=1)
         self.page_container.grid_columnconfigure(0, weight=1)
-        self.page_container.grid(row=0, column=1)
-
+        self.page_container.grid_columnconfigure(1, weight=0)
 
         self.pages = {
             "ExpensesPage": ExpensesPage(self.page_container, self, db),
@@ -59,15 +58,15 @@ class App(customtkinter.CTk):
             "LoginPage": LoginPage(self.page_container, self, db),
             "RegisterPage": RegisterPage(self.page_container, self, db)
         }
-
-        # Setup default page TODO - change to login
+        
+        # Setup default page
         self.show_page("LoginPage")
 
     def show_navbar(self):
         """
         Displays the navbar
         """
-        self.navbar.grid(row=0, column=0, sticky="nsw")
+        self.navbar.grid(row=0, column=0, sticky="nsew")
 
     def show_page(self, page):
         """
@@ -75,23 +74,26 @@ class App(customtkinter.CTk):
 
         Argument:
             page (String): The new page to be displayed
-        """
+        """ 
         p = self.pages[page]
 
         # Show or hide the navbar
         if self.user_id:
-            self.show_navbar()
-            self.page_container.grid(row=0, column=1)
-            self.grid_columnconfigure(0, weight=0)
-            
-        else:
-            self.navbar.grid_forget()
-            self.page_container.grid(row=0, column=0, sticky="nsew")
-            self.grid_columnconfigure(0, weight=1)
+            self.page_container.grid(row=0, column=1, sticky="nsew")
+            self.grid_columnconfigure(0, weight=0) 
+            self.grid_columnconfigure(1, weight=1)
 
+            self.show_navbar()
+
+        else:
+            self.page_container.grid(row=0, column=0, sticky="nsew")
+            self.navbar.grid_forget()
+            
+            self.grid_columnconfigure(0, weight=1) 
+            self.grid_columnconfigure(1, weight=0)
 
         p.refresh_page(self.user_id)
-        p.grid(row=0, column=1, sticky="nsew")
+        p.grid(row=0, column=0, sticky="nsew")
         p.tkraise()
 
     def show_message(self, message):

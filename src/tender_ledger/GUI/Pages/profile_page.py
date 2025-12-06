@@ -28,6 +28,7 @@ class ProfilePage(customtkinter.CTkFrame):
         label = customtkinter.CTkLabel(self, text="My Profile", font=self.controller.font_label)
         label.grid(row=0, column=0)
 
+        # Creating tab menu
         self.tabview = customtkinter.CTkTabview(self)
         self.tabview.grid(row=1, column=0, sticky="nsew")
 
@@ -39,15 +40,40 @@ class ProfilePage(customtkinter.CTkFrame):
         
         self.tabview.tab("Customization").grid_columnconfigure(0, weight=1)
         self.tabview.tab("Customization").grid_rowconfigure(0, weight=1)
+        self.create_spacers()
 
-
+        # User tab
         self.user_form = UserForm(self.tabview.tab("Profile"), self, self.db, None, None, False)
-        self.user_form.grid(row=0, column=0, sticky="nsew")
+        self.user_form.grid(row=1, column=1, sticky="nsew")
 
+        # Customization tab
         self.customizations = Customizations(self.tabview.tab("Customization"), self, self.db)
-        self.customizations.grid(row=0, column=0, sticky="nsew")
+        self.customizations.grid(row=1, column=1, sticky="nsew")
 
         self.tabview._segmented_button.configure(command=self.on_tab_changed)
+
+    def create_spacers(self):
+        """
+        Creating spacers to center the contents of the tabs
+
+        """
+        # For the Profile tab
+        self.tabview.tab("Profile").grid_rowconfigure(0, weight=1)
+        self.tabview.tab("Profile").grid_rowconfigure(1, weight=0)
+        self.tabview.tab("Profile").grid_rowconfigure(2, weight=1)
+        
+        self.tabview.tab("Profile").grid_columnconfigure(0, weight=1)
+        self.tabview.tab("Profile").grid_columnconfigure(1, weight=0)
+        self.tabview.tab("Profile").grid_columnconfigure(2, weight=1) 
+
+        # For the Customization tab
+        self.tabview.tab("Customization").grid_rowconfigure(0, weight=1)
+        self.tabview.tab("Customization").grid_rowconfigure(1, weight=0)
+        self.tabview.tab("Customization").grid_rowconfigure(2, weight=1)
+        
+        self.tabview.tab("Customization").grid_columnconfigure(0, weight=1)
+        self.tabview.tab("Customization").grid_columnconfigure(1, weight=0)
+        self.tabview.tab("Customization").grid_columnconfigure(2, weight=1) 
 
     def refresh_page(self, user_id):
         """

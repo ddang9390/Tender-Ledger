@@ -342,17 +342,17 @@
     "CTkFont": {
         "macOS": {
             "family": "SF Display",
-            "size": 14,
+            "size": 16,
             "weight": "normal"
         },
         "Windows": {
             "family": "Roboto",
-            "size": 14,
+            "size": 16,
             "weight": "normal"
         },
         "Linux": {
             "family": "Roboto",
-            "size": 14,
+            "size": 16,
             "weight": "normal"
         }
     }

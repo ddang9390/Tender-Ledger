@@ -24,6 +24,15 @@ class LoginPage(customtkinter.CTkFrame):
         self.controller = controller
         self.db = db
         
+        # Making row and column spacers to center login frame
+        self.grid_rowconfigure(0, weight=1)
+        self.grid_rowconfigure(1, weight=0)
+        self.grid_rowconfigure(2, weight=1)
+        
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_columnconfigure(1, weight=0)
+        self.grid_columnconfigure(2, weight=1) 
+        
         self.showing = False
 
         
@@ -43,7 +52,7 @@ class LoginPage(customtkinter.CTkFrame):
             border_color="gray",
             corner_radius=10
         )
-        self.login_frame.grid(row=0, column=0, padx=50, pady=50, sticky="nsew")
+        self.login_frame.grid(row=1, column=1,  sticky="nsew")
 
         # Setup error message
         self.error_message = ErrorMessage(self.login_frame, self.controller)
