@@ -67,10 +67,10 @@ class AddPopup(customtkinter.CTkToplevel):
         Ensures that the popup shows over the window rather than some random location
         """
         # Get dimensions of main window
-        width = self.controller.winfo_width()
-        height = self.controller.winfo_height()
-        main_x = self.controller.winfo_x()
-        main_y = self.controller.winfo_y()
+        width = self.controller.controller.winfo_width()
+        height = self.controller.controller.winfo_height()
+        main_x = self.controller.controller.winfo_x()
+        main_y = self.controller.controller.winfo_y()
 
         # Set coordinates of where popup should show
         x = main_x + (width // 2)
