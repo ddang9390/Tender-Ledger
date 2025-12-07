@@ -34,7 +34,7 @@ Just run the run.bat file
 
 
 ### Database Schema Design
-![ER Diagram](assets/er_diagram.png)
+![ER Diagram](src/tender_ledger/assets/er_diagram.png)
 
 
 

@@ -24,7 +24,7 @@ class FilterSection:
         self.input_frame.pack()
 
         # Different search commands
-        self.refresh_command = self.controller.refresh_table if self.for_expenses else self
+        self.refresh_command = self.controller.refresh_table if self.for_expenses else self.controller.filter_page
         self.create_filter_section()
 
     def create_filter_section(self):

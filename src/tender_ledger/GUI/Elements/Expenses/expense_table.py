@@ -57,7 +57,7 @@ class ExpenseTable():
         self.expense_table.column('date', width=100)
         self.expense_table.column('amount', width=100)
         self.expense_table.column('category', width=100)
-        self.expense_table.column('payment method', width=150)
+        self.expense_table.column('payment method', width=175)
         self.expense_table.column('location', width=200)
         self.expense_table.column('edit', width=75, anchor="center")
         self.expense_table.column('delete', width=100, anchor="center")
