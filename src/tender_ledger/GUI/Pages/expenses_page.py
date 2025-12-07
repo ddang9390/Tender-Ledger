@@ -31,7 +31,7 @@ class ExpensesPage(customtkinter.CTkFrame):
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=1)
 
- 
+
         
     def refresh_page(self, user_id):
         """
@@ -45,30 +45,34 @@ class ExpensesPage(customtkinter.CTkFrame):
         self.categories = get_categories_for_user(self.user_id, self.db)
         self.payment_methods = get_payment_methods_for_user(self.user_id, self.db)
         
-        
         # Creating header section
         label = customtkinter.CTkLabel(self, text="My Expenses", font=self.controller.font_label)
-        label.grid(row=0, column=0, sticky="w")
+        label.grid(row=0, column=0, sticky="w", padx=20, pady=(20,0))
 
-        import_button = customtkinter.CTkButton(self, text="Import CSV", command=self.import_csv)
-        import_button.grid(row=0, column=0, sticky="e")
+        button_frame = customtkinter.CTkFrame(self, fg_color="transparent")
+        button_frame.grid(row=0, column=1, sticky="e", padx=20, pady=(20,0))
 
-        download_button = customtkinter.CTkButton(self, text="Download CSV", command=self.download_csv)
-        download_button.grid(row=0, column=1, sticky="e")
+        import_button = customtkinter.CTkButton(button_frame, text="Import CSV", command=self.import_csv)
+        import_button.pack(side="left", padx=(0, 10))
 
-        add_button = customtkinter.CTkButton(self, text="Add", command=self.display_popup)
-        add_button.grid(row=0, column=3, sticky="e")
+        download_button = customtkinter.CTkButton(button_frame, text="Download CSV", command=self.download_csv)
+        download_button.pack(side="left", padx=(0, 10))
+
+        add_button = customtkinter.CTkButton(button_frame, text="Add", command=self.display_popup)
+        add_button.pack(side="left")
 
         # Creating filter section
         self.filter_frame = customtkinter.CTkFrame(self)
-        self.filter_frame.grid(row=1, column=0, columnspan=4, pady=20)
-        self.filter_frame.grid_rowconfigure(0, weight=1)
+        self.filter_frame.grid(row=1, column=0, columnspan=2, padx=20, pady=20, sticky="ew")
+        self.filter_frame.grid_columnconfigure(0, weight=1)
         self.filter_section = FilterSection(self.filter_frame, self, True)
 
         # Creating table
         self.expense_table_frame = customtkinter.CTkFrame(self) 
-        self.expense_table_frame.grid(row=2, column=0, columnspan=4)
+        self.expense_table_frame.grid(row=2, column=0, columnspan=2, padx=20, pady=(20, 0), sticky="nsew")
+
         self.expense_table_frame.grid_rowconfigure(0, weight=1)
+        self.expense_table_frame.grid_columnconfigure(0, weight=1)
         self.expense_table = ExpenseTable(self.expense_table_frame, self, self.filter_section, self.db)
 
     def display_popup(self, deleting=None, editing=None):

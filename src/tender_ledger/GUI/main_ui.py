@@ -18,6 +18,11 @@ from ..Backend.path_utils import get_theme_path
 RESOLUTION_WIDTH = 1100
 RESOLUTION_HEIGHT = 820
 
+# Styling Constants for tables
+TEXT_COLOR = 'white'
+HEADER_BG_COLOR = '#343638'
+BG_COLOR = '#2B2B2B'
+SELECTED_COLOR = '#3B8ED0'
 
 class App(customtkinter.CTk):
     def __init__(self, db):
@@ -66,15 +71,6 @@ class App(customtkinter.CTk):
 
         # Setup default page
         self.show_page("LoginPage")
-
-    def style_tables(self, style):
-        """
-        Style the tables that will be used in the app
-        """
-        style.configure("Treeview", font=("Roboto", 12))
-        style.configure("Treeview.Heading", font=("Roboto", 14, 'bold'))
-
-
 
     def show_navbar(self):
         """
@@ -139,3 +135,30 @@ class App(customtkinter.CTk):
         self.calendar_style = {
             'font': ("Roboto", 12)
         }
+
+    def style_tables(self, style):
+        """
+        Style the tables that will be used in the app
+        """
+        style.theme_use("clam")
+
+        # Style the tables
+        style.configure("Treeview", 
+                        font=("Roboto", 12),
+                        background=BG_COLOR,
+                        foreground=TEXT_COLOR,
+                        fieldbackground=BG_COLOR,
+                        rowheight=20)
+        
+        style.map('Treeview', 
+                  background=[('selected', SELECTED_COLOR)],
+                  foreground=[('selected', 'white')])
+        
+        # Style the table headers
+        style.configure("Treeview.Heading", 
+                        font=("Roboto", 14, 'bold'),
+                        background=HEADER_BG_COLOR,
+                        foreground=TEXT_COLOR)
+        
+        style.map("Treeview.Heading",
+                  background=[('active', SELECTED_COLOR)])
