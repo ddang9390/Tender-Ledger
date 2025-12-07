@@ -55,11 +55,11 @@ class RegisterPage(customtkinter.CTkFrame):
         
         # Setup Header
         label = customtkinter.CTkLabel(self.register_frame, text="Register", font=self.controller.font_label)
-        label.grid(row=0, column=1, sticky="nsew")
+        label.grid(row=0, column=1, sticky="nsew", pady=20, padx=20)
 
         # Setup user form
         self.user_form = UserForm(self.register_frame, self.controller, self.db, self.register_user, self.login)
-        self.user_form.grid(row=2, column=1, sticky="nsew")
+        self.user_form.grid(row=2, column=1, sticky="nsew", padx=20, pady=(0,20))
 
     def register_user(self, event=None):
         """

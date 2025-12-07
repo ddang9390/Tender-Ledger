@@ -55,12 +55,12 @@ class Customizations(customtkinter.CTkFrame):
         categories_frame.grid(row=0, column=0, sticky="nsew")
 
         # Label
-        label = customtkinter.CTkLabel(categories_frame, text="Categories")
-        label.grid(row=0, column=0)
+        label = customtkinter.CTkLabel(categories_frame, text="Categories", font=self.controller.font_label)
+        label.grid(row=0, column=0, pady=20)
 
         # Add button
-        add_button = customtkinter.CTkButton(categories_frame, text="Add", command=lambda: self.display_popup("Category"))
-        add_button.grid(row=0, column=1, sticky="e")
+        add_button = customtkinter.CTkButton(categories_frame, text="Add", command=lambda: self.display_popup("Category"), width=100)
+        add_button.grid(row=0, column=1, sticky="e", padx=(20, 0), pady=20)
 
         # Adding columns to table
         columns = ('name', 'edit', 'delete')
@@ -72,9 +72,9 @@ class Customizations(customtkinter.CTkFrame):
         self.category_table.heading('delete', text="Delete")
 
         # Control column width
-        self.category_table.column('name', width=150)
-        self.category_table.column('edit', width=50, anchor="center")
-        self.category_table.column('delete', width=70, anchor="center")
+        self.category_table.column('name', width=175)
+        self.category_table.column('edit', width=75, anchor="center")
+        self.category_table.column('delete', width=100, anchor="center")
 
         # Bind left click event
         self.category_table.bind("<Button-1>", lambda event: self.action_click(event, True))
@@ -91,7 +91,7 @@ class Customizations(customtkinter.CTkFrame):
                     delete = "Delete"
                 self.category_table.insert('', 'end', iid=category_id, values=(category_name, edit, delete))
 
-        self.category_table.grid(row=1, column=0, sticky="nsew")
+        self.category_table.grid(row=1, column=0, columnspan=2, pady=20)
 
     def setup_payment_methods(self):
         """
@@ -102,12 +102,13 @@ class Customizations(customtkinter.CTkFrame):
         methods_frame = customtkinter.CTkFrame(self)
         methods_frame.grid(row=0, column=1, sticky="nsew")
 
-        label = customtkinter.CTkLabel(methods_frame, text="Payment Methods")
-        label.grid(row=0, column=0)
+        # Label
+        label = customtkinter.CTkLabel(methods_frame, text="Payment Methods", font=self.controller.font_label)
+        label.grid(row=0, column=0, pady=20)
 
         # Add button
-        add_button = customtkinter.CTkButton(methods_frame, text="Add", command=lambda: self.display_popup("Payment Method"))
-        add_button.grid(row=0, column=1, sticky="e")
+        add_button = customtkinter.CTkButton(methods_frame, text="Add", command=lambda: self.display_popup("Payment Method"), width=100)
+        add_button.grid(row=0, column=1, sticky="e", padx=(20, 0), pady=20)
 
         # Adding columns to table
         columns = ('name', 'edit', 'delete')
@@ -120,9 +121,9 @@ class Customizations(customtkinter.CTkFrame):
         self.method_table.heading('delete', text="Delete")
 
         # Control column width
-        self.method_table.column('name', width=150)
-        self.method_table.column('edit', width=50, anchor="center")
-        self.method_table.column('delete', width=70, anchor="center")
+        self.method_table.column('name', width=175)
+        self.method_table.column('edit', width=75, anchor="center")
+        self.method_table.column('delete', width=100, anchor="center")
 
         # Bind left click event
         self.method_table.bind("<Button-1>", lambda event: self.action_click(event, False))
@@ -138,7 +139,7 @@ class Customizations(customtkinter.CTkFrame):
                     edit = "Edit"
                     delete = "Delete"
                 self.method_table.insert('', 'end', iid=method_id, values=(method_name, edit, delete))
-        self.method_table.grid(row=1, column=0)
+        self.method_table.grid(row=1, column=0, columnspan=2, pady=20, padx=(30, 0))
         
 
     def clear_form(self):

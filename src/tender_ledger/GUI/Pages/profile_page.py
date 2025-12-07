@@ -32,30 +32,41 @@ class ProfilePage(customtkinter.CTkFrame):
         self.tabview = customtkinter.CTkTabview(self)
         self.tabview.grid(row=1, column=0, sticky="nsew")
 
+        # Adding tabs
         self.tabview.add("Profile")
         self.tabview.add("Customization")
 
-        self.tabview.tab("Profile").grid_columnconfigure(0, weight=1)
-        self.tabview.tab("Profile").grid_rowconfigure(0, weight=1)
-        
-        self.tabview.tab("Customization").grid_columnconfigure(0, weight=1)
-        self.tabview.tab("Customization").grid_rowconfigure(0, weight=1)
+        # Customizing Tabs
+        self.profile_tab = customtkinter.CTkFrame(
+            self.tabview.tab("Profile"), 
+            border_width=2, 
+            border_color="gray",
+            corner_radius=10
+        )
+        self.profile_tab.grid(row=1, column=1, sticky="nsew")
+
+        self.customizations_tab = customtkinter.CTkFrame(
+            self.tabview.tab("Customization"), 
+            border_width=2, 
+            border_color="gray",
+            corner_radius=10
+        )
+        self.customizations_tab.grid(row=1, column=1, sticky="nsew")
         self.create_spacers()
 
         # User tab
-        self.user_form = UserForm(self.tabview.tab("Profile"), self.controller, self.db, None, None, False)
-        self.user_form.grid(row=1, column=1, sticky="nsew")
+        self.user_form = UserForm(self.profile_tab, self.controller, self.db, None, None, False)
+        self.user_form.grid(row=1, column=1, sticky="nsew", padx=20, pady=20)
 
         # Customization tab
-        self.customizations = Customizations(self.tabview.tab("Customization"), self.controller, self.db)
-        self.customizations.grid(row=1, column=1, sticky="nsew")
+        self.customizations = Customizations(self.customizations_tab, self.controller, self.db)
+        self.customizations.grid(row=1, column=1, sticky="nsew", padx=20, pady=20)
 
         self.tabview._segmented_button.configure(command=self.on_tab_changed)
 
     def create_spacers(self):
         """
         Creating spacers to center the contents of the tabs
-
         """
         # For the Profile tab
         self.tabview.tab("Profile").grid_rowconfigure(0, weight=1)
