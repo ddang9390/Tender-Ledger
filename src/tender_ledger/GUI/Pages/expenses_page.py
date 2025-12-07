@@ -28,7 +28,7 @@ class ExpensesPage(customtkinter.CTkFrame):
         self.db = db
 
         # Have elements in main container expand properly
-        self.grid_rowconfigure(2, weight=1)
+        
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=1)
  
@@ -61,12 +61,14 @@ class ExpensesPage(customtkinter.CTkFrame):
 
         # Creating filter section
         self.filter_frame = customtkinter.CTkFrame(self)
-        self.filter_frame.grid(row=1, column=0, columnspan=4, pady=20, sticky="nsew")
+        self.filter_frame.grid(row=1, column=0, columnspan=4, pady=20)
+        self.filter_frame.grid_rowconfigure(0, weight=1)
         self.filter_section = FilterSection(self.filter_frame, self, True)
 
         # Creating table
         self.expense_table_frame = customtkinter.CTkFrame(self) 
-        self.expense_table_frame.grid(row=2, column=0, columnspan=4, sticky="nsew")
+        self.expense_table_frame.grid(row=2, column=0, columnspan=4)
+        self.expense_table_frame.grid_rowconfigure(0, weight=1)
         self.expense_table = ExpenseTable(self.expense_table_frame, self, self.filter_section, self.db)
 
     def display_popup(self, deleting=None, editing=None):

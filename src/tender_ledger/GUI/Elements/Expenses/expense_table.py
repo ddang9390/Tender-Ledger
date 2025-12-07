@@ -6,6 +6,8 @@ import customtkinter
 from ....Backend.expenses import get_expenses_for_user
 from tkinter import ttk
 
+OPTIONS_PER_PAGE = 20
+
 class ExpenseTable():
     def __init__(self, parent, controller, filter_section, db):
         """
@@ -25,11 +27,8 @@ class ExpenseTable():
 
         self.expenses = get_expenses_for_user(self.user_id, self.db)
 
-        # Setting page options
-        self.current_page = 1
-        self.options_per_page = 10
-
         # Creating table and pagination options
+        self.current_page = 1
         self.create_table()
         self.create_pagination_options()
         self.refresh_table()
@@ -43,7 +42,7 @@ class ExpenseTable():
 
         # Adding columns to table
         columns = ('date', 'amount', 'category', 'payment method', 'location', 'edit', 'delete')
-        self.expense_table = ttk.Treeview(self.expense_table_frame, columns=columns, show='headings')
+        self.expense_table = ttk.Treeview(self.expense_table_frame, columns=columns, show='headings', height=20)
 
         # Add headers to columns
         self.expense_table.heading('date', text='Date')
@@ -103,6 +102,7 @@ class ExpenseTable():
         """
         # Get date values
         start_date = self.filter_section.start_date.get()
+
         # Ensure date fields are not empty
         if start_date:
             start_date = self.filter_section.start_date.get_date()
@@ -110,10 +110,10 @@ class ExpenseTable():
         if end_date:
             end_date = self.filter_section.end_date.get_date()
 
+        # Get what are in the search and dropdown filters
         search = self.filter_section.search_bar.get()
         category_search = self.controller.categories[self.filter_section.category_filter.get()] if self.filter_section.category_filter.get() != "--Category--" else None
         payment_method_search = self.controller.payment_methods[self.filter_section.method_filter.get()] if self.filter_section.method_filter.get() != "--Payment Method--" else None
-
 
         self.expenses = get_expenses_for_user(self.user_id, self.db, category=category_search, payment_method=payment_method_search, search=search, start_date=start_date, end_date=end_date)
 
@@ -123,10 +123,10 @@ class ExpenseTable():
 
         # Calculate start and end indices for pagination
         if self.current_page != 0:
-            start = self.options_per_page * (self.current_page-1)
+            start = OPTIONS_PER_PAGE* (self.current_page-1)
         else:
             start = 0
-        end = start + self.options_per_page
+        end = start + OPTIONS_PER_PAGE
         if end > len(self.expenses):
             end = len(self.expenses)
 
@@ -219,6 +219,6 @@ class ExpenseTable():
         """
         Calculate the total number of pages in the table
         """
-        self.total_pages = len(self.expenses) // self.options_per_page
-        if len(self.expenses) % self.options_per_page != 0:
+        self.total_pages = len(self.expenses) // OPTIONS_PER_PAGE
+        if len(self.expenses) % OPTIONS_PER_PAGE != 0:
             self.total_pages += 1

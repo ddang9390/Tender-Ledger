@@ -3,11 +3,16 @@
 # Purpose - Handles the appearance and logic of the login page
 
 import customtkinter
+from PIL import Image
 from ...Backend.users import get_user_by_username
 from ...Backend.password_utils import verify_password
 from ..Elements.error_message import ErrorMessage
 from ..Elements.password_field import PasswordField
+from ...Backend.path_utils import get_logo_path
 
+LOGO_PATH = ""
+LOGO_HEIGHT = 400
+LOGO_WIDTH = 80
 
 class LoginPage(customtkinter.CTkFrame):
     def __init__(self, parent, controller, db):
@@ -32,7 +37,7 @@ class LoginPage(customtkinter.CTkFrame):
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=0)
         self.grid_columnconfigure(2, weight=1) 
-        
+
         self.showing = False
 
         
@@ -59,7 +64,9 @@ class LoginPage(customtkinter.CTkFrame):
         self.error_message.hide()
         
         # Setup Header
-        label = customtkinter.CTkLabel(self.login_frame, text="Login", font=self.controller.font_label)
+        logo = customtkinter.CTkImage(Image.open(get_logo_path()), size=(LOGO_HEIGHT, LOGO_WIDTH))
+
+        label = customtkinter.CTkLabel(self.login_frame, image=logo, text="", font=self.controller.font_label)
         label.grid(row=0, column=1, padx=50, pady=20, sticky="nsew")
 
         self.setup_inputs()
@@ -86,7 +93,7 @@ class LoginPage(customtkinter.CTkFrame):
         password_label = customtkinter.CTkLabel(self.login_frame, text="Password:")
         password_label.grid(row=4, column=1, pady=10, padx=80, sticky="w")
         self.password = PasswordField(self.login_frame, self.login)
-        self.password.grid(row=5, column=1, pady=10, padx=80)
+        self.password.grid(row=5, column=1, pady=10, padx=80, sticky="w")
 
         # Add confirm button
         login_button = customtkinter.CTkButton(self.login_frame, text="Login", command=self.login)

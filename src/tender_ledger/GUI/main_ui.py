@@ -119,8 +119,6 @@ class App(customtkinter.CTk):
     def center_window(self):
         """
         Center the window of the main app
-
-        # TODO - place this function in some utils file so that the popups can use this instead
         """
         width = self.winfo_screenwidth()
         height = self.winfo_screenheight()

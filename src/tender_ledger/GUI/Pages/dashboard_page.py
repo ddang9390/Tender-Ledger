@@ -50,7 +50,6 @@ class DashboardPage(customtkinter.CTkFrame):
         """
         self.user_id = user_id
         self.expenses = get_expenses_for_user(self.user_id, self.db, start_date=self.start_date, end_date=self.end_date)
-        print(self.expenses)
 
         # Header
         label = customtkinter.CTkLabel(self, text="Dashboard", font=self.controller.font_label)

@@ -12,6 +12,9 @@ TEST_DB_NAME = 'test_tender_ledger.db'
 # JSON files for custom themes
 THEME_NAME = 'GUI/theme.json'
 
+# Logo path
+LOGO_PATH = 'assets/logo.png'
+
 def get_base_path():
     """
     Get the base path for the application.
@@ -78,3 +81,12 @@ def get_theme_path():
         Path: Full path to theme file
     """
     return get_base_path() / THEME_NAME
+
+def get_logo_path():
+    """
+    Get the full path to the logo file
+    
+    Returns:
+        Path: Full path to logo file
+    """
+    return get_base_path() / LOGO_PATH

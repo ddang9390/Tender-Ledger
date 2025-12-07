@@ -2,3 +2,4 @@ customtkinter
 tkcalendar
 matplotlib
 bcrypt
+pandas

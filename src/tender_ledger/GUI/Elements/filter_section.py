@@ -56,21 +56,21 @@ class FilterSection:
         if self.for_expenses:
             # Category Filter
             category_label = customtkinter.CTkLabel(self.input_frame, text="Categories")
-            category_label.grid(row=0, column=2)
+            category_label.grid(row=2, column=0)
             categories = ["--Category--"]
             for category in self.controller.categories.keys():
                 categories.append(category)
             self.category_filter = customtkinter.CTkOptionMenu(self.input_frame, values=categories)
-            self.category_filter.grid(row=1, column=2)
+            self.category_filter.grid(row=3, column=0)
 
             # Payment Method Filter
             payment_method_label = customtkinter.CTkLabel(self.input_frame, text="Payment Methods")
-            payment_method_label.grid(row=0, column=3)
+            payment_method_label.grid(row=2, column=1)
             method_of_purchase = ["--Payment Method--"]
             for method in self.controller.payment_methods.keys():
                 method_of_purchase.append(method)
             self.method_filter = customtkinter.CTkOptionMenu(self.input_frame, values=method_of_purchase)
-            self.method_filter.grid(row=1, column=3, padx=10)
+            self.method_filter.grid(row=3, column=1, padx=10)
 
             # Generic search bar
             self.search_bar = customtkinter.CTkEntry(self.input_frame, placeholder_text = "Search")
