@@ -3,15 +3,20 @@
 # Purpose - Generates the charts for the dashboard
 
 import datetime
-import numpy as np
+import matplotlib.dates as mdates
+import matplotlib.ticker as mtick
 from matplotlib.figure import Figure
-
 
 # Defining constants which are the indices of the elements that
 # appear in the expenses list
 CATEGORY_INDEX = 3
 PAYMENT_METHOD_INDEX = 2
 AMOUNT_INDEX = 0
+
+# Styling Constants to have colors of graphs match customtkinter color scheme
+TEXT_COLOR = 'white'
+FACE_COLOR = '#2B2B2B'
+ACCENT_COLOR = '#3B8ED0'
 
 def generate_pie_charts(expenses):
     """
@@ -30,32 +35,27 @@ def generate_pie_charts(expenses):
 
     for expense in expenses:
         category = expense[CATEGORY_INDEX]
-        # Gathering categories that expenses used
-        if category not in categories.keys():
-            categories[category] = 0
-
-        # Gathering payment methods that expenses used
         payment_method = expense[PAYMENT_METHOD_INDEX]
-        if payment_method not in payment_methods.keys():
-            payment_methods[payment_method] = 0
+        amount = expense[AMOUNT_INDEX]
 
-        # Sum up number of times categories and payment methods were used
-        categories[category] += 1
-        payment_methods[payment_method] += 1
+        # Adding up values by expense amounts
+        categories[category] = categories.get(category, 0) + amount
+        payment_methods[payment_method] = payment_methods.get(payment_method, 0) + amount
 
     # Making pie chart for distribution by categories
-    category_pie = Figure(figsize=(4, 3))
+    category_pie = Figure(figsize=(4, 3), facecolor=FACE_COLOR)
     category_pie_axes = category_pie.add_subplot(111)
-    category_pie_axes.pie(categories.values(), labels = categories.keys(), autopct='%1.1f%%')
-    category_pie_axes.set_title('Distribution by Categories')
+    category_pie_axes.pie(categories.values(), labels = categories.keys(), autopct='%1.1f%%', textprops={'color': TEXT_COLOR})
+    category_pie_axes.set_title('Distribution by Categories', color=TEXT_COLOR)
 
     # Making pie chart for distribution by payment methods
-    payment_method_pie = Figure(figsize=(4, 3))
+    payment_method_pie = Figure(figsize=(4, 3), facecolor=FACE_COLOR)
     payment_method_pie_axes = payment_method_pie.add_subplot(111)
-    payment_method_pie_axes.pie(payment_methods.values(), labels = payment_methods.keys(), autopct='%1.1f%%')
-    payment_method_pie_axes.set_title('Distribution by Payment Methods')
+    payment_method_pie_axes.pie(payment_methods.values(), labels = payment_methods.keys(), autopct='%1.1f%%', textprops={'color': TEXT_COLOR})
+    payment_method_pie_axes.set_title('Distribution by Payment Methods', color=TEXT_COLOR)
     
     category_pie.tight_layout()
+    payment_method_pie.tight_layout()
 
     return category_pie, payment_method_pie
 
@@ -81,14 +81,31 @@ def generate_line_plot(expenses):
     sorted_spending = dict(sorted(spending.items()))
 
     # Make line plot
-    line_plot = Figure(figsize=(4, 3))
+    line_plot = Figure(figsize=(4, 3), facecolor=FACE_COLOR)
     line_plot_axes = line_plot.add_subplot(111)
+    line_plot_axes.set_facecolor(FACE_COLOR)
 
-    line_plot_axes.plot(sorted_spending.keys(), sorted_spending.values(), marker='o')
-    line_plot_axes.set_title("Daily Spending")
-    line_plot_axes.set_xlabel("Dates")
-    line_plot_axes.set_ylabel("Amount")
-    line_plot_axes.tick_params(axis='x', labelrotation=45)
+    dates = list(sorted_spending.keys())
+    if dates:
+        line_plot_axes.plot(dates, sorted_spending.values(), marker='o', linestyle='-', color=ACCENT_COLOR, linewidth=2)
+
+        # Format the dates
+        date_fmt = mdates.DateFormatter('%b %d')
+        line_plot_axes.xaxis.set_major_formatter(date_fmt)
+        line_plot.autofmt_xdate()
+
+        # Add grid
+        line_plot_axes.grid(True, linestyle='--', linewidth=0.5, color='gray', alpha=0.5)
+    
+    line_plot_axes.set_title("Daily Spending", color=TEXT_COLOR)
+    line_plot_axes.set_xlabel("Dates", color=TEXT_COLOR)
+    line_plot_axes.set_ylabel("Amount", color=TEXT_COLOR)
+
+    line_plot_axes.tick_params(axis='x', labelrotation=45, color=TEXT_COLOR, labelcolor=TEXT_COLOR)
+    line_plot_axes.tick_params(axis='y', color=TEXT_COLOR, labelcolor=TEXT_COLOR)
+
+    for spine in line_plot_axes.spines.values():
+        spine.set_edgecolor(TEXT_COLOR)
 
     line_plot.tight_layout()
 
@@ -104,34 +121,40 @@ def generate_bar_chart(expenses):
     Returns:
         bar_chart: Bar chart representing spending distribution
     """
-    bar_chart = Figure(figsize=(4, 3))
+    bar_chart = Figure(figsize=(4, 3), facecolor=FACE_COLOR)
     bar_chart_axes = bar_chart.add_subplot(111)
+    bar_chart_axes.set_facecolor(FACE_COLOR)
 
     categories = {}
     for expense in expenses:
         category = expense[CATEGORY_INDEX]
         amount = expense[AMOUNT_INDEX]
 
-        # Gathering categories that expenses used
-        if category not in categories.keys():
-            categories[category] = 0
-
-
         # Sum up number of times categories and payment methods were used
-        categories[category] += amount
+        categories[category] = categories.get(category, 0) + amount
 
+    # Sort categories
     spending = dict(sorted(categories.items(), key=lambda item: item[1]))
-    y_axes = np.arange(len(spending.keys()))
-    x_axes = np.arange(len(spending.values()))
+    cat_names = list(spending.keys())
+    cat_amounts = list(spending.values())
 
-    bar_chart_axes.set_title("Top Spending by Categories")
-    bar_chart_axes.set_ylabel("Category")
-    bar_chart_axes.set_xlabel("Amount")
+    if cat_amounts:
+        bar_chart_axes.barh(cat_names, cat_amounts, color=ACCENT_COLOR)
 
-    bar_chart_axes.barh(y_axes, x_axes)
-    bar_chart_axes.set_yticks(y_axes, labels=spending.keys())
-    bar_chart_axes.set_xticks(x_axes, labels=spending.values())
-    bar_chart_axes.tick_params(axis='x', labelrotation=45)
+        # Format amounts
+        amount_fmt = mtick.StrMethodFormatter("${x:,.0f}")
+        bar_chart_axes.xaxis.set_major_formatter(amount_fmt)
+
+        # Add vertical lines to chart
+        bar_chart_axes.grid(True, linestyle='--', linewidth=0.5, color='gray', alpha=0.5, axis='x')
+
+    bar_chart_axes.set_title("Top Spending by Categories", color=TEXT_COLOR)
+    bar_chart_axes.set_xlabel("Amount", color=TEXT_COLOR)
+
+    bar_chart_axes.tick_params(axis='x', colors=TEXT_COLOR)
+    bar_chart_axes.tick_params(axis='y', colors=TEXT_COLOR)
+    for spine in bar_chart_axes.spines.values():
+        spine.set_edgecolor(TEXT_COLOR)
 
     bar_chart.tight_layout()
 
