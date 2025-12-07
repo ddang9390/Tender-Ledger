@@ -74,7 +74,7 @@ class Customizations(customtkinter.CTkFrame):
         # Control column width
         self.category_table.column('name', width=150)
         self.category_table.column('edit', width=50, anchor="center")
-        self.category_table.column('delete', width=50, anchor="center")
+        self.category_table.column('delete', width=70, anchor="center")
 
         # Bind left click event
         self.category_table.bind("<Button-1>", lambda event: self.action_click(event, True))
@@ -113,6 +113,7 @@ class Customizations(customtkinter.CTkFrame):
         columns = ('name', 'edit', 'delete')
         self.method_table = ttk.Treeview(methods_frame, columns=columns, show='headings')
 
+
         # Add headers to columns
         self.method_table.heading('name', text='Payment Method')
         self.method_table.heading('edit', text="Edit")
@@ -121,7 +122,7 @@ class Customizations(customtkinter.CTkFrame):
         # Control column width
         self.method_table.column('name', width=150)
         self.method_table.column('edit', width=50, anchor="center")
-        self.method_table.column('delete', width=50, anchor="center")
+        self.method_table.column('delete', width=70, anchor="center")
 
         # Bind left click event
         self.method_table.bind("<Button-1>", lambda event: self.action_click(event, False))

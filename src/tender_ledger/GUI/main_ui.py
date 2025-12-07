@@ -4,6 +4,7 @@
 
 import customtkinter
 
+from tkinter import ttk
 from .Pages.expenses_page import ExpensesPage
 from .Pages.dashboard_page import DashboardPage
 from .Pages.profile_page import ProfilePage  
@@ -59,8 +60,20 @@ class App(customtkinter.CTk):
             "RegisterPage": RegisterPage(self.page_container, self, db)
         }
         
+        # Styling table
+        self.style_tables()
+
         # Setup default page
         self.show_page("LoginPage")
+
+    def style_tables(self):
+        """
+        Style the tables that will be used in the app
+        """
+        style = ttk.Style()
+        style.configure("Treeview", font=("Arial", 12))
+        style.configure("Treeview.Heading", font=("Arial", 14, 'bold'))
+
 
     def show_navbar(self):
         """

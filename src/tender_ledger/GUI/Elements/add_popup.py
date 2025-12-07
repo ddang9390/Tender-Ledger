@@ -67,10 +67,10 @@ class AddPopup(customtkinter.CTkToplevel):
         Ensures that the popup shows over the window rather than some random location
         """
         # Get dimensions of main window
-        width = self.controller.controller.winfo_width()
-        height = self.controller.controller.winfo_height()
-        main_x = self.controller.controller.winfo_x()
-        main_y = self.controller.controller.winfo_y()
+        width = self.controller.winfo_width()
+        height = self.controller.winfo_height()
+        main_x = self.controller.winfo_x()
+        main_y = self.controller.winfo_y()
 
         # Set coordinates of where popup should show
         x = main_x + (width // 2)
@@ -138,28 +138,28 @@ class AddPopup(customtkinter.CTkToplevel):
             if not editing:
                 if self.action == 'Category':
                     if add_category(self.controller.user_id, name, self.db):
-                        self.controller.controller.show_message("Successfully added category")
+                        self.controller.show_message("Successfully added category")
                     else:
-                        self.controller.controller.show_message("Name already exists")
+                        self.controller.show_message("Name already exists")
                         return
                 elif self.action == 'Payment Method':
                     if add_payment_method(self.controller.user_id, name, self.db):
-                        self.controller.controller.show_message("Successfully added payment method")
+                        self.controller.show_message("Successfully added payment method")
                     else:
-                        self.controller.controller.show_message("Name already exists")
+                        self.controller.show_message("Name already exists")
                         return
             else:
                 if self.action == 'Category':
                     if update_category(editing, name, self.db):
-                        self.controller.controller.show_message("Successfully updated category")
+                        self.controller.show_message("Successfully updated category")
                     else:
-                        self.controller.controller.show_message("Name already exists")
+                        self.controller.show_message("Name already exists")
                         return
                 elif self.action == 'Payment Method':
                     if update_payment_method(editing, name, self.db):
-                        self.controller.controller.show_message("Successfully updated payment method")
+                        self.controller.show_message("Successfully updated payment method")
                     else:
-                        self.controller.controller.show_message("Name already exists")
+                        self.controller.show_message("Name already exists")
                         return
 
             self.parent.refresh()

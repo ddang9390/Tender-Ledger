@@ -43,11 +43,11 @@ class ProfilePage(customtkinter.CTkFrame):
         self.create_spacers()
 
         # User tab
-        self.user_form = UserForm(self.tabview.tab("Profile"), self, self.db, None, None, False)
+        self.user_form = UserForm(self.tabview.tab("Profile"), self.controller, self.db, None, None, False)
         self.user_form.grid(row=1, column=1, sticky="nsew")
 
         # Customization tab
-        self.customizations = Customizations(self.tabview.tab("Customization"), self, self.db)
+        self.customizations = Customizations(self.tabview.tab("Customization"), self.controller, self.db)
         self.customizations.grid(row=1, column=1, sticky="nsew")
 
         self.tabview._segmented_button.configure(command=self.on_tab_changed)
