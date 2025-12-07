@@ -144,7 +144,7 @@ class AddPopup(customtkinter.CTkToplevel):
                         return
                 elif self.action == 'Payment Method':
                     if add_payment_method(self.controller.user_id, name, self.db):
-                        self.controller.show_message("Successfully added payment method")
+                        self.controller.show_message("Successfully added \npayment method")
                     else:
                         self.controller.show_message("Name already exists")
                         return
@@ -157,7 +157,7 @@ class AddPopup(customtkinter.CTkToplevel):
                         return
                 elif self.action == 'Payment Method':
                     if update_payment_method(editing, name, self.db):
-                        self.controller.show_message("Successfully updated payment method")
+                        self.controller.show_message("Successfully updated \npayment method")
                     else:
                         self.controller.show_message("Name already exists")
                         return

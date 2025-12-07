@@ -24,10 +24,8 @@ class FilterSection:
         self.input_frame.pack()
 
         # Different search commands
-        self.refresh_command = self.controller.refresh_table if self.for_expenses else self.controller.filter_page
-
+        self.refresh_command = self.controller.refresh_table if self.for_expenses else self
         self.create_filter_section()
-        
 
     def create_filter_section(self):
         """
@@ -36,8 +34,8 @@ class FilterSection:
         # Setting up date field
         start_date_label = customtkinter.CTkLabel(self.input_frame, text="Start Date")
         start_date_label.grid(row=0, column=0)
-        self.start_date = DateEntry(self.input_frame, selectmode='day', state='normal', showweeknumbers=False)
-        self.start_date.grid(row=1, column=0)
+        self.start_date = DateEntry(self.input_frame, selectmode='day', state='normal', showweeknumbers=False, **self.controller.controller.calendar_style)
+        self.start_date.grid(row=1, column=0, padx=(0, 20))
 
         # Ensures that the DateEntry is at the top level to prevent clicking the fields behind it
         #self.start_date._top_cal.transient(self)
@@ -45,7 +43,7 @@ class FilterSection:
         
         end_date_label = customtkinter.CTkLabel(self.input_frame, text="End Date")
         end_date_label.grid(row=0, column=1)
-        self.end_date = DateEntry(self.input_frame, selectmode='day', state='normal', showweeknumbers=False)
+        self.end_date = DateEntry(self.input_frame, selectmode='day', state='normal', showweeknumbers=False, **self.controller.controller.calendar_style)
         self.end_date.grid(row=1, column=1)
 
         # Have date range filters empty by default
@@ -74,11 +72,13 @@ class FilterSection:
 
             # Generic search bar
             self.search_bar = customtkinter.CTkEntry(self.input_frame, placeholder_text = "Search")
-            self.search_bar.grid(row=1, column=4)
+            self.search_bar.grid(row=3, column=6)
+
+            self.input_frame.columnconfigure(4, weight=0)
 
         # Search button
         search_button = customtkinter.CTkButton(self.input_frame, text="Search", command=self.refresh_command, width=100)
-        search_button.grid(row=1, column=5)
+        search_button.grid(row=1, column=5, padx=10)
 
         # Reset button
         reset_button = customtkinter.CTkButton(self.input_frame, text="Reset", command=self.clear_filters, width=100)

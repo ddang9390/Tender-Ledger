@@ -107,7 +107,7 @@ class UserForm(customtkinter.CTkFrame):
         # Setting up birthday field
         birthday_label = customtkinter.CTkLabel(self.input_frame, text="Birthday:")
         birthday_label.grid(row=4, column=0, pady=10, padx=10)
-        self.birthday = DateEntry(self.input_frame, selectmode='day', state='normal', showweeknumbers=False)
+        self.birthday = DateEntry(self.input_frame, selectmode='day', state='normal', showweeknumbers=False, **self.controller.calendar_style)
         self.birthday.grid(row=4, column=1, pady=10, padx=10)
         self.birthday.set_date(birthday)
 

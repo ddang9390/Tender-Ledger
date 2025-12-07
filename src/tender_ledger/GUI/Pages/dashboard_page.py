@@ -37,7 +37,7 @@ class DashboardPage(customtkinter.CTkFrame):
 
         # Create Filter Section
         self.filter_frame = customtkinter.CTkFrame(self)
-        self.filter_frame.grid(row=1, column=0, columnspan=2, sticky="nsew")
+        self.filter_frame.grid(row=1, column=0, columnspan=2)
         self.filter_section = FilterSection(self.filter_frame, self)
 
         

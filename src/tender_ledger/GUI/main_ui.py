@@ -60,19 +60,20 @@ class App(customtkinter.CTk):
             "RegisterPage": RegisterPage(self.page_container, self, db)
         }
         
-        # Styling table
-        self.style_tables()
+        # Styling fields
+        style = ttk.Style()
+        self.style_tables(style)
 
         # Setup default page
         self.show_page("LoginPage")
 
-    def style_tables(self):
+    def style_tables(self, style):
         """
         Style the tables that will be used in the app
         """
-        style = ttk.Style()
-        style.configure("Treeview", font=("Arial", 12))
-        style.configure("Treeview.Heading", font=("Arial", 14, 'bold'))
+        style.configure("Treeview", font=("Roboto", 12))
+        style.configure("Treeview.Heading", font=("Roboto", 14, 'bold'))
+
 
 
     def show_navbar(self):
@@ -133,3 +134,8 @@ class App(customtkinter.CTk):
         Define styles to be used by certain parts of the app
         """
         self.font_label = customtkinter.CTkFont(family="Roboto", size=18, weight="bold")
+
+        # Dictionary of style options for the calendar popup
+        self.calendar_style = {
+            'font': ("Roboto", 12)
+        }

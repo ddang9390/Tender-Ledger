@@ -28,9 +28,9 @@ class ExpensesPage(customtkinter.CTkFrame):
         self.db = db
 
         # Have elements in main container expand properly
-        
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=1)
+
  
         
     def refresh_page(self, user_id):
@@ -50,10 +50,10 @@ class ExpensesPage(customtkinter.CTkFrame):
         label = customtkinter.CTkLabel(self, text="My Expenses", font=self.controller.font_label)
         label.grid(row=0, column=0, sticky="w")
 
-        import_button = customtkinter.CTkButton(self, text="Import", command=self.import_csv)
+        import_button = customtkinter.CTkButton(self, text="Import CSV", command=self.import_csv)
         import_button.grid(row=0, column=0, sticky="e")
 
-        download_button = customtkinter.CTkButton(self, text="Download", command=self.download_csv)
+        download_button = customtkinter.CTkButton(self, text="Download CSV", command=self.download_csv)
         download_button.grid(row=0, column=1, sticky="e")
 
         add_button = customtkinter.CTkButton(self, text="Add", command=self.display_popup)
@@ -115,15 +115,15 @@ class ExpensesPage(customtkinter.CTkFrame):
 
         download_expenses_csv(to_download)
 
-        self.controller.show_message("Successfully downloaded expenses")
+        self.controller.show_message("Successfully downloaded \nexpenses to output.csv")
 
     def import_csv(self):
         """
         Import a csv file and add them to the user's expenses
         """
         if open_file(self.user_id, self.db):
-            print("success")
             self.refresh_page(self.user_id)
+            self.controller.show_message("Successfully imported \nexpenses")
 
         else:
             print("failure")

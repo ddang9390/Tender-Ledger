@@ -50,7 +50,7 @@ class DatabaseManager:
             # Commit pending transactions to the database then close the connection
             self.con.commit()
  
-            print("Database", name, " has been connected")
+            print("Database", name, "has been connected")
 
         except sqlite3.Error as e:
             print(e)

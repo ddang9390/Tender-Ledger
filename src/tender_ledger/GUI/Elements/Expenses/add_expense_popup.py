@@ -210,7 +210,9 @@ class AddExpensePopup(customtkinter.CTkToplevel):
         else:
             if not editing:
                 add_expense(self.controller.user_id, amount, date_of_purchase, payment_method_id, category_id, location, self.db)
+                self.controller.show_message("Successfully added \nexpense")
             else:
                 update_expense(amount, date_of_purchase, payment_method_id, category_id, location, editing,self.db)
+                self.controller.show_message("Successfully updated \nexpense")
             self.expense_page.refresh_table()
             self.destroy()
