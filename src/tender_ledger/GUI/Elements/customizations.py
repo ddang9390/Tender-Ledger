@@ -1,5 +1,5 @@
 # Author - Daniel Dang
-# Filename - error_message.py
+# Filename - customizations.py
 # Purpose - Handles the appearance of the customization section from the Profile page
 
 import customtkinter
@@ -7,12 +7,15 @@ from ...Backend.categories import get_categories_for_list
 from ...Backend.payment_methods import get_payment_methods_for_list
 from ..Elements.confirmation_popup import ConfirmationPopup
 from ..Elements.add_popup import AddPopup
+from ..Elements.pagination import Pagination
 from tkinter import ttk
+
+OPTIONS_PER_PAGE = 10
 
 class Customizations(customtkinter.CTkFrame):
     def __init__(self, parent, controller, db):
         """
-        Initializes a new instance of the ProfilePage
+        Initializes a new instance of the Customizations
 
         Arguments:
             parent (CTkFrame): The container that will be containing this page
@@ -23,6 +26,10 @@ class Customizations(customtkinter.CTkFrame):
         self.parent = parent
         self.controller = controller
         self.db = db
+        
+        # Store the full lists
+        self.all_categories = []
+        self.all_methods = []
 
     def set_user(self, user_id):
         """
@@ -34,25 +41,22 @@ class Customizations(customtkinter.CTkFrame):
         self.user_id = user_id
         self.refresh()
 
-
     def refresh(self):
         """
         Refreshes the Customizations tab
         """
         self.clear_form()
-
         self.setup_categories()
         self.setup_payment_methods()
-
 
     def setup_categories(self):
         """
         Setup the Categories list
         """
-        categories = get_categories_for_list(self.user_id, self.db)
+        self.all_categories = get_categories_for_list(self.user_id, self.db)
 
         categories_frame = customtkinter.CTkFrame(self)
-        categories_frame.grid(row=0, column=0, sticky="nsew")
+        categories_frame.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)
 
         # Label
         label = customtkinter.CTkLabel(categories_frame, text="Categories", font=self.controller.font_label)
@@ -79,28 +83,54 @@ class Customizations(customtkinter.CTkFrame):
         # Bind left click event
         self.category_table.bind("<Button-1>", lambda event: self.action_click(event, True))
 
-        # Add categories to list
-        if categories:
-            for category in categories:
-                category_id = category[0]
-                category_name = category[1]
-                edit = ""
-                delete = ""
-                if category[2]:
-                    edit = "Edit"
-                    delete = "Delete"
-                self.category_table.insert('', 'end', iid=category_id, values=(category_name, edit, delete))
+        self.category_table.grid(row=1, column=0, columnspan=2, pady=(0, 10))
 
-        self.category_table.grid(row=1, column=0, columnspan=2, pady=20)
+        # Add pagination
+        self.category_pagination = Pagination(
+            categories_frame, 
+            OPTIONS_PER_PAGE, 
+            self.all_categories,
+            self.refresh_category_table
+        )
+        self.category_pagination.grid(row=2, column=0, columnspan=2, sticky="nsew")
+        self.category_pagination.create_pagination_options()
+
+        # Populate table
+        self.refresh_category_table()
+
+    def refresh_category_table(self):
+        """
+        Refreshes the category table with paginated data
+        """
+        # Clear the table
+        for row in self.category_table.get_children():
+            self.category_table.delete(row)
+
+        if not self.all_categories:
+            return
+
+        # Calculate pagination
+        current_page = self.category_pagination.current_page
+        start = OPTIONS_PER_PAGE * (current_page - 1) if current_page != 0 else 0
+        end = min(start + OPTIONS_PER_PAGE, len(self.all_categories))
+
+        # Add categories to table
+        for i in range(start, end):
+            category = self.all_categories[i]
+            category_id = category[0]
+            category_name = category[1]
+            edit = "Edit" if category[2] else ""
+            delete = "Delete" if category[2] else ""
+            self.category_table.insert('', 'end', iid=category_id, values=(category_name, edit, delete))
 
     def setup_payment_methods(self):
         """
         Setup the Payment Methods list
         """
-        methods = get_payment_methods_for_list(self.user_id, self.db)
+        self.all_methods = get_payment_methods_for_list(self.user_id, self.db)
 
         methods_frame = customtkinter.CTkFrame(self)
-        methods_frame.grid(row=0, column=1, sticky="nsew")
+        methods_frame.grid(row=0, column=1, sticky="nsew", padx=10, pady=10)
 
         # Label
         label = customtkinter.CTkLabel(methods_frame, text="Payment Methods", font=self.controller.font_label)
@@ -113,7 +143,6 @@ class Customizations(customtkinter.CTkFrame):
         # Adding columns to table
         columns = ('name', 'edit', 'delete')
         self.method_table = ttk.Treeview(methods_frame, columns=columns, show='headings')
-
 
         # Add headers to columns
         self.method_table.heading('name', text='Payment Method')
@@ -128,19 +157,45 @@ class Customizations(customtkinter.CTkFrame):
         # Bind left click event
         self.method_table.bind("<Button-1>", lambda event: self.action_click(event, False))
 
-        # Add methods to list
-        if methods:
-            for method in methods:
-                method_id = method[0]
-                method_name = method[1]
-                edit = ""
-                delete = ""
-                if method[2]:
-                    edit = "Edit"
-                    delete = "Delete"
-                self.method_table.insert('', 'end', iid=method_id, values=(method_name, edit, delete))
-        self.method_table.grid(row=1, column=0, columnspan=2, pady=20, padx=(30, 0))
-        
+        self.method_table.grid(row=1, column=0, columnspan=2, pady=(0, 10))
+
+        # Add pagination
+        self.method_pagination = Pagination(
+            methods_frame, 
+            OPTIONS_PER_PAGE, 
+            self.all_methods,
+            self.refresh_method_table
+        )
+        self.method_pagination.grid(row=2, column=0, columnspan=2, sticky="nsew")
+        self.method_pagination.create_pagination_options()
+
+        # Populate table
+        self.refresh_method_table()
+
+    def refresh_method_table(self):
+        """
+        Refreshes the payment method table with paginated data
+        """
+        # Clear the table
+        for row in self.method_table.get_children():
+            self.method_table.delete(row)
+
+        if not self.all_methods:
+            return
+
+        # Calculate pagination
+        current_page = self.method_pagination.current_page
+        start = OPTIONS_PER_PAGE * (current_page - 1) if current_page != 0 else 0
+        end = min(start + OPTIONS_PER_PAGE, len(self.all_methods))
+
+        # Add methods to table
+        for i in range(start, end):
+            method = self.all_methods[i]
+            method_id = method[0]
+            method_name = method[1]
+            edit = "Edit" if method[2] else ""
+            delete = "Delete" if method[2] else ""
+            self.method_table.insert('', 'end', iid=method_id, values=(method_name, edit, delete))
 
     def clear_form(self):
         """
@@ -170,7 +225,8 @@ class Customizations(customtkinter.CTkFrame):
 
         # Get region of event and return if not a cell
         region = table.identify_region(x, y)
-        if region != "cell": return
+        if region != "cell": 
+            return
 
         # Get column
         col_index = table.identify_column(x)
@@ -186,13 +242,10 @@ class Customizations(customtkinter.CTkFrame):
 
             if col["id"] == "edit":
                 self.display_popup(popup_type, editing=id)
-
             else:
-                # Display confirmation popup before deleting expense
+                # Display confirmation popup before deleting
                 deleting = (popup_type, id, self)
-                self.display_popup(popup_type,deleting=deleting)
-
-
+                self.display_popup(popup_type, deleting=deleting)
 
     def display_popup(self, action, deleting=None, editing=None):
         """
@@ -203,15 +256,12 @@ class Customizations(customtkinter.CTkFrame):
             deleting (tuple): First element contains type being deleted, second contains ID
             editing (int): Contains ID of expense to edit
         """
-        # TODO - need scrollbars
         if not deleting and not editing:
             popup = AddPopup(self, self.controller, self.db, action)
-
         elif editing:
             popup = AddPopup(self, self.controller, self.db, action, editing=editing)
-
         else:
-            popup = ConfirmationPopup(parent=self, controller=self.controller,db=self.db, action=deleting)
+            popup = ConfirmationPopup(parent=self, controller=self.controller, db=self.db, action=deleting)
 
         # Ensures that the popup is updated and visible before grabbing it
         popup.update_idletasks()

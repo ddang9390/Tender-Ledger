@@ -89,11 +89,11 @@ class ConfirmationPopup(customtkinter.CTkToplevel):
         elif self.action[0] == "Category":
             delete_category(self.action[1], self.db)
             self.parent.refresh()
-            self.controller.controller.show_message("Successfully deleted category")
+            self.controller.show_message("Successfully deleted category")
 
         elif self.action[0] == "Payment Method":
             delete_payment_method(self.action[1], self.db)
             self.parent.refresh()
-            self.controller.controller.show_message("Successfully deleted \npayment method")
+            self.controller.show_message("Successfully deleted \npayment method")
 
         self.destroy()

@@ -34,8 +34,8 @@ def generate_pie_charts(expenses):
     payment_methods = {}
 
     for expense in expenses:
-        category = expense[CATEGORY_INDEX]
-        payment_method = expense[PAYMENT_METHOD_INDEX]
+        category = expense[CATEGORY_INDEX]  if expense[CATEGORY_INDEX] is not None else "Uncategorized"
+        payment_method = expense[PAYMENT_METHOD_INDEX]  if expense[PAYMENT_METHOD_INDEX] is not None else "Uncategorized"
         amount = expense[AMOUNT_INDEX]
 
         # Adding up values by expense amounts
@@ -127,7 +127,7 @@ def generate_bar_chart(expenses):
 
     categories = {}
     for expense in expenses:
-        category = expense[CATEGORY_INDEX]
+        category = expense[CATEGORY_INDEX] if expense[CATEGORY_INDEX] is not None else "Uncategorized"
         amount = expense[AMOUNT_INDEX]
 
         # Sum up number of times categories and payment methods were used

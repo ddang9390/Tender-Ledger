@@ -3,8 +3,9 @@
 # Purpose - Handles the appearance and functionality of the expenses table
 
 import customtkinter
-from ....Backend.expenses import get_expenses_for_user
 from tkinter import ttk
+from ....Backend.expenses import get_expenses_for_user
+from ...Elements.pagination import Pagination
 
 OPTIONS_PER_PAGE = 20
 
@@ -27,10 +28,8 @@ class ExpenseTable():
 
         self.expenses = get_expenses_for_user(self.user_id, self.db)
 
-        # Creating table and pagination options
-        self.current_page = 1
+        # Creating table
         self.create_table()
-        self.create_pagination_options()
         self.refresh_table()
 
     def create_table(self):
@@ -43,6 +42,11 @@ class ExpenseTable():
         # Adding columns to table
         columns = ('date', 'amount', 'category', 'payment method', 'location', 'edit', 'delete')
         self.expense_table = ttk.Treeview(self.expense_table_frame, columns=columns, show='headings', height=20)
+
+        # Create pagination options
+        self.pagination = Pagination(self.expense_table_frame, OPTIONS_PER_PAGE, self.expenses, self.refresh_table)
+        self.pagination.grid(row=1, column=0, columnspan=2, sticky="nsew")
+        self.pagination.create_pagination_options()
 
         # Add headers to columns
         self.expense_table.heading('date', text='Date')
@@ -100,6 +104,9 @@ class ExpenseTable():
         """
         Refreshes the table by clearing it and then repopulating it
         """
+        # Get current page
+        current_page = self.pagination.current_page
+
         # Get date values
         start_date = self.filter_section.start_date.get()
 
@@ -122,13 +129,9 @@ class ExpenseTable():
             self.expense_table.delete(row)
 
         # Calculate start and end indices for pagination
-        if self.current_page != 0:
-            start = OPTIONS_PER_PAGE* (self.current_page-1)
-        else:
-            start = 0
-        end = start + OPTIONS_PER_PAGE
-        if end > len(self.expenses):
-            end = len(self.expenses)
+
+        start = OPTIONS_PER_PAGE * (current_page - 1) if current_page != 0 else 0
+        end = min(start + OPTIONS_PER_PAGE, len(self.expenses))
 
         # Add expenses to the table
         if len(self.expenses) > 0: 
@@ -147,78 +150,10 @@ class ExpenseTable():
                 self.expense_table.insert('', 'end', values=display_values, iid=expense_id)
 
         # Refresh pagination options
-        self.create_pagination_options()
-        if self.current_page > self.total_pages:
-            self.go_to_prev_page()
+        self.pagination.create_pagination_options(self.expenses)
+        self.pagination.calculate_total_pages()
+        if current_page > self.pagination.total_pages:
+            self.pagination.go_to_prev_page()
 
-    def create_pagination_options(self):
-        """
-        Displays pagination options for the expenses table
-        """
-        self.pagination_frame = customtkinter.CTkFrame(self.parent)
-        self.pagination_frame.grid(row=1, column=0, columnspan=2, sticky="nsew")
-        self.calculate_total_pages()
-
-        # Previous button
-        self.prev_button = customtkinter.CTkButton(self.pagination_frame, text="Prev", command=self.go_to_prev_page)
-        self.prev_button.grid(row=0, column=0)
-
-        # Page label
-        self.page_label = customtkinter.CTkLabel(self.pagination_frame, text=f"{self.current_page}/{self.total_pages}")
-        self.page_label.grid(row=0, column=1, padx=10)
-
-        # Next button
-        self.next_button = customtkinter.CTkButton(self.pagination_frame, text="Next", command=self.go_to_next_page)
-        self.next_button.grid(row=0, column=2)
-
-        # Update status of pagination buttons
-        self.update_pagination_buttons()
-
-
-    def go_to_prev_page(self):
-        """
-        Go to the previous page in the table
-        """
-        self.current_page -= 1
-        self.page_label.configure(text=f"{self.current_page}/{self.total_pages}")
-
-        # Enable or disable buttons
-        self.update_pagination_buttons()
-        self.refresh_table()
-
-    def go_to_next_page(self):
-        """
-        Go to the previous page in the table
-        """
-        self.current_page += 1
-        self.page_label.configure(text=f"{self.current_page}/{self.total_pages}")
-
-        # Enable or disable buttons
-        self.update_pagination_buttons()
-        self.refresh_table()
-
-    def update_pagination_buttons(self):
-        """
-        Disables or enables the pagination buttons depending on what page the user is on
-        """
-        self.calculate_total_pages()
-
-        # If at the beginning, disable prev button and ensure next button is enabled
-        if self.current_page == 1 or self.current_page == 0:
-            self.prev_button.configure(state="disabled")
-        else:
-            self.prev_button.configure(state="normal")  
-
-        # If at the end, disable next button and ensure prev button is enabled
-        if self.current_page == self.total_pages:
-            self.next_button.configure(state="disabled")
-        else:
-            self.next_button.configure(state="normal")
-
-    def calculate_total_pages(self):
-        """
-        Calculate the total number of pages in the table
-        """
-        self.total_pages = len(self.expenses) // OPTIONS_PER_PAGE
-        if len(self.expenses) % OPTIONS_PER_PAGE != 0:
-            self.total_pages += 1
+        
+   
