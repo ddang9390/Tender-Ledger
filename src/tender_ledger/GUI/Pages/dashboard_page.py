@@ -4,6 +4,7 @@
 
 import customtkinter
 import platform
+from datetime import datetime
 from ...Backend.expenses import get_expenses_for_user, get_total_spending
 from ...Backend.dashboard import generate_pie_charts, generate_line_plot, generate_bar_chart
 from ..Elements.filter_section import FilterSection
@@ -37,9 +38,11 @@ class DashboardPage(customtkinter.CTkFrame):
 
         # Create Filter Section
         self.filter_frame = customtkinter.CTkFrame(self)
-        self.filter_frame.grid(row=1, column=0, columnspan=2)
+        self.filter_frame.grid(row=1, column=1, columnspan=2)
         self.filter_section = FilterSection(self.filter_frame, self)
 
+        # Initialize date range label
+        self.date_range_label = customtkinter.CTkLabel(self)
         
     def refresh_page(self, user_id):
         """
@@ -55,11 +58,49 @@ class DashboardPage(customtkinter.CTkFrame):
         label = customtkinter.CTkLabel(self, text="Dashboard", font=self.controller.font_label)
         label.grid(row=0, column=0, columnspan=2, sticky="nsew")
 
+        # Date Range Label
+        self.create_date_range_label()
+
         # Summary Row
         self.create_summary_section()
 
         # Tables
         self.create_chart_section()
+
+    def create_date_range_label(self):
+        """
+        Create the date range label showing the earliest and latest expense dates
+        """
+        # Reset date range label
+        if self.date_range_label is not None:
+            self.date_range_label.destroy()
+            self.date_range_label = None
+
+        date_range_text = "No expenses"
+        
+        if self.expenses:
+            # Get all dates from expenses
+            dates = [datetime.strptime(expense[1], "%Y-%m-%d").date() for expense in self.expenses]
+            
+            if dates:
+                earliest_date = min(dates)
+                latest_date = max(dates)
+                
+                # Format dates
+                earliest_str = earliest_date.strftime("%b %d, %Y")
+                latest_str = latest_date.strftime("%b %d, %Y")
+                
+                date_range_text = f"Date Range:\n{earliest_str} - {latest_str}"
+        
+        # Create date range label
+        self.date_range_label = customtkinter.CTkLabel(
+            self, 
+            text=date_range_text,
+            font=("Roboto", 20, "bold"),
+            justify="left"
+        )
+        self.date_range_label.grid(row=1, column=0, sticky="w", padx=20, pady=10)
+
 
     def create_summary_section(self):
         """
@@ -78,7 +119,7 @@ class DashboardPage(customtkinter.CTkFrame):
         total_purchases_label = customtkinter.CTkLabel(self.summary_frame, text=f"Total Purchases: {total_purchases}", font=self.controller.font_label)
         total_purchases_label.grid(row=0, column=1, padx=20)
 
-        self.summary_frame.grid(row=2, column=0, columnspan=2,sticky="nsew")
+        self.summary_frame.grid(row=2, column=0, columnspan=2, sticky="nsew", padx=20, pady=10)
 
     def filter_page(self):
         """
