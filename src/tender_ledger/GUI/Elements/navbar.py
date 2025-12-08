@@ -3,6 +3,12 @@
 # Purpose - Handles the appearance and logic of the navbar
 
 import customtkinter
+from PIL import Image
+from ...Backend.path_utils import get_logo_path
+
+LOGO_PATH = ""
+LOGO_HEIGHT = 200
+LOGO_WIDTH = 40
 
 class NavBar(customtkinter.CTkFrame):
     def __init__(self, parent, controller, db):
@@ -20,8 +26,9 @@ class NavBar(customtkinter.CTkFrame):
 
         self.grid_rowconfigure(4, weight=1)
 
-        label = customtkinter.CTkLabel(self, text="Navbar", font=self.controller.font_label)
-        label.grid(row=0, column=0, padx=20, pady=20, sticky="n")
+        logo = customtkinter.CTkImage(Image.open(get_logo_path()), size=(LOGO_HEIGHT, LOGO_WIDTH))
+        label = customtkinter.CTkLabel(self, image=logo, text="", font=self.controller.font_label)
+        label.grid(row=0, column=0, padx=2, pady=20, sticky="n")
 
         expenses_button = customtkinter.CTkButton(self, text="Expenses", command=lambda: controller.show_page("ExpensesPage"))
         expenses_button.grid(row=1, column=0, padx=20, pady=20, sticky="n")
