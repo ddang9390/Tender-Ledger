@@ -1,6 +1,7 @@
 *.db
 output.csv
 test.csv
+test_forecast_data.csv
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
