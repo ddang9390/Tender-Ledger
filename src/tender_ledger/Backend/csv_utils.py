@@ -18,8 +18,14 @@ def download_expenses_csv(expenses):
     Argument:
         expenses (list): List of tuples that represent the expenses
     """
-    df = pd.DataFrame(expenses, columns= COLUMN_NAMES)
-    df.to_csv('output.csv', index=False)
+    file_path = filedialog.asksaveasfilename(
+        defaultextension=".csv",
+        filetypes = [("CSV files", "*.csv"), ("All files", "*.*")],
+        title="Save File As"
+    )
+    if file_path:
+        df = pd.DataFrame(expenses, columns= COLUMN_NAMES)
+        df.to_csv(file_path, index=False)
 
 def open_file(user_id, db):
     """

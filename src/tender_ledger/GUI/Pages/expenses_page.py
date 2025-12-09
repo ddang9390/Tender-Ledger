@@ -119,7 +119,7 @@ class ExpensesPage(customtkinter.CTkFrame):
 
         download_expenses_csv(to_download)
 
-        self.controller.show_message("Successfully downloaded \nexpenses to output.csv")
+        self.controller.show_message("Successfully downloaded \nexpenses")
 
     def import_csv(self):
         """
