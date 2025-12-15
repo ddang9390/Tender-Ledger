@@ -36,8 +36,11 @@ class NavBar(customtkinter.CTkFrame):
         dashboard_button = customtkinter.CTkButton(self, text="Dashboard", command=lambda: controller.show_page("DashboardPage"))
         dashboard_button.grid(row=2, column=0, padx=20, pady=20, sticky="n")
 
+        forecast_button = customtkinter.CTkButton(self, text="Forecast", command=lambda: controller.show_page("ForecastPage"))
+        forecast_button.grid(row=3, column=0, padx=20, pady=20, sticky="n")
+
         profile_button = customtkinter.CTkButton(self, text="My Profile", command=lambda: controller.show_page("ProfilePage"))
-        profile_button.grid(row=3, column=0, padx=20, pady=20, sticky="n")
+        profile_button.grid(row=4, column=0, padx=20, pady=20, sticky="n")
 
         logout_button = customtkinter.CTkButton(self, text="Logout", command=self.logout)
         logout_button.grid(row=4, column=0, pady=50, sticky="s")

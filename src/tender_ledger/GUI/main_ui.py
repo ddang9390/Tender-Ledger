@@ -10,6 +10,7 @@ from .Pages.dashboard_page import DashboardPage
 from .Pages.profile_page import ProfilePage  
 from .Pages.login_page import LoginPage
 from .Pages.register_page import RegisterPage
+from .Pages.forecast_page import ForecastPage
 from .Elements.navbar import NavBar
 from .Elements.notification import Notification
 from ..Backend.path_utils import get_theme_path
@@ -62,7 +63,8 @@ class App(customtkinter.CTk):
             "DashboardPage": DashboardPage(self.page_container, self, db),
             "ProfilePage": ProfilePage(self.page_container, self, db),
             "LoginPage": LoginPage(self.page_container, self, db),
-            "RegisterPage": RegisterPage(self.page_container, self, db)
+            "RegisterPage": RegisterPage(self.page_container, self, db),
+            "ForecastPage": ForecastPage(self.page_container, self, db)
         }
         
         # Styling fields
