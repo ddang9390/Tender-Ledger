@@ -41,7 +41,14 @@ along with data portability through CSV import and export.
 Python 3.7+
 
 ### Installation
-Just run the run.bat file
+1. Download the code or clone the repository  
+git clone https://github.com/ddang9390/Tender-Ledger.git
+2. Navigate to the project directory  
+cd tender-ledger
+3. Install the requirements  
+pip install -r requirements.txt
+4. Run the main file  
+python main.py
 
 ## Technical Architecture
 ### Tech Stack
